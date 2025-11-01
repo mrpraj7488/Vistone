@@ -26,35 +26,40 @@ export default function ProductDetail({ darkMode }) {
   }, [slug]);
 
   const fetchProduct = async () => {
-    const { data: productData } = await supabase
-      .from('products')
-      .select(`
-        *,
-        category:categories(name),
-        technologies:product_technologies(technology:technologies(name, color))
-      `)
-      .eq('slug', slug)
-      .single();
+    try {
+      const { data: productData, error } = await supabase
+        .from('products')
+        .select(`
+          *,
+          category:categories(name),
+          technologies:product_technologies(technology:technologies(name, color))
+        `)
+        .eq('slug', slug)
+        .maybeSingle();
 
-    if (productData) {
-      setProduct(productData);
+      if (productData) {
+        setProduct(productData);
 
-      const { data: reviewsData } = await supabase
-        .from('reviews')
-        .select('*')
-        .eq('product_id', productData.id)
-        .order('created_at', { ascending: false });
+        const { data: reviewsData } = await supabase
+          .from('reviews')
+          .select('*')
+          .eq('product_id', productData.id)
+          .order('created_at', { ascending: false });
 
-      setReviews(reviewsData || []);
+        setReviews(reviewsData || []);
 
-      const { data: featuresData } = await supabase
-        .from('product_features')
-        .select('*')
-        .eq('product_id', productData.id);
+        const { data: featuresData } = await supabase
+          .from('product_features')
+          .select('*')
+          .eq('product_id', productData.id);
 
-      setFeatures(featuresData || []);
+        setFeatures(featuresData || []);
+      }
+    } catch (err) {
+      console.error('Error fetching product:', err);
+    } finally {
+      setLoading(false);
     }
-    setLoading(false);
   };
 
   const handleAddToCart = () => {
@@ -68,7 +73,18 @@ export default function ProductDetail({ darkMode }) {
   };
 
   const price = licenseType === 'yearly' ? product?.price_yearly : product?.price_monthly;
-  const images = product?.images ? JSON.parse(product.images) : [product?.featured_image];
+
+  const getImages = () => {
+    if (!product) return [];
+    try {
+      const imgArray = typeof product.images === 'string' ? JSON.parse(product.images) : product.images;
+      return Array.isArray(imgArray) && imgArray.length > 0 ? imgArray : [product.featured_image];
+    } catch {
+      return [product.featured_image];
+    }
+  };
+
+  const images = getImages();
 
   if (loading) {
     return (
