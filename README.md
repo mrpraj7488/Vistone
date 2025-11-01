@@ -1736,12 +1736,16 @@ Step 1: Request → Step 2: Review → Step 3: Approved → Step 4: Refunded
 
 ## 📈 ADDITIONAL ESSENTIAL PAGES
 
-### **Pricing Page:**
-- Comparison table
-- Plan cards
-- Feature comparison
-- FAQ section
-- "Contact Sales" CTA
+### **services:**
+- installation
+- Customization
+- Support
+
+### **Resources:**
+- Blogs
+- Documentation
+- Video
+- Faq
 
 ### **Documentation Page:**
 - Sidebar navigation
@@ -1749,12 +1753,6 @@ Step 1: Request → Step 2: Review → Step 3: Approved → Step 4: Refunded
 - API reference
 - Getting started guide
 - Version selector
-
-### **Sitemap Page:**
-- Hierarchical links
-- All pages listed
-- Organized by section
-- Search functionality
 
 ### **Coming Soon Page:**
 - Product launch countdown
@@ -1775,8 +1773,8 @@ Step 1: Request → Step 2: Review → Step 3: Approved → Step 4: Refunded
 **Navigation Bar (All Pages):**
 ```
 ┌─────────────────────────────────────────────┐
-│ [Logo] Products▾ Solutions▾ Pricing Blog   │
-│                    [Search] [Theme] [Cart] [User]│
+│ [Logo] Products▾ services▾ Resources▾ Company▾  │
+│                    [Active Purchase Code] [Theme] [Cart] [User]│
 └─────────────────────────────────────────────┘
 ```
 
