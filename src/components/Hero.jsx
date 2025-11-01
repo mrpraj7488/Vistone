@@ -57,9 +57,6 @@ export default function Hero({ darkMode }) {
           <div className={darkMode ? 'text-white' : 'text-gray-900'}>
             Business To Innovate And
           </div>
-          <div className="text-gradient animate-pulse-glow">
-            Grow
-          </div>
         </h1>
 
         <p className={`text-lg md:text-xl lg:text-2xl mb-12 max-w-3xl mx-auto leading-relaxed font-medium ${
