@@ -1,0 +1,12 @@
+// Landing page components index for optimized imports
+export { default as Hero } from './Hero';
+export { default as Features } from './Features';
+export { default as Services } from './Services';
+export { default as Products } from './Products';
+export { default as Stats } from './Stats';
+export { default as Achievements } from './Achievements';
+export { default as TechStack } from './TechStack';
+export { default as CompanyGlance } from './CompanyGlance';
+export { default as Testimonials } from './Testimonials';
+export { default as EliteAuthor } from './EliteAuthor';
+export { default as Blog } from './Blog';
