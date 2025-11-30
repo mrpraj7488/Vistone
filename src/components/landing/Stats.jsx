@@ -1,140 +1,226 @@
+import { useEffect, useState, useRef } from 'react';
 import { Container } from '../layout/Container';
+import { Users, Rocket, Heart, Globe, Sparkles } from 'lucide-react';
 import { useScrollAnimation } from '../../hooks/useScrollAnimation';
 
 const stats = [
-  { number: '10+', label: 'Years of Experience' },
-  { number: '500+', label: 'Projects Done' },
-  { number: '9,000+', label: 'Worldwide Clients' },
-  { number: '800+', label: 'Positive Reviews' },
+  {
+    number: 20,
+    suffix: '+',
+    label: 'Team Members',
+    icon: Users,
+    gradient: 'from-blue-600 via-indigo-400 to-blue-600',
+    shadow: 'shadow-blue-500/20'
+  },
+  {
+    number: 30,
+    suffix: '+',
+    label: 'Amazing Products',
+    icon: Rocket,
+    gradient: 'from-purple-600 via-fuchsia-400 to-purple-600',
+    shadow: 'shadow-purple-500/20'
+  },
+  {
+    number: 9,
+    suffix: 'K+',
+    label: 'Happy Clients',
+    icon: Heart,
+    gradient: 'from-rose-500 via-red-400 to-rose-500',
+    shadow: 'shadow-rose-500/20'
+  },
+  {
+    number: 80,
+    suffix: '+',
+    label: 'Countries Served',
+    icon: Globe,
+    gradient: 'from-emerald-600 via-teal-400 to-emerald-600',
+    shadow: 'shadow-emerald-500/20'
+  },
 ];
 
-const floatingIcons = ['💻', '🎨', '⚡', '📱', '🛠️', '🚀', '💡', '🔧'];
+function CountUp({ end, duration = 2000, suffix = '' }) {
+  const [count, setCount] = useState(0);
+  const countRef = useRef(null);
+  const [isVisible, setIsVisible] = useState(false);
 
-export default function Stats({ darkMode }) {
-  const { ref, isVisible } = useScrollAnimation({ threshold: 0.2 });
+  useEffect(() => {
+    const observer = new IntersectionObserver(
+      ([entry]) => {
+        if (entry.isIntersecting) {
+          setIsVisible(true);
+        }
+      },
+      { threshold: 0.1 }
+    );
+
+    if (countRef.current) {
+      observer.observe(countRef.current);
+    }
+
+    return () => observer.disconnect();
+  }, []);
+
+  useEffect(() => {
+    if (!isVisible) return;
+
+    let startTime;
+    let animationFrame;
+
+    const animate = (timestamp) => {
+      if (!startTime) startTime = timestamp;
+      const progress = timestamp - startTime;
+      const percentage = Math.min(progress / duration, 1);
+
+      // Easing function for smooth animation
+      const easeOutQuart = 1 - Math.pow(1 - percentage, 4);
+
+      setCount(Math.floor(end * easeOutQuart));
+
+      if (progress < duration) {
+        animationFrame = requestAnimationFrame(animate);
+      } else {
+        setCount(end);
+      }
+    };
+
+    animationFrame = requestAnimationFrame(animate);
+
+    return () => cancelAnimationFrame(animationFrame);
+  }, [end, duration, isVisible]);
 
   return (
-    <section className={`section-padding relative overflow-hidden ${
-      darkMode 
-        ? 'bg-gradient-to-br from-slate-900 via-slate-800/50 to-slate-900' 
-        : 'bg-gradient-to-br from-blue-50 via-indigo-50/50 to-blue-50'
-    }`}>
-      {/* Background Elements */}
-      <div className="absolute inset-0 overflow-hidden pointer-events-none">
-        <div className={`absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-64 h-64 sm:w-96 sm:h-96 rounded-full ${
-          darkMode ? 'bg-primary-500/10' : 'bg-primary-500/5'
-        } blur-3xl`} />
+    <span ref={countRef}>
+      {count.toLocaleString()}{suffix}
+    </span>
+  );
+}
+
+export default function Stats({ darkMode }) {
+  const { ref, isVisible } = useScrollAnimation({ threshold: 0.1 });
+
+  return (
+    <section className={`py-20 relative overflow-hidden ${darkMode
+      ? 'bg-slate-900'
+      : 'bg-slate-50'
+      }`}>
+      {/* Animated Background */}
+      <div className="absolute inset-0 overflow-hidden">
+        {/* Gradient Mesh Base */}
+        <div className={`absolute inset-0 ${darkMode
+            ? 'bg-[radial-gradient(ellipse_at_top,_var(--tw-gradient-stops))] from-slate-900 via-[#0B1120] to-black'
+            : 'bg-[radial-gradient(ellipse_at_top,_var(--tw-gradient-stops))] from-white via-slate-50 to-slate-100'
+          }`} />
+
+        {/* Moving Grid with Radial Mask */}
+        <div className={`absolute inset-0 opacity-[0.15] ${darkMode ? 'bg-grid-white/[0.1]' : 'bg-grid-black/[0.1]'
+          }`}
+          style={{
+            maskImage: 'radial-gradient(ellipse at center, black 40%, transparent 70%)',
+            WebkitMaskImage: 'radial-gradient(ellipse at center, black 40%, transparent 70%)',
+          }}>
+          <div className="absolute inset-0 animate-move duration-[20s]" style={{
+            backgroundImage: `linear-gradient(to right, ${darkMode ? '#6366f1' : '#3b82f6'} 1px, transparent 1px),
+                             linear-gradient(to bottom, ${darkMode ? '#6366f1' : '#3b82f6'} 1px, transparent 1px)`,
+            backgroundSize: '50px 50px',
+          }} />
+        </div>
+
+        {/* Twinkling Stars */}
+        {[...Array(20)].map((_, i) => (
+          <div
+            key={`star-${i}`}
+            className={`absolute rounded-full animate-twinkle ${darkMode ? 'bg-white shadow-[0_0_8px_rgba(255,255,255,0.8)]' : 'bg-blue-400 shadow-[0_0_8px_rgba(59,130,246,0.5)]'
+              }`}
+            style={{
+              left: `${Math.random() * 100}%`,
+              top: `${Math.random() * 100}%`,
+              width: `${Math.random() * 2 + 1}px`,
+              height: `${Math.random() * 2 + 1}px`,
+              animationDelay: `${Math.random() * 5}s`,
+              animationDuration: `${Math.random() * 3 + 2}s`,
+            }}
+          />
+        ))}
+
+        {/* Shooting Star */}
+        <div className={`absolute top-0 right-0 w-[300px] h-[1px] rotate-[315deg] animate-shooting-star opacity-0 ${darkMode
+            ? 'bg-gradient-to-r from-transparent via-white to-transparent'
+            : 'bg-gradient-to-r from-transparent via-blue-500 to-transparent'
+          }`} style={{
+            top: '20%',
+            right: '10%',
+            animationDelay: '2s',
+            animationDuration: '7s',
+          }} />
+
+        <div className={`absolute top-0 right-0 w-[200px] h-[1px] rotate-[315deg] animate-shooting-star opacity-0 ${darkMode
+            ? 'bg-gradient-to-r from-transparent via-indigo-300 to-transparent'
+            : 'bg-gradient-to-r from-transparent via-blue-400 to-transparent'
+          }`} style={{
+            top: '40%',
+            right: '20%',
+            animationDelay: '5s',
+            animationDuration: '8s',
+          }} />
+
+        {/* Ambient Glow Blobs */}
+        <div className={`absolute top-1/4 left-1/4 w-[500px] h-[500px] rounded-full mix-blend-screen filter blur-[100px] opacity-20 animate-blob ${darkMode ? 'bg-indigo-600' : 'bg-blue-300'
+          }`} />
+        <div className={`absolute bottom-1/4 right-1/4 w-[500px] h-[500px] rounded-full mix-blend-screen filter blur-[100px] opacity-20 animate-blob animation-delay-2000 ${darkMode ? 'bg-purple-600' : 'bg-purple-300'
+          }`} />
       </div>
 
       <Container>
-        <div className="relative z-10">
-          {/* Title */}
-          <div className={`text-center mb-12 sm:mb-16 transition-all duration-1000 ${
-            isVisible ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-10'
-          }`}>
-            <h2 
-              className={`font-black leading-tight mb-4 px-4 ${
-                darkMode ? 'text-white' : 'text-slate-900'
-              }`}
-              style={{
-                fontSize: 'clamp(1.5rem, 4vw + 0.5rem, 2.5rem)', // 24px - 40px
-                lineHeight: '1.2',
-                letterSpacing: '-0.02em',
-              }}
-            >
-              Run Your Online Business Smartly with Our Pre-Built Product.
-            </h2>
-            <p 
-              className={`max-w-3xl mx-auto px-4 leading-relaxed ${
-                darkMode ? 'text-slate-300' : 'text-slate-700'
-              }`}
-              style={{
-                fontSize: 'clamp(0.875rem, 1.5vw + 0.25rem, 1.125rem)', // 14px - 18px
-                lineHeight: '1.6',
-              }}
-            >
-              Discover how our pre-built solutions can transform your business operations and accelerate growth.
-            </p>
+        {/* Section Title */}
+        <div
+          ref={ref}
+          className={`text-center mb-16 transition-all duration-1000 ${isVisible ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-10'
+            }`}
+        >
+          <div className="inline-flex items-center justify-center gap-2 mb-4">
+            <Sparkles className={`w-6 h-6 animate-pulse ${darkMode ? 'text-indigo-400' : 'text-blue-500'}`} />
+            <span className={`text-sm font-bold tracking-widest uppercase ${darkMode ? 'text-indigo-400' : 'text-blue-500'}`}>
+              Our Growth
+            </span>
+            <Sparkles className={`w-6 h-6 animate-pulse ${darkMode ? 'text-indigo-400' : 'text-blue-500'}`} />
           </div>
 
-          {/* Circular Graphic with Icons */}
-          <div 
-            ref={ref}
-            className="relative w-48 h-48 sm:w-64 sm:h-64 md:w-80 md:h-80 mx-auto mb-12 sm:mb-16"
-          >
-            {/* Central Circle */}
-            <div className={`absolute inset-0 rounded-full flex items-center justify-center futuristic-card ${
-              darkMode 
-                ? 'bg-slate-800/70 border border-slate-700/50 shadow-2xl' 
-                : 'bg-white shadow-2xl border border-gray-200/50'
-            }`}>
-              <div className="text-center px-4">
-                <p className={`text-xs sm:text-sm md:text-base font-black mb-1 ${
-                  darkMode ? 'text-primary-400' : 'text-primary-600'
+          <h2 className={`text-4xl sm:text-5xl font-black mb-6 bg-gradient-to-r ${darkMode
+            ? 'from-white via-indigo-200 to-slate-400'
+            : 'from-slate-900 via-blue-800 to-slate-600'
+            } bg-clip-text text-transparent animate-text-shimmer bg-[length:200%_auto]`}>
+            Vistone at A Glance
+          </h2>
+
+          <div className={`h-1.5 mx-auto rounded-full bg-gradient-to-r from-blue-500 via-purple-500 to-pink-500 transition-all duration-1000 delay-500 ${isVisible ? 'w-32 opacity-100' : 'w-0 opacity-0'
+            }`} />
+        </div>
+
+        <div className="grid grid-cols-2 lg:grid-cols-4 gap-8 relative z-10">
+          {stats.map((stat, index) => (
+            <div
+              key={index}
+              className="flex flex-col items-center text-center group"
+            >
+              {/* Icon - Subtle and clean */}
+              <div className={`mb-4 p-3 rounded-2xl transition-transform duration-300 group-hover:scale-110 ${darkMode ? 'bg-slate-800/50' : 'bg-white/60'
                 }`}>
-                  Browse
-                </p>
-                <p className={`text-xs sm:text-sm md:text-base font-black ${
-                  darkMode ? 'text-primary-400' : 'text-primary-600'
+                <stat.icon className={`w-6 h-6 ${darkMode ? 'text-slate-400' : 'text-slate-500'
+                  }`} />
+              </div>
+
+              {/* Number - Big and Bold with Shine */}
+              <div className={`text-4xl sm:text-5xl font-black mb-2 tracking-tight bg-gradient-to-r ${stat.gradient} bg-clip-text text-transparent animate-text-shimmer`}>
+                <CountUp end={stat.number} suffix={stat.suffix} />
+              </div>
+
+              {/* Label */}
+              <div className={`font-medium text-sm sm:text-base ${darkMode ? 'text-slate-400' : 'text-slate-600'
                 }`}>
-                  Product
-                </p>
+                {stat.label}
               </div>
             </div>
-
-            {/* Floating Icons */}
-            {floatingIcons.map((icon, index) => {
-              const angle = (index * 360) / floatingIcons.length;
-              const radius = 90; // Adjusted for responsive
-              const x = Math.cos((angle * Math.PI) / 180) * radius;
-              const y = Math.sin((angle * Math.PI) / 180) * radius;
-
-              return (
-                <div
-                  key={index}
-                  className="absolute text-2xl sm:text-3xl md:text-4xl"
-                  style={{
-                    left: `calc(50% + ${x}px)`,
-                    top: `calc(50% + ${y}px)`,
-                    transform: 'translate(-50%, -50%)',
-                    animation: `float ${5 + (index % 3)}s cubic-bezier(0.4, 0, 0.6, 1) infinite`,
-                    animationDelay: `${index * 0.3}s`,
-                  }}
-                >
-                  {icon}
-                </div>
-              );
-            })}
-          </div>
-
-          {/* Stats Grid - Premium mobile optimized */}
-          <div className={`grid grid-cols-2 lg:grid-cols-4 gap-4 sm:gap-6 md:gap-8 transition-all duration-1000 delay-300 ${
-            isVisible ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-10'
-          }`}>
-            {stats.map((stat, index) => (
-              <div key={index} className="text-center">
-                <div 
-                  className="font-black mb-2 bg-gradient-to-r from-primary-600 to-accent-500 bg-clip-text text-transparent"
-                  style={{
-                    fontSize: 'clamp(1.75rem, 3.5vw + 0.5rem, 3rem)', // 28px - 48px
-                  }}
-                >
-                  {stat.number}
-                </div>
-                <div 
-                  className={`font-medium ${
-                    darkMode ? 'text-slate-400' : 'text-slate-700'
-                  }`}
-                  style={{
-                    fontSize: 'clamp(0.75rem, 1.25vw + 0.25rem, 1rem)', // 12px - 16px
-                    lineHeight: '1.4',
-                  }}
-                >
-                  {stat.label}
-                </div>
-              </div>
-            ))}
-          </div>
+          ))}
         </div>
       </Container>
     </section>

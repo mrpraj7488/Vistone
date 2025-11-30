@@ -1,232 +1,165 @@
 import { Container } from '../layout/Container';
-import { Card } from '../ui/Card';
-import { Button } from '../ui/Button';
-import { Star } from 'lucide-react';
-import { useScrollAnimation } from '../../hooks/useScrollAnimation';
-import { Link } from 'react-router-dom';
+import { Star, Quote } from 'lucide-react';
 
-const testimonial = {
-  name: 'Pramod Kumar Sahu',
-  role: 'Software Developer',
-  avatar: '👤',
-  rating: 5,
-  quote: 'Excellent service and support! The products are high quality and the team is very responsive. Highly recommended!',
-  company: 'Tech Solutions Inc.',
-};
+const testimonials = [
+  {
+    name: 'Sarah Johnson',
+    role: 'Product Manager',
+    company: 'TechFlow',
+    avatar: 'https://api.dicebear.com/7.x/avataaars/svg?seed=Sarah',
+    content: "Vistone transformed our workflow completely. The intuitive interface and powerful features have saved us countless hours.",
+    rating: 5
+  },
+  {
+    name: 'Michael Chen',
+    role: 'CTO',
+    company: 'InnovateLabs',
+    avatar: 'https://api.dicebear.com/7.x/avataaars/svg?seed=Michael',
+    content: "The scalability is impressive. We've grown 10x since using Vistone and haven't faced a single performance issue.",
+    rating: 5
+  },
+  {
+    name: 'Emily Davis',
+    role: 'Marketing Director',
+    company: 'GrowthCo',
+    avatar: 'https://api.dicebear.com/7.x/avataaars/svg?seed=Emily',
+    content: "The analytics dashboard is a game-changer. I can finally see where our traffic is coming from and optimize accordingly.",
+    rating: 5
+  },
+  {
+    name: 'David Wilson',
+    role: 'Founder',
+    company: 'StartUp Inc',
+    avatar: 'https://api.dicebear.com/7.x/avataaars/svg?seed=David',
+    content: "Customer support is phenomenal. They resolved my issue within minutes. Truly a partner in our success.",
+    rating: 5
+  },
+  {
+    name: 'Lisa Anderson',
+    role: 'Operations Head',
+    company: 'LogisticsPro',
+    avatar: 'https://api.dicebear.com/7.x/avataaars/svg?seed=Lisa',
+    content: "We've tried many tools, but Vistone is by far the best. It's robust, reliable, and beautifully designed.",
+    rating: 5
+  },
+  {
+    name: 'James Thompson',
+    role: 'Lead Developer',
+    company: 'CodeCrafters',
+    avatar: 'https://api.dicebear.com/7.x/avataaars/svg?seed=James',
+    content: "The API documentation is top-notch. Integrating Vistone into our existing stack was a breeze.",
+    rating: 5
+  }
+];
 
-const avatars = ['👨', '👩', '🧑'];
+const TestimonialCard = ({ testimonial, darkMode }) => (
+  <div className={`flex-shrink-0 w-[350px] p-6 rounded-2xl mx-4 transition-all duration-300 hover:-translate-y-1 hover:shadow-xl ${darkMode
+    ? 'bg-slate-800/40 border border-slate-700/50 backdrop-blur-md'
+    : 'bg-white/60 border border-white/50 backdrop-blur-md shadow-lg shadow-slate-200/50'
+    }`}>
+    <div className="flex items-start justify-between mb-4">
+      <div className="flex items-center gap-3">
+        <img
+          src={testimonial.avatar}
+          alt={testimonial.name}
+          className="w-12 h-12 rounded-full bg-slate-200"
+        />
+        <div>
+          <h4 className={`font-bold ${darkMode ? 'text-white' : 'text-slate-900'}`}>
+            {testimonial.name}
+          </h4>
+          <p className={`text-xs ${darkMode ? 'text-slate-400' : 'text-slate-500'}`}>
+            {testimonial.role} at {testimonial.company}
+          </p>
+        </div>
+      </div>
+      <Quote className={`w-8 h-8 opacity-20 ${darkMode ? 'text-indigo-400' : 'text-blue-500'}`} />
+    </div>
+
+    <div className="flex gap-1 mb-3">
+      {[...Array(testimonial.rating)].map((_, i) => (
+        <Star key={i} size={14} className="fill-yellow-400 text-yellow-400" />
+      ))}
+    </div>
+
+    <p className={`text-sm leading-relaxed ${darkMode ? 'text-slate-300' : 'text-slate-600'}`}>
+      "{testimonial.content}"
+    </p>
+  </div>
+);
 
 export default function Testimonials({ darkMode }) {
-  const { ref, isVisible } = useScrollAnimation({ threshold: 0.1 });
-
   return (
-    <section className={`section-padding relative overflow-hidden ${
-      darkMode 
-        ? 'bg-gradient-to-br from-slate-900 via-slate-800/50 to-slate-900' 
-        : 'bg-gradient-to-br from-white via-gray-50/50 to-white'
-    }`}>
-      {/* Background Elements */}
-      <div className="absolute inset-0 overflow-hidden pointer-events-none">
-        <div className={`absolute top-1/4 right-1/4 w-64 h-64 sm:w-96 sm:h-96 rounded-full blur-3xl opacity-5 ${
-          darkMode ? 'bg-accent-500/20' : 'bg-accent-500/10'
-        }`} />
+    <section className={`py-24 relative overflow-hidden ${darkMode
+      ? 'bg-slate-900'
+      : 'bg-slate-50'
+      }`}>
+      {/* Professional Background */}
+      <div className="absolute inset-0 overflow-hidden">
+        {/* Base Background */}
+        <div className={`absolute inset-0 ${darkMode ? 'bg-[#0B1120]' : 'bg-slate-50'
+          }`} />
+
+        {/* Dot Pattern */}
+        <div className={`absolute inset-0 opacity-[0.5] ${darkMode ? 'opacity-[0.3]' : 'opacity-[0.5]'
+          }`}
+          style={{
+            backgroundImage: `radial-gradient(${darkMode ? '#475569' : '#94a3b8'} 1px, transparent 1px)`,
+            backgroundSize: '32px 32px',
+            maskImage: 'radial-gradient(ellipse at center, black 50%, transparent 90%)',
+            WebkitMaskImage: 'radial-gradient(ellipse at center, black 50%, transparent 90%)',
+          }} />
+
+        {/* Ambient Lighting - Top Spotlight */}
+        <div className={`absolute top-0 left-1/2 -translate-x-1/2 w-full h-[500px] opacity-20 pointer-events-none ${darkMode
+            ? 'bg-[radial-gradient(ellipse_at_top,_var(--tw-gradient-stops))] from-indigo-500/50 via-slate-900/50 to-transparent'
+            : 'bg-[radial-gradient(ellipse_at_top,_var(--tw-gradient-stops))] from-blue-200/50 via-slate-50/50 to-transparent'
+          }`} />
+
+        {/* Subtle Side Glows */}
+        <div className={`absolute top-1/4 -left-64 w-96 h-96 rounded-full blur-[128px] opacity-20 ${darkMode ? 'bg-indigo-600' : 'bg-blue-400'
+          }`} />
+        <div className={`absolute bottom-1/4 -right-64 w-96 h-96 rounded-full blur-[128px] opacity-20 ${darkMode ? 'bg-purple-600' : 'bg-purple-400'
+          }`} />
       </div>
 
       <Container>
-        <div className="grid lg:grid-cols-2 gap-6 sm:gap-8 md:gap-12 items-center relative z-10">
-          {/* Left Content */}
-          <div 
-            ref={ref}
-            className={`space-y-3 sm:space-y-4 md:space-y-6 transition-all duration-1000 ${
-              isVisible ? 'opacity-100 translate-x-0' : 'opacity-0 -translate-x-10'
-            }`}
-          >
-            {/* Rating Badges - Premium mobile optimized */}
-            <div className="flex flex-wrap items-center gap-2.5 sm:gap-3 md:gap-4 mb-3 sm:mb-4 md:mb-6">
-              <div 
-                className={`flex items-center gap-1.5 sm:gap-2 px-2.5 sm:px-3 md:px-4 py-1.5 sm:py-2 rounded-lg futuristic-card ${
-                  darkMode ? 'bg-slate-800/95 border border-slate-700/60 hover:shadow-lg hover:shadow-primary-500/10' : 'bg-white/98 border-2 border-gray-200/80 hover:shadow-lg hover:shadow-primary-500/10'
-                }`}
-                style={{
-                  borderRadius: 'clamp(0.5rem, 1vw + 0.25rem, 0.75rem)', // 8px - 12px
-                }}
-              >
-                <span 
-                  className={`font-semibold ${darkMode ? 'text-white' : 'text-slate-900'}`}
-                  style={{
-                    fontSize: 'clamp(0.75rem, 1.25vw + 0.25rem, 0.875rem)', // 12px - 14px
-                  }}
-                >
-                  envato
-                </span>
-                <div className="flex items-center gap-0.5">
-                  {[...Array(5)].map((_, i) => (
-                    <Star key={i} size={12} className="sm:w-3.5 sm:h-3.5 fill-yellow-400 text-yellow-400" />
-                  ))}
-                </div>
-              </div>
-              <div 
-                className={`flex items-center gap-1.5 sm:gap-2 px-2.5 sm:px-3 md:px-4 py-1.5 sm:py-2 rounded-lg futuristic-card ${
-                  darkMode ? 'bg-slate-800/95 border border-slate-700/60 hover:shadow-lg hover:shadow-primary-500/10' : 'bg-white/98 border-2 border-gray-200/80 hover:shadow-lg hover:shadow-primary-500/10'
-                }`}
-                style={{
-                  borderRadius: 'clamp(0.5rem, 1vw + 0.25rem, 0.75rem)', // 8px - 12px
-                }}
-              >
-                <span 
-                  className={`font-semibold ${darkMode ? 'text-white' : 'text-slate-900'}`}
-                  style={{
-                    fontSize: 'clamp(0.75rem, 1.25vw + 0.25rem, 0.875rem)', // 12px - 14px
-                  }}
-                >
-                  Google
-                </span>
-                <div className="flex items-center gap-0.5">
-                  {[...Array(5)].map((_, i) => (
-                    <Star key={i} size={12} className="sm:w-3.5 sm:h-3.5 fill-yellow-400 text-yellow-400" />
-                  ))}
-                </div>
-              </div>
-            </div>
-
-            <h2 
-              className={`font-black leading-tight ${
-                darkMode ? 'text-white' : 'text-slate-900'
-              }`}
-              style={{
-                fontSize: 'clamp(1.75rem, 4vw + 0.5rem, 2.75rem)', // 28px - 44px
-                lineHeight: '1.2',
-                letterSpacing: '-0.02em',
-              }}
-            >
-              Happy Client <span className="text-gradient-gamified">Feedbacks</span>
-            </h2>
-            <p 
-              className={`leading-relaxed ${
-                darkMode ? 'text-slate-300' : 'text-slate-700'
-              }`}
-              style={{
-                fontSize: 'clamp(0.875rem, 1.5vw + 0.25rem, 1.125rem)', // 14px - 18px
-                lineHeight: '1.6',
-              }}
-            >
-              See what other people have said about our work! We value our clients and their feedback drives us to deliver excellence.
-            </p>
-
-            <Button
-              variant="primary"
-              size="lg"
-              className={`px-6 sm:px-8 font-semibold ${
-                darkMode 
-                  ? '' 
-                  : '!bg-primary-600 !hover:bg-primary-700 !text-white !shadow-lg hover:!shadow-xl focus:!ring-primary-500'
-              }`}
-              style={!darkMode ? {
-                background: '#2563eb',
-                color: '#ffffff',
-                fontSize: 'clamp(0.875rem, 1.25vw + 0.25rem, 1rem)', // 14px - 16px
-                textShadow: '0 1px 2px rgba(0, 0, 0, 0.1)',
-              } : {
-                fontSize: 'clamp(0.875rem, 1.25vw + 0.25rem, 1rem)',
-              }}
-              aria-label="See More Feedback"
-              asChild
-            >
-              <Link to="/testimonials">
-                See More Feedback
-              </Link>
-            </Button>
-          </div>
-
-          {/* Right Content - Testimonial Card */}
-          <div className={`relative transition-all duration-1000 delay-300 ${
-            isVisible ? 'opacity-100 translate-x-0' : 'opacity-0 translate-x-10'
-          }`}>
-            {/* Testimonial Card - Premium mobile optimized */}
-            <Card 
-              className={`p-4 sm:p-6 md:p-8 futuristic-card ${
-                darkMode 
-                  ? 'bg-slate-800/95 border border-slate-700/60 hover:shadow-2xl hover:shadow-primary-500/20' 
-                  : 'bg-white/98 border-2 border-gray-200/80 hover:shadow-2xl hover:shadow-primary-500/20'
-              }`}
-              style={{
-                borderRadius: 'clamp(0.75rem, 1.5vw + 0.25rem, 1rem)', // 12px - 16px
-              }}
-            >
-              {/* Avatar Stack - Premium mobile sizing */}
-              <div className="flex items-center gap-2.5 sm:gap-3 md:gap-4 mb-3 sm:mb-4 md:mb-6">
-                <div 
-                  className={`rounded-full bg-gradient-to-br from-primary-500 to-accent-500 flex items-center justify-center shadow-lg`}
-                  style={{
-                    width: 'clamp(2.5rem, 4vw + 0.5rem, 4rem)', // 40px - 64px
-                    height: 'clamp(2.5rem, 4vw + 0.5rem, 4rem)',
-                    fontSize: 'clamp(1.25rem, 2.5vw + 0.5rem, 2rem)', // 20px - 32px
-                  }}
-                >
-                  {testimonial.avatar}
-                </div>
-                <div>
-                  <h3 
-                    className={`font-black ${darkMode ? 'text-white' : 'text-slate-900'}`}
-                    style={{
-                      fontSize: 'clamp(1rem, 2vw + 0.5rem, 1.25rem)', // 16px - 20px
-                    }}
-                  >
-                    {testimonial.name}
-                  </h3>
-                  <p 
-                    className={`${darkMode ? 'text-slate-400' : 'text-slate-700'}`}
-                    style={{
-                      fontSize: 'clamp(0.75rem, 1.25vw + 0.25rem, 0.875rem)', // 12px - 14px
-                    }}
-                  >
-                    {testimonial.role} • {testimonial.company}
-                  </p>
-                </div>
-              </div>
-
-              {/* Rating - Premium mobile sizing */}
-              <div className="flex items-center gap-0.5 sm:gap-1 mb-2.5 sm:mb-3 md:mb-4">
-                {[...Array(testimonial.rating)].map((_, i) => (
-                  <Star key={i} size={16} className="sm:w-4 sm:h-4 md:w-5 md:h-5 fill-yellow-400 text-yellow-400" />
-                ))}
-              </div>
-
-              {/* Quote - Premium mobile typography */}
-              <p 
-                className={`leading-relaxed ${darkMode ? 'text-slate-300' : 'text-slate-700'}`}
-                style={{
-                  fontSize: 'clamp(0.875rem, 1.5vw + 0.25rem, 1.125rem)', // 14px - 18px
-                  lineHeight: '1.6',
-                }}
-              >
-                "{testimonial.quote}"
-              </p>
-            </Card>
-
-            {/* Floating Avatars - Premium mobile optimized */}
-            <div className="absolute -right-1.5 sm:-right-2 md:-right-4 top-4 sm:top-6 md:top-8 flex flex-col gap-1.5 sm:gap-2 md:gap-3">
-              {avatars.map((avatar, index) => (
-                <div
-                  key={index}
-                  className={`rounded-full bg-gradient-to-br from-primary-400 to-accent-400 flex items-center justify-center border-2 shadow-lg ${
-                    darkMode ? 'border-slate-700' : 'border-white'
-                  }`}
-                  style={{
-                    width: 'clamp(2rem, 3vw + 0.5rem, 3rem)', // 32px - 48px
-                    height: 'clamp(2rem, 3vw + 0.5rem, 3rem)',
-                    fontSize: 'clamp(1rem, 2vw + 0.5rem, 1.25rem)', // 16px - 20px
-                    animation: `float ${5 + index}s cubic-bezier(0.4, 0, 0.6, 1) infinite`,
-                    animationDelay: `${index * 0.4}s`,
-                  }}
-                >
-                  {avatar}
-                </div>
-              ))}
-            </div>
-          </div>
+        <div className="text-center mb-16 relative z-10">
+          <h2 className={`text-3xl sm:text-4xl font-black mb-4 ${darkMode ? 'text-white' : 'text-slate-900'
+            }`}>
+            Happy Client <span className="text-transparent bg-clip-text bg-gradient-to-r from-blue-500 to-purple-500">Feedbacks</span>
+          </h2>
+          <p className={`max-w-2xl mx-auto text-lg ${darkMode ? 'text-slate-400' : 'text-slate-600'
+            }`}>
+            Don't just take our word for it. Here's what industry leaders have to say about their experience with Vistone.
+          </p>
         </div>
       </Container>
+
+      {/* Marquee Container */}
+      <div className="relative z-10 pause-on-hover">
+        {/* Gradient Masks for smooth fade */}
+        <div className={`absolute left-0 top-0 bottom-0 w-32 z-20 bg-gradient-to-r ${darkMode ? 'from-slate-900 to-transparent' : 'from-slate-50 to-transparent'
+          }`} />
+        <div className={`absolute right-0 top-0 bottom-0 w-32 z-20 bg-gradient-to-l ${darkMode ? 'from-slate-900 to-transparent' : 'from-slate-50 to-transparent'
+          }`} />
+
+        {/* Marquee Track - Row 1 */}
+        <div className="flex animate-marquee hover:[animation-play-state:paused]">
+          <div className="flex py-4">
+            {testimonials.map((testimonial, index) => (
+              <TestimonialCard key={`t1-${index}`} testimonial={testimonial} darkMode={darkMode} />
+            ))}
+          </div>
+          <div className="flex py-4">
+            {testimonials.map((testimonial, index) => (
+              <TestimonialCard key={`t1-dup-${index}`} testimonial={testimonial} darkMode={darkMode} />
+            ))}
+          </div>
+        </div>
+
+        {/* Marquee Track - Row 2 (Reverse direction? Maybe later, let's stick to one clean row first or two rows moving same way but offset. Actually, let's do just one row for now to keep it clean, or duplicate the content to fill width) */}
+      </div>
     </section>
   );
 }

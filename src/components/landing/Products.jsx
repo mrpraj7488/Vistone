@@ -1,5 +1,5 @@
 import { useEffect, useState } from 'react';
-import { Store, ShoppingBag, Utensils, CreditCard, ShoppingCart, Barcode, ShoppingCartIcon, Star, Heart, Package } from 'lucide-react';
+import { Store, ShoppingBag, Utensils, CreditCard, ShoppingCart, Barcode, ShoppingCartIcon, Star, Heart, Package, ArrowRight, Flame } from 'lucide-react';
 import { Container } from '../layout/Container';
 import { Card, CardHeader, CardContent, CardFooter } from '../ui/Card';
 import { Button } from '../ui/Button';
@@ -135,93 +135,74 @@ export default function Products({ darkMode }) {
   }, []);
 
   return (
-    <section className={`section-padding relative overflow-hidden ${
-      darkMode 
-        ? 'bg-gradient-to-br from-slate-900 via-slate-800/50 to-slate-900' 
-        : 'bg-gradient-to-br from-white via-blue-50/30 to-white'
-    }`}>
-      {/* Gamification Background Elements */}
+    <section className={`section-padding relative overflow-hidden py-24 sm:py-32 ${darkMode
+      ? 'bg-[#0B0F19]'
+      : 'bg-slate-50'
+      }`}>
+      {/* Background Elements */}
       <div className="absolute inset-0 overflow-hidden pointer-events-none">
-        {/* Animated gradient orbs */}
-        <div 
-          className={`absolute top-1/4 left-1/4 w-64 h-64 sm:w-80 sm:h-80 md:w-96 md:h-96 rounded-full blur-3xl opacity-20 ${
-            darkMode ? 'bg-primary-500/30' : 'bg-primary-500/10'
-          }`}
-          style={{
-            animation: 'float 8s cubic-bezier(0.4, 0, 0.6, 1) infinite',
-          }}
-        />
-        <div 
-          className={`absolute bottom-1/4 right-1/4 w-64 h-64 sm:w-80 sm:h-80 md:w-96 md:h-96 rounded-full blur-3xl opacity-20 ${
-            darkMode ? 'bg-accent-500/30' : 'bg-accent-500/10'
-          }`}
-          style={{
-            animation: 'float 10s cubic-bezier(0.4, 0, 0.6, 1) infinite',
-            animationDelay: '1s',
-          }}
-        />
-        
-        {/* Grid pattern */}
-        <div className={`absolute inset-0 bg-grid ${
-          darkMode ? 'opacity-[0.03]' : 'opacity-[0.05]'
-        }`} />
+        <div className={`absolute inset-0 bg-grid ${darkMode ? 'opacity-[0.05]' : 'opacity-[0.03]'}`} />
+        {/* Radial Glow */}
+        <div className={`absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[800px] h-[800px] rounded-full blur-[120px] opacity-20 ${darkMode ? 'bg-indigo-500/20' : 'bg-blue-500/10'
+          }`} />
       </div>
 
       <Container>
         {/* Section Header */}
-        <div className="text-center mb-12 sm:mb-16 lg:mb-20 space-y-4 relative z-10 px-4">
-          <h2 
-            className={`font-black ${
-              darkMode ? 'text-white' : 'text-slate-900'
-            }`}
+        <div className="text-center mb-16 sm:mb-24 space-y-6 relative z-10 px-4">
+          <Badge
+            variant="outline"
+            className={`px-4 py-1.5 rounded-full text-sm font-medium backdrop-blur-sm ${darkMode
+              ? 'border-indigo-500/30 text-indigo-400 bg-indigo-500/10'
+              : 'border-blue-500/30 text-blue-600 bg-blue-50'
+              }`}
+          >
+            Our Products
+          </Badge>
+          <h2
+            className={`font-black tracking-tight ${darkMode ? 'text-white' : 'text-slate-900'
+              }`}
             style={{
-              fontSize: 'clamp(1.75rem, 4vw + 0.5rem, 2.75rem)', // 28px - 44px
-              lineHeight: '1.2',
-              letterSpacing: '-0.02em',
+              fontSize: 'clamp(2.25rem, 5vw + 1rem, 4rem)',
+              lineHeight: '1.1',
             }}
           >
-            Our <span className="text-gradient-gamified">Software Solutions</span>
+            Software Solutions for <br className="hidden sm:block" />
+            <span className="text-transparent bg-clip-text bg-gradient-to-r from-blue-500 via-indigo-500 to-purple-600">
+              Modern Businesses
+            </span>
           </h2>
-          <p 
-            className={`max-w-3xl mx-auto ${
-              darkMode ? 'text-slate-300' : 'text-slate-700'
-            }`}
-            style={{
-              fontSize: 'clamp(0.875rem, 1.5vw + 0.25rem, 1.125rem)', // 14px - 18px
-              lineHeight: '1.6',
-            }}
+          <p
+            className={`max-w-2xl mx-auto text-lg sm:text-xl leading-relaxed ${darkMode ? 'text-slate-400' : 'text-slate-600'
+              }`}
           >
-            Discover our premium digital products designed to accelerate your business growth. Each product comes with lifetime updates and dedicated support.
+            Powerful, scalable, and secure digital products designed to accelerate your growth.
           </p>
         </div>
 
-        {/* Products Grid - Premium 2-column mobile layout */}
-        <div className="grid grid-cols-2 lg:grid-cols-3 gap-3 sm:gap-4 md:gap-5 mb-8 sm:mb-12 relative z-10">
+        {/* Products Grid - Optimized for 2 cards per row on mobile */}
+        <div className="grid grid-cols-2 lg:grid-cols-3 gap-3 sm:gap-4 md:gap-6 lg:gap-8 mb-12 sm:mb-16 relative z-10">
           {(loading ? fallbackProducts : products).map((product, index) => (
             <ProductCard key={product.id || product.slug || index} product={product} index={index} darkMode={darkMode} />
           ))}
         </div>
 
         {/* View All Button */}
-        <div className="text-center relative z-10">
-          <Button 
-            variant="outline" 
-            size="lg" 
-            rightIcon={<ShoppingCartIcon size={20} />}
-            className={`px-6 sm:px-8 font-semibold ${
-              darkMode 
-                ? 'border-primary-500 text-primary-400 hover:bg-primary-900/30' 
-                : 'border-primary-500 text-primary-600 hover:bg-primary-50'
-            }`}
-            style={{
-              fontSize: 'clamp(0.875rem, 1.25vw + 0.25rem, 1rem)', // 14px - 16px
-            }}
-            asChild
-          >
-            <Link to="/products">
-              Browse All Products
-            </Link>
-          </Button>
+        <div className="flex justify-center mt-16">
+          <Link to="/products">
+            <Button
+              size="lg"
+              className={`group relative px-8 py-3 rounded-full font-semibold transition-all duration-300 w-full sm:w-auto ${darkMode
+                ? 'bg-slate-800 text-white border border-slate-700 hover:bg-slate-700 hover:border-slate-600 shadow-lg hover:shadow-indigo-500/20'
+                : 'bg-white text-slate-900 border border-slate-200 hover:bg-slate-50 hover:border-slate-300 shadow-lg hover:shadow-xl hover:shadow-blue-500/10'
+                }`}
+            >
+              <span className="flex items-center gap-2">
+                View All Products
+                <ArrowRight size={18} className="transition-transform duration-300 group-hover:translate-x-1" />
+              </span>
+            </Button>
+          </Link>
         </div>
       </Container>
     </section>
@@ -237,17 +218,19 @@ function ProductCard({ product, index, darkMode }) {
   const removeWishlist = useWishlistStore((state) => state.removeItem);
   const isInWishlist = useWishlistStore((state) => state.isInWishlist(product.id));
   const navigate = useNavigate();
-  const Icon = product.icon || Package;
-  
+
+  // Calculate discount percentage
   const discount = product.regular_price && (product.current_price || product.price)
     ? Math.max(0, Math.round(((product.regular_price - (product.current_price || product.price)) / product.regular_price) * 100))
-    : (product.originalPrice 
+    : (product.originalPrice
       ? Math.max(0, Math.round(((product.originalPrice - product.price) / product.originalPrice) * 100))
       : 0);
 
   const imageSrc = product.featured_image || product.image || `https://via.placeholder.com/640x480?text=${encodeURIComponent(product.name)}`;
 
-  const handleAddToCart = async () => {
+  const handleAddToCart = async (e) => {
+    e.preventDefault();
+    e.stopPropagation();
     setIsAdding(true);
     try {
       const priced = {
@@ -264,7 +247,9 @@ function ProductCard({ product, index, darkMode }) {
     }
   };
 
-  const handleBuyNow = () => {
+  const handleBuyNow = (e) => {
+    e.preventDefault();
+    e.stopPropagation();
     const priced = {
       ...product,
       price_monthly: product.current_price || product.price || product.regular_price,
@@ -274,7 +259,9 @@ function ProductCard({ product, index, darkMode }) {
     navigate('/checkout');
   };
 
-  const toggleWishlist = () => {
+  const toggleWishlist = (e) => {
+    e.preventDefault();
+    e.stopPropagation();
     if (isInWishlist) {
       removeWishlist(product.id);
       showToast(`${product.name} removed from wishlist`, 'info');
@@ -287,252 +274,150 @@ function ProductCard({ product, index, darkMode }) {
   return (
     <div
       ref={ref}
-      className={`transition-all duration-700 ${
-        isVisible ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-10'
-      }`}
+      className={`group h-full transition-all duration-700 ${isVisible ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-10'
+        }`}
       style={{ transitionDelay: `${index * 100}ms` }}
     >
-      <Card 
-        hover 
-        interactive 
-        className={`h-full group relative overflow-hidden futuristic-card glow-border shine-overlay animated-border ${
-          darkMode 
-            ? 'bg-gradient-to-br from-slate-800/95 via-slate-800/98 to-slate-800/95 border border-slate-700/60 hover:border-primary-500/60 hover:shadow-2xl hover:shadow-primary-500/20' 
-            : 'bg-white/98 border-2 border-gray-200/80 hover:border-primary-500/60 hover:shadow-2xl hover:shadow-primary-500/20'
-        }`}
-        style={{
-          borderRadius: 'clamp(0.75rem, 1.5vw + 0.25rem, 1rem)', // 12px - 16px
-        }}
-      >
-        {/* Gamification Glow Effect */}
-        {(product.is_featured || product.isFeatured) && (
-          <div className={`absolute inset-0 rounded-xl bg-gradient-to-r ${product.color} opacity-0 group-hover:opacity-5 transition-opacity duration-500 blur-xl`} />
-        )}
-
-        {/* Badges - Clean professional SaaS design */}
-        <div className="absolute top-1.5 sm:top-2 left-1.5 sm:left-2 z-20 flex flex-col gap-1 sm:gap-1.5">
-          {product.badge && (
-            <Badge 
-              variant={product.badge === 'Best Seller' ? 'warning' : product.badge === 'New' ? 'success' : 'secondary'}
-              size="sm"
-              className="shadow-md px-1.5 sm:px-2 py-0.5 font-semibold"
-              style={{
-                fontSize: 'clamp(0.625rem, 1vw + 0.25rem, 0.75rem)', // 10px - 12px
-              }}
-            >
-              {product.badge}
-            </Badge>
-          )}
-          {discount > 0 && (
-            <Badge 
-              variant="error" 
-              size="sm" 
-              className="shadow-md px-1.5 sm:px-2 py-0.5 font-semibold"
-              style={{
-                fontSize: 'clamp(0.625rem, 1vw + 0.25rem, 0.75rem)', // 10px - 12px
-              }}
-            >
-              -{discount}%
-            </Badge>
-          )}
-        </div>
-
-        {/* Media - Premium mobile optimized */}
-        <div className="relative w-full aspect-[4/3] overflow-hidden">
-          <img
-            src={imageSrc}
-            alt={product.name}
-            className="w-full h-full object-cover transition-transform duration-500 group-hover:scale-105"
-          />
-          <div className="absolute inset-0 bg-gradient-to-b from-transparent via-transparent to-black/5" />
-          {/* Wishlist toggle - Premium mobile sizing */}
-          <button
-            type="button"
-            onClick={toggleWishlist}
-            aria-label={isInWishlist ? 'Remove from wishlist' : 'Add to wishlist'}
-            className={`absolute top-1.5 sm:top-2 right-1.5 sm:right-2 z-20 rounded-full flex items-center justify-center shadow-md transition-colors ${
-              darkMode ? 'bg-slate-800/70 hover:bg-slate-700/70 border border-slate-700' : 'bg-white/90 hover:bg-white border border-gray-200'
+      <Link to={`/products/${product.slug}`} className="block h-full">
+        <Card
+          className={`h-full flex flex-col relative overflow-hidden rounded-xl transition-all duration-500 hover:-translate-y-2 ${darkMode
+            ? '!bg-slate-900 !border-slate-800 hover:!border-indigo-500/50 hover:shadow-2xl hover:shadow-indigo-500/20'
+            : '!bg-white !border-slate-200 shadow-md hover:!border-blue-300 hover:shadow-xl hover:shadow-blue-500/10'
             }`}
-            style={{
-              width: 'clamp(1.75rem, 3vw + 0.5rem, 2rem)', // 28px - 32px
-              height: 'clamp(1.75rem, 3vw + 0.5rem, 2rem)',
-            }}
-          >
-            <Heart 
-              size={14} 
-              className={`sm:w-4 sm:h-4 ${isInWishlist ? 'text-red-500' : darkMode ? 'text-slate-300' : 'text-slate-700'}`} 
+        >
+          {/* Image Section - Much larger on mobile */}
+          <div className={`relative aspect-square sm:aspect-[16/10] overflow-hidden ${darkMode ? 'bg-slate-800' : 'bg-slate-100'
+            }`}>
+            <img
+              src={imageSrc}
+              alt={product.name}
+              className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-105"
             />
-          </button>
-          {/* Status badge - Clean minimal design */}
-          <div className="absolute top-1.5 sm:top-2 right-10 sm:right-12 z-20">
-            {(product.is_featured || product.isFeatured) && (
-              <Badge 
-                variant="default" 
-                size="sm" 
-                className="shadow-md px-1.5 sm:px-2 py-0.5 font-semibold"
-                style={{
-                  fontSize: 'clamp(0.625rem, 1vw + 0.25rem, 0.75rem)', // 10px - 12px
-                }}
-              >
-                Featured
-              </Badge>
-            )}
-          </div>
-        </div>
 
-        <CardHeader className="relative pt-3 sm:pt-4 md:pt-6 pb-2 sm:pb-3">
-          {/* Icon with gradient background - Premium mobile sizing */}
-          <div className={`relative mb-2 sm:mb-3 group-hover:scale-105 transition-transform duration-300`}>
-            <div className={`absolute inset-0 rounded-lg sm:rounded-xl bg-gradient-to-br ${product.color} opacity-15 blur-lg group-hover:opacity-20 transition-opacity duration-300`} />
-            <div className={`relative w-10 h-10 sm:w-12 sm:h-12 md:w-14 md:h-14 rounded-lg sm:rounded-xl bg-gradient-to-br ${product.color} flex items-center justify-center shadow-lg`}>
-              <Icon size={20} className="sm:w-6 sm:h-6 md:w-7 md:h-7 text-white drop-shadow-md" />
+            {/* Gradient Overlay */}
+            <div className={`absolute inset-0 transition-opacity duration-300 ${darkMode
+              ? 'bg-gradient-to-t from-slate-900/90 via-slate-900/20 to-transparent'
+              : 'bg-gradient-to-t from-white/10 via-transparent to-transparent'
+              }`} />
+
+            {/* Badges - Very compact for mobile */}
+            <div className="absolute top-1 sm:top-2 left-1 sm:left-2 flex flex-col sm:flex-row gap-0.5 sm:gap-1">
+              {product.badge && (
+                <span className={`px-1 sm:px-2 py-0.5 text-[9px] sm:text-[10px] font-bold rounded shadow-sm ${darkMode
+                  ? 'bg-indigo-500 text-white'
+                  : 'bg-blue-600 text-white'
+                  }`}>
+                  {product.badge}
+                </span>
+              )}
+              {discount > 0 && (
+                <span className="px-1 sm:px-2 py-0.5 text-[9px] sm:text-[10px] font-bold rounded bg-red-500 text-white shadow-sm">
+                  -{discount}%
+                </span>
+              )}
             </div>
-          </div>
 
-          {/* Title - Clean professional SaaS design */}
-          <Link 
-            to={`/products/${product.slug}`}
-            className="block"
-          >
-            <h3 
-              className={`font-bold mb-1 sm:mb-1.5 group-hover:text-primary-600 dark:group-hover:text-primary-400 transition-colors line-clamp-1 ${
-                darkMode ? 'text-white' : 'text-slate-900'
-              }`}
-              style={{
-                fontSize: 'clamp(0.875rem, 2vw + 0.25rem, 1.125rem)', // 14px - 18px
-                lineHeight: '1.3',
-              }}
-            >
-              {product.name}
-            </h3>
-          </Link>
-
-          {/* Rating - Clean professional SaaS display */}
-          <div className="flex items-center gap-1 mb-2 sm:mb-2.5">
-            <div className="flex items-center gap-0.5">
-              {[...Array(5)].map((_, i) => (
-                <Star
-                  key={i}
-                  size={10}
-                  className={`sm:w-3 sm:h-3 ${
-                    i < Math.floor(product.rating_average || product.rating || 0) 
-                      ? 'fill-yellow-400 text-yellow-400' 
-                      : darkMode ? 'text-gray-600' : 'text-gray-300'
-                  }`}
-                />
-              ))}
-            </div>
-            <span 
-              className={`ml-1 font-semibold ${darkMode ? 'text-slate-400' : 'text-slate-600'}`}
-              style={{
-                fontSize: 'clamp(0.625rem, 1vw + 0.25rem, 0.75rem)', // 10px - 12px
-              }}
-            >
-              {product.rating_average || product.rating || 0}
-            </span>
-          </div>
-        </CardHeader>
-
-        <CardContent className="pt-0 pb-2 sm:pb-3">
-          {/* Description - Clean professional SaaS design */}
-          <p 
-            className={`leading-relaxed mb-2 sm:mb-3 line-clamp-2 ${
-              darkMode ? 'text-slate-400' : 'text-slate-600'
-            }`}
-            style={{
-              fontSize: 'clamp(0.75rem, 1.5vw + 0.25rem, 0.875rem)', // 12px - 14px
-              lineHeight: '1.5',
-            }}
-          >
-            {product.short_description || product.description}
-          </p>
-
-          {/* Price - Premium mobile sizing */}
-          <div className="flex items-baseline gap-1.5 sm:gap-2 mb-1.5 sm:mb-2">
-            <span 
-              className={`font-black ${
-                darkMode ? 'text-white' : 'text-slate-900'
-              }`}
-              style={{
-                fontSize: 'clamp(1rem, 2.5vw + 0.5rem, 1.5rem)', // 16px - 24px
-              }}
-            >
-              ${product.current_price || product.price || product.regular_price}
-            </span>
-            {(product.on_sale || product.originalPrice) && (
-              <span 
-                className={`line-through ${
-                  darkMode ? 'text-slate-500' : 'text-slate-400'
+            {/* Wishlist Button - Very small on mobile */}
+            <button
+              onClick={toggleWishlist}
+              className={`absolute top-1 sm:top-2 right-1 sm:right-2 p-1 sm:p-1.5 rounded-full transition-all duration-300 shadow-sm ${isInWishlist
+                ? 'bg-red-500 text-white scale-110'
+                : darkMode
+                  ? 'bg-slate-800/80 text-slate-300 hover:bg-red-500 hover:text-white backdrop-blur-sm'
+                  : 'bg-white/90 text-slate-600 hover:bg-red-500 hover:text-white backdrop-blur-sm'
                 }`}
-                style={{
-                  fontSize: 'clamp(0.75rem, 1.5vw + 0.25rem, 1rem)', // 12px - 16px
-                }}
-              >
-                ${product.regular_price || product.originalPrice}
-              </span>
-            )}
+            >
+              <Heart size={12} className={`sm:w-3.5 sm:h-3.5 ${isInWishlist ? 'fill-current' : ''}`} />
+            </button>
           </div>
 
-          {/* Sales Count - Clean minimal display */}
-          <p 
-            className={`mb-0 ${darkMode ? 'text-slate-500' : 'text-slate-500'}`}
-            style={{
-              fontSize: 'clamp(0.625rem, 1vw + 0.25rem, 0.75rem)', // 10px - 12px
-            }}
-          >
-            {(product.sales_count || product.sales || 0).toLocaleString()}+ sold
-          </p>
-        </CardContent>
+          <CardContent className="flex-1 p-1.5 sm:p-3 md:p-4 flex flex-col">
+            {/* Title & Rating - Ultra compact */}
+            <div className="flex items-start justify-between gap-1 mb-0.5 sm:mb-1">
+              <h3 className={`font-bold text-[11px] sm:text-sm md:text-base leading-tight flex-1 transition-colors ${darkMode
+                ? 'text-white group-hover:text-indigo-400'
+                : 'text-slate-900 group-hover:text-blue-600'
+                }`}>
+                {product.name}
+              </h3>
+              <div className="flex items-center gap-0.5 shrink-0">
+                <Star size={9} className="sm:w-3 sm:h-3 text-yellow-500 fill-yellow-500" />
+                <span className={`text-[9px] sm:text-xs font-semibold ${darkMode ? 'text-slate-300' : 'text-slate-900'
+                  }`}>
+                  {product.rating_average || product.rating || 4.8}
+                </span>
+              </div>
+            </div>
 
-        <CardFooter className="pt-2 pb-2 sm:pb-3">
-          {/* Action Buttons - Clean professional SaaS design */}
-          <div className="flex gap-1.5 sm:gap-2 w-full">
-            <Button
-              variant="outline"
-              size="sm"
-              className={`flex-1 border font-semibold px-1.5 sm:px-2 py-1 sm:py-1.5 ${
-                darkMode 
-                  ? 'border-primary-500 text-primary-400 hover:bg-primary-900/30' 
-                  : 'border-primary-500 text-primary-600 hover:bg-primary-50'
-              }`}
-              style={{
-                height: 'clamp(2rem, 4vw + 0.5rem, 2.25rem)', // 32px - 36px
-                fontSize: 'clamp(0.625rem, 1.25vw + 0.25rem, 0.75rem)', // 10px - 12px
-              }}
-              onClick={handleBuyNow}
-              aria-label="Buy Now"
-            >
-              Buy Now
-            </Button>
-            <Button
-              variant="primary"
-              size="sm"
-              className={`flex-1 font-semibold px-1.5 sm:px-2 py-1 sm:py-1.5 ${
-                darkMode 
-                  ? '' 
-                  : '!bg-primary-600 !hover:bg-primary-700 !text-white !shadow-lg hover:!shadow-xl focus:!ring-primary-500'
-              }`}
-              style={!darkMode ? {
-                background: '#2563eb',
-                color: '#ffffff',
-                height: 'clamp(2rem, 4vw + 0.5rem, 2.25rem)', // 32px - 36px
-                fontSize: 'clamp(0.625rem, 1.25vw + 0.25rem, 0.75rem)', // 10px - 12px
-                textShadow: '0 1px 2px rgba(0, 0, 0, 0.1)',
-              } : {
-                height: 'clamp(2rem, 4vw + 0.5rem, 2.25rem)',
-                fontSize: 'clamp(0.625rem, 1.25vw + 0.25rem, 0.75rem)',
-              }}
-              leftIcon={<ShoppingCartIcon size={12} className="sm:w-3.5 sm:h-3.5" />}
-              onClick={handleAddToCart}
-              loading={isAdding}
-              disabled={isAdding}
-              aria-label={isAdding ? 'Adding to cart' : 'Add to cart'}
-            >
-              {isAdding ? 'Adding...' : 'Add to Cart'}
-            </Button>
-          </div>
-        </CardFooter>
-      </Card>
+            {/* Description - Hidden on very small screens */}
+            <p className={`hidden sm:block text-xs sm:text-sm mb-2 sm:mb-4 line-clamp-2 leading-relaxed ${darkMode ? 'text-slate-400' : 'text-slate-600'
+              }`}>
+              {product.short_description || product.description}
+            </p>
+
+            <div className="mt-auto space-y-1 sm:space-y-2 md:space-y-3">
+              {/* Sales & Price - Ultra compact */}
+              <div>
+                <div className={`inline-flex items-center gap-0.5 px-1 py-0.5 rounded-full mb-0.5 sm:mb-1 ${darkMode ? 'bg-orange-500/10 border border-orange-500/20' : 'bg-orange-50 border border-orange-100'
+                  }`}>
+                  <Flame size={8} className={`sm:w-2.5 sm:h-2.5 animate-pulse ${darkMode ? 'text-orange-400 fill-orange-400' : 'text-orange-500 fill-orange-500'
+                    }`} />
+                  <p className={`text-[8px] sm:text-[10px] font-bold ${darkMode ? 'text-orange-300' : 'text-orange-600'
+                    }`}>
+                    {(product.sales_count || product.sales || 0).toLocaleString()}
+                  </p>
+                </div>
+                <div className="flex items-baseline gap-0.5 sm:gap-1">
+                  <span className={`text-base sm:text-xl md:text-2xl font-black ${darkMode ? 'text-white' : 'text-slate-900'
+                    }`}>
+                    ${product.current_price || product.price || product.regular_price}
+                  </span>
+                  {(product.on_sale || product.originalPrice) && (
+                    <span className={`text-[10px] sm:text-sm line-through font-medium ${darkMode ? 'text-slate-600' : 'text-slate-400'
+                      }`}>
+                      ${product.regular_price || product.originalPrice}
+                    </span>
+                  )}
+                </div>
+              </div>
+
+              {/* Action Buttons - Ultra compact */}
+              <div className="flex gap-1">
+                <Button
+                  variant="outline"
+                  className={`flex-1 h-6 sm:h-7 md:h-8 rounded text-[9px] sm:text-[10px] font-semibold transition-all px-1.5 ${darkMode
+                    ? 'border-slate-700 text-slate-300 hover:bg-slate-800 hover:text-white hover:border-slate-600'
+                    : 'border-slate-200 text-slate-700 hover:border-blue-300 hover:text-blue-600 hover:bg-blue-50'
+                    }`}
+                  onClick={handleBuyNow}
+                >
+                  Buy
+                </Button>
+                <Button
+                  variant="primary"
+                  className={`flex-1 h-6 sm:h-7 md:h-8 rounded text-[9px] sm:text-[10px] font-semibold transition-all px-1.5 ${darkMode
+                    ? 'bg-indigo-600 hover:bg-indigo-500 text-white'
+                    : 'bg-blue-600 hover:bg-blue-700 text-white shadow-md hover:shadow-lg'
+                    }`}
+                  onClick={handleAddToCart}
+                  disabled={isAdding}
+                >
+                  {isAdding ? (
+                    <div className="flex items-center justify-center">
+                      <div className="w-2 h-2 sm:w-2.5 sm:h-2.5 border-2 border-white/30 border-t-white rounded-full animate-spin" />
+                    </div>
+                  ) : (
+                    <span className="flex items-center gap-0.5 sm:gap-1">
+                      <ShoppingCartIcon size={10} className="sm:w-3 sm:h-3" />
+                      Add
+                    </span>
+                  )}
+                </Button>
+              </div>
+            </div>
+          </CardContent>
+        </Card>
+      </Link>
     </div>
   );
 }

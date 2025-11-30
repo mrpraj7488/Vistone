@@ -6,7 +6,7 @@ import {
   Stats,
   Achievements,
   TechStack,
-  CompanyGlance,
+
   Testimonials,
   EliteAuthor,
   Blog
@@ -22,7 +22,7 @@ export default function Home({ darkMode }) {
       <Stats darkMode={darkMode} />
       <Achievements darkMode={darkMode} />
       <TechStack darkMode={darkMode} />
-      <CompanyGlance darkMode={darkMode} />
+
       <Testimonials darkMode={darkMode} />
       <EliteAuthor darkMode={darkMode} />
       <Blog darkMode={darkMode} />

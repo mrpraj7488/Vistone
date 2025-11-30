@@ -2,6 +2,7 @@ import { BrowserRouter, Routes, Route, Navigate, useLocation } from 'react-route
 import { useState, useEffect, lazy, Suspense } from 'react';
 import { supabase } from './lib/supabase';
 import { useAuthStore } from './store/useStore';
+import { useTheme } from './contexts/ThemeContext';
 import { HeaderNav, Footer } from './components/layout';
 import Toast from './components/ui/Toast';
 import LoadingSpinner from './components/ui/LoadingSpinner';
@@ -54,24 +55,11 @@ const AdminTheme = lazy(() => import('./pages/admin/Theme'));
 const AdminProfile = lazy(() => import('./pages/admin/Profile'));
 
 // Layout wrapper component
-function LayoutWrapper({ children, darkMode, setDarkMode }) {
+function LayoutWrapper({ children }) {
   const location = useLocation();
   const isAdminRoute = location.pathname.startsWith('/admin');
-
-  return (
-    <div className="min-h-screen w-full overflow-x-hidden">
-      {!isAdminRoute && <HeaderNav darkMode={darkMode} setDarkMode={setDarkMode} />}
-      {children}
-      {!isAdminRoute && <Footer darkMode={darkMode} />}
-      <Toast />
-    </div>
-  );
-}
-
-export default function AppRoutes() {
-  const [darkMode, setDarkMode] = useState(false);
-  const [loading, setLoading] = useState(true);
-  const { setUser, setSession } = useAuthStore();
+  const { theme, toggleTheme } = useTheme();
+  const darkMode = theme === 'dark';
 
   useEffect(() => {
     if (darkMode) {
@@ -80,6 +68,20 @@ export default function AppRoutes() {
       document.body.classList.remove('dark-mode');
     }
   }, [darkMode]);
+
+  return (
+    <div className="min-h-screen w-full overflow-x-hidden">
+      {!isAdminRoute && <HeaderNav darkMode={darkMode} setDarkMode={toggleTheme} />}
+      {children}
+      {!isAdminRoute && <Footer darkMode={darkMode} />}
+      <Toast />
+    </div>
+  );
+}
+
+export default function AppRoutes() {
+  const [loading, setLoading] = useState(true);
+  const { setUser, setSession } = useAuthStore();
 
   useEffect(() => {
     const initializeAuth = async () => {
@@ -118,122 +120,132 @@ export default function AppRoutes() {
 
   return (
     <BrowserRouter>
-      <LayoutWrapper darkMode={darkMode} setDarkMode={setDarkMode}>
-        <Routes>
-          <Route path="/" element={<Home darkMode={darkMode} />} />
-          <Route path="/products" element={<Products darkMode={darkMode} />} />
-          <Route path="/products/:slug" element={<ProductDetail darkMode={darkMode} />} />
-          <Route path="/categories" element={<Categories darkMode={darkMode} />} />
-          <Route path="/categories/:categorySlug" element={<Categories darkMode={darkMode} />} />
-          <Route path="/cart" element={<Cart darkMode={darkMode} />} />
-          <Route path="/wishlist" element={<Wishlist darkMode={darkMode} />} />
-          <Route path="/checkout" element={<Checkout darkMode={darkMode} />} />
-          <Route path="/blog" element={<Blog darkMode={darkMode} />} />
-          <Route path="/blog/:slug" element={<BlogDetail darkMode={darkMode} />} />
-          <Route path="/testimonials" element={<Testimonials darkMode={darkMode} />} />
-          <Route path="/contact" element={<Contact darkMode={darkMode} />} />
-          <Route path="/about" element={<About darkMode={darkMode} />} />
-          <Route path="/search" element={<Search darkMode={darkMode} />} />
-          <Route path="/login" element={<Login darkMode={darkMode} />} />
-          <Route path="/register" element={<Register darkMode={darkMode} />} />
-          <Route path="/dashboard" element={<Dashboard darkMode={darkMode} setDarkMode={setDarkMode} />} />
-          <Route path="/support" element={<Support darkMode={darkMode} />} />
-          <Route path="/support/category/:slug" element={<Support darkMode={darkMode} />} />
-          <Route path="/support/article/:slug" element={<Support darkMode={darkMode} />} />
-          <Route path="/services" element={<Services darkMode={darkMode} />} />
-          <Route path="/docs" element={<Documentation darkMode={darkMode} />} />
-          <Route path="/docs/:slug" element={<Documentation darkMode={darkMode} />} />
-          <Route path="/faq" element={<FAQ darkMode={darkMode} />} />
-          <Route path="/terms" element={<Terms darkMode={darkMode} />} />
-          <Route path="/privacy" element={<Privacy darkMode={darkMode} />} />
-          <Route path="/refund" element={<Refund darkMode={darkMode} />} />
-          
-          {/* Admin Login Route - Secret URL */}
-          <Route path="/admin-1253223" element={<AdminLogin />} />
-          
-          {/* Admin Routes - Protected */}
-          <Route path="/admin" element={
-            <AdminProtectedRoute>
-              <AdminLayout />
-            </AdminProtectedRoute>
-          }>
-            <Route index element={<Navigate to="/admin/dashboard" replace />} />
-            <Route path="dashboard" element={<AdminDashboard />} />
-            <Route path="products" element={<AdminProductsPage />} />
-            <Route path="products/new" element={<AdminProductForm />} />
-            <Route path="products/:id/edit" element={<AdminProductForm />} />
-            <Route path="categories" element={<AdminCategories />} />
-            <Route path="users" element={<AdminUsers />} />
-            <Route path="orders" element={
-              <Suspense fallback={<LoadingSpinner />}>
-                <AdminOrders />
-              </Suspense>
-            } />
-            <Route path="analytics" element={
-              <Suspense fallback={<LoadingSpinner />}>
-                <AdminAnalytics />
-              </Suspense>
-            } />
-            <Route path="support" element={
-              <Suspense fallback={<LoadingSpinner />}>
-                <AdminSupport />
-              </Suspense>
-            } />
-            <Route path="blogs" element={
-              <Suspense fallback={<LoadingSpinner />}>
-                <AdminBlogs />
-              </Suspense>
-            } />
-            <Route path="downloads" element={
-              <Suspense fallback={<LoadingSpinner />}>
-                <AdminDownloads />
-              </Suspense>
-            } />
-            <Route path="licenses" element={
-              <Suspense fallback={<LoadingSpinner />}>
-                <AdminLicenses />
-              </Suspense>
-            } />
-            <Route path="coupons" element={
-              <Suspense fallback={<LoadingSpinner />}>
-                <AdminCoupons />
-              </Suspense>
-            } />
-            <Route path="reviews" element={
-              <Suspense fallback={<LoadingSpinner />}>
-                <AdminReviews />
-              </Suspense>
-            } />
-            <Route path="pages" element={
-              <Suspense fallback={<LoadingSpinner />}>
-                <AdminPages />
-              </Suspense>
-            } />
-            <Route path="settings" element={
-              <Suspense fallback={<LoadingSpinner />}>
-                <AdminSettings />
-              </Suspense>
-            } />
-            <Route path="activity" element={
-              <Suspense fallback={<LoadingSpinner />}>
-                <AdminActivityLog />
-              </Suspense>
-            } />
-            <Route path="theme" element={
-              <Suspense fallback={<LoadingSpinner />}>
-                <AdminTheme />
-              </Suspense>
-            } />
-            <Route path="profile" element={
-              <Suspense fallback={<LoadingSpinner />}>
-                <AdminProfile />
-              </Suspense>
-            } />
-          </Route>
-          
-          <Route path="*" element={<NotFound darkMode={darkMode} />} />
-        </Routes>
-      </LayoutWrapper>
+      <RoutesContent />
     </BrowserRouter>
+  );
+}
+
+// Inner component that has access to theme context
+function RoutesContent() {
+  const { theme, toggleTheme } = useTheme();
+  const darkMode = theme === 'dark';
+
+  return (
+    <LayoutWrapper>
+      <Routes>
+        <Route path="/" element={<Home darkMode={darkMode} />} />
+        <Route path="/products" element={<Products darkMode={darkMode} />} />
+        <Route path="/products/:slug" element={<ProductDetail darkMode={darkMode} />} />
+        <Route path="/categories" element={<Categories darkMode={darkMode} />} />
+        <Route path="/categories/:categorySlug" element={<Categories darkMode={darkMode} />} />
+        <Route path="/cart" element={<Cart darkMode={darkMode} />} />
+        <Route path="/wishlist" element={<Wishlist darkMode={darkMode} />} />
+        <Route path="/checkout" element={<Checkout darkMode={darkMode} />} />
+        <Route path="/blog" element={<Blog darkMode={darkMode} />} />
+        <Route path="/blog/:slug" element={<BlogDetail darkMode={darkMode} />} />
+        <Route path="/testimonials" element={<Testimonials darkMode={darkMode} />} />
+        <Route path="/contact" element={<Contact darkMode={darkMode} />} />
+        <Route path="/about" element={<About darkMode={darkMode} />} />
+        <Route path="/search" element={<Search darkMode={darkMode} />} />
+        <Route path="/login" element={<Login darkMode={darkMode} />} />
+        <Route path="/register" element={<Register darkMode={darkMode} />} />
+        <Route path="/dashboard" element={<Dashboard darkMode={darkMode} setDarkMode={toggleTheme} />} />
+        <Route path="/support" element={<Support darkMode={darkMode} />} />
+        <Route path="/support/category/:slug" element={<Support darkMode={darkMode} />} />
+        <Route path="/support/article/:slug" element={<Support darkMode={darkMode} />} />
+        <Route path="/services" element={<Services darkMode={darkMode} />} />
+        <Route path="/docs" element={<Documentation darkMode={darkMode} />} />
+        <Route path="/docs/:slug" element={<Documentation darkMode={darkMode} />} />
+        <Route path="/faq" element={<FAQ darkMode={darkMode} />} />
+        <Route path="/terms" element={<Terms darkMode={darkMode} />} />
+        <Route path="/privacy" element={<Privacy darkMode={darkMode} />} />
+        <Route path="/refund" element={<Refund darkMode={darkMode} />} />
+
+        {/* Admin Login Route - Secret URL */}
+        <Route path="/admin-1253223" element={<AdminLogin />} />
+
+        {/* Admin Routes - Protected */}
+        <Route path="/admin" element={
+          <AdminProtectedRoute>
+            <AdminLayout />
+          </AdminProtectedRoute>
+        }>
+          <Route index element={<Navigate to="/admin/dashboard" replace />} />
+          <Route path="dashboard" element={<AdminDashboard />} />
+          <Route path="products" element={<AdminProductsPage />} />
+          <Route path="products/new" element={<AdminProductForm />} />
+          <Route path="products/:id/edit" element={<AdminProductForm />} />
+          <Route path="categories" element={<AdminCategories />} />
+          <Route path="users" element={<AdminUsers />} />
+          <Route path="orders" element={
+            <Suspense fallback={<LoadingSpinner />}>
+              <AdminOrders />
+            </Suspense>
+          } />
+          <Route path="analytics" element={
+            <Suspense fallback={<LoadingSpinner />}>
+              <AdminAnalytics />
+            </Suspense>
+          } />
+          <Route path="support" element={
+            <Suspense fallback={<LoadingSpinner />}>
+              <AdminSupport />
+            </Suspense>
+          } />
+          <Route path="blogs" element={
+            <Suspense fallback={<LoadingSpinner />}>
+              <AdminBlogs />
+            </Suspense>
+          } />
+          <Route path="downloads" element={
+            <Suspense fallback={<LoadingSpinner />}>
+              <AdminDownloads />
+            </Suspense>
+          } />
+          <Route path="licenses" element={
+            <Suspense fallback={<LoadingSpinner />}>
+              <AdminLicenses />
+            </Suspense>
+          } />
+          <Route path="coupons" element={
+            <Suspense fallback={<LoadingSpinner />}>
+              <AdminCoupons />
+            </Suspense>
+          } />
+          <Route path="reviews" element={
+            <Suspense fallback={<LoadingSpinner />}>
+              <AdminReviews />
+            </Suspense>
+          } />
+          <Route path="pages" element={
+            <Suspense fallback={<LoadingSpinner />}>
+              <AdminPages />
+            </Suspense>
+          } />
+          <Route path="settings" element={
+            <Suspense fallback={<LoadingSpinner />}>
+              <AdminSettings />
+            </Suspense>
+          } />
+          <Route path="activity" element={
+            <Suspense fallback={<LoadingSpinner />}>
+              <AdminActivityLog />
+            </Suspense>
+          } />
+          <Route path="theme" element={
+            <Suspense fallback={<LoadingSpinner />}>
+              <AdminTheme />
+            </Suspense>
+          } />
+          <Route path="profile" element={
+            <Suspense fallback={<LoadingSpinner />}>
+              <AdminProfile />
+            </Suspense>
+          } />
+        </Route>
+
+        <Route path="*" element={<NotFound darkMode={darkMode} />} />
+      </Routes>
+    </LayoutWrapper>
   );
 }
