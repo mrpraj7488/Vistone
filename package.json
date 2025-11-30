@@ -73,6 +73,7 @@
     "prettier": "^3.1.1",
     "rimraf": "^5.0.5",
     "tailwindcss": "^4.1.16",
+    "terser": "^5.44.1",
     "vite": "^7.1.7"
   },
   "engines": {

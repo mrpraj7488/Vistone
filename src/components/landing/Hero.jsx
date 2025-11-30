@@ -4,7 +4,7 @@ import { Button } from '../ui/Button';
 import { Container } from '../layout/Container';
 import BlurText from './BlurText';
 import Aurora from './Aurora';
-import GradientText from './GradientText';
+
 import { useScrollAnimation } from '../../hooks/useScrollAnimation';
 import { motion, useMotionValue, useSpring, useTransform } from 'motion/react';
 
@@ -73,14 +73,17 @@ const BlurWord = ({ word, delay, index, darkMode, isGradient = false, gradientCo
   };
 
   const content = isGradient ? (
-    <GradientText
-      colors={gradientColors}
-      animationSpeed={3}
-      showBorder={false}
-      className="inline-block align-baseline font-black"
+    <span
+      className="inline-block align-baseline font-black bg-clip-text text-transparent"
+      style={{
+        backgroundImage: `linear-gradient(to right, ${gradientColors.join(', ')})`,
+        backgroundSize: '200% auto',
+        // Simple animation fallback
+        animation: 'gradient 3s linear infinite'
+      }}
     >
       {word}
-    </GradientText>
+    </span>
   ) : (
     <span
       className={`font-black inline-block ${darkMode
@@ -167,6 +170,10 @@ const ShootingStars = ({ darkMode }) => {
           0% { transform: translateX(0) translateY(0) rotate(-45deg); opacity: 1; }
           10% { opacity: 1; }
           100% { transform: translateX(-800px) translateY(800px) rotate(-45deg); opacity: 0; }
+        }
+        @keyframes gradient {
+          0% { background-position: 0% 50%; }
+          100% { background-position: 200% 50%; }
         }
       `}</style>
     </div>
