@@ -53,36 +53,36 @@ const testimonials = [
 ];
 
 const TestimonialCard = ({ testimonial, darkMode }) => (
-  <div className={`flex-shrink-0 w-[350px] p-6 rounded-2xl mx-4 transition-all duration-300 hover:-translate-y-1 hover:shadow-xl ${darkMode
+  <div className={`flex-shrink-0 w-[280px] sm:w-[350px] p-4 sm:p-6 rounded-2xl mx-3 sm:mx-4 transition-all duration-300 hover:-translate-y-1 hover:shadow-xl ${darkMode
     ? 'bg-slate-800/40 border border-slate-700/50 backdrop-blur-md'
     : 'bg-white/60 border border-white/50 backdrop-blur-md shadow-lg shadow-slate-200/50'
     }`}>
-    <div className="flex items-start justify-between mb-4">
-      <div className="flex items-center gap-3">
+    <div className="flex items-start justify-between mb-3 sm:mb-4">
+      <div className="flex items-center gap-2 sm:gap-3">
         <img
           src={testimonial.avatar}
           alt={testimonial.name}
-          className="w-12 h-12 rounded-full bg-slate-200"
+          className="w-10 h-10 sm:w-12 sm:h-12 rounded-full bg-slate-200"
         />
         <div>
-          <h4 className={`font-bold ${darkMode ? 'text-white' : 'text-slate-900'}`}>
+          <h4 className={`font-bold text-sm sm:text-base ${darkMode ? 'text-white' : 'text-slate-900'}`}>
             {testimonial.name}
           </h4>
-          <p className={`text-xs ${darkMode ? 'text-slate-400' : 'text-slate-500'}`}>
+          <p className={`text-[10px] sm:text-xs ${darkMode ? 'text-slate-400' : 'text-slate-500'}`}>
             {testimonial.role} at {testimonial.company}
           </p>
         </div>
       </div>
-      <Quote className={`w-8 h-8 opacity-20 ${darkMode ? 'text-indigo-400' : 'text-blue-500'}`} />
+      <Quote className={`w-6 h-6 sm:w-8 sm:h-8 opacity-20 ${darkMode ? 'text-indigo-400' : 'text-blue-500'}`} />
     </div>
 
-    <div className="flex gap-1 mb-3">
+    <div className="flex gap-1 mb-2 sm:mb-3">
       {[...Array(testimonial.rating)].map((_, i) => (
-        <Star key={i} size={14} className="fill-yellow-400 text-yellow-400" />
+        <Star key={i} size={12} className="fill-yellow-400 text-yellow-400 sm:w-3.5 sm:h-3.5" />
       ))}
     </div>
 
-    <p className={`text-sm leading-relaxed ${darkMode ? 'text-slate-300' : 'text-slate-600'}`}>
+    <p className={`text-xs sm:text-sm leading-relaxed ${darkMode ? 'text-slate-300' : 'text-slate-600'}`}>
       "{testimonial.content}"
     </p>
   </div>
@@ -90,7 +90,7 @@ const TestimonialCard = ({ testimonial, darkMode }) => (
 
 export default function Testimonials({ darkMode }) {
   return (
-    <section className={`py-24 relative overflow-hidden ${darkMode
+    <section className={`py-12 sm:py-16 lg:py-24 relative overflow-hidden ${darkMode
       ? 'bg-slate-900'
       : 'bg-slate-50'
       }`}>
@@ -111,9 +111,9 @@ export default function Testimonials({ darkMode }) {
           }} />
 
         {/* Ambient Lighting - Top Spotlight */}
-        <div className={`absolute top-0 left-1/2 -translate-x-1/2 w-full h-[500px] opacity-20 pointer-events-none ${darkMode
-            ? 'bg-[radial-gradient(ellipse_at_top,_var(--tw-gradient-stops))] from-indigo-500/50 via-slate-900/50 to-transparent'
-            : 'bg-[radial-gradient(ellipse_at_top,_var(--tw-gradient-stops))] from-blue-200/50 via-slate-50/50 to-transparent'
+        <div className={`absolute top-0 left-1/2 -translate-x-1/2 w-full h-[300px] sm:h-[500px] opacity-20 pointer-events-none ${darkMode
+          ? 'bg-[radial-gradient(ellipse_at_top,_var(--tw-gradient-stops))] from-indigo-500/50 via-slate-900/50 to-transparent'
+          : 'bg-[radial-gradient(ellipse_at_top,_var(--tw-gradient-stops))] from-blue-200/50 via-slate-50/50 to-transparent'
           }`} />
 
         {/* Subtle Side Glows */}
@@ -124,12 +124,12 @@ export default function Testimonials({ darkMode }) {
       </div>
 
       <Container>
-        <div className="text-center mb-16 relative z-10">
-          <h2 className={`text-3xl sm:text-4xl font-black mb-4 ${darkMode ? 'text-white' : 'text-slate-900'
+        <div className="text-center mb-10 sm:mb-16 relative z-10">
+          <h2 className={`text-3xl sm:text-4xl font-black mb-3 sm:mb-4 ${darkMode ? 'text-white' : 'text-slate-900'
             }`}>
             Happy Client <span className="text-transparent bg-clip-text bg-gradient-to-r from-blue-500 to-purple-500">Feedbacks</span>
           </h2>
-          <p className={`max-w-2xl mx-auto text-lg ${darkMode ? 'text-slate-400' : 'text-slate-600'
+          <p className={`max-w-2xl mx-auto text-sm sm:text-lg ${darkMode ? 'text-slate-400' : 'text-slate-600'
             }`}>
             Don't just take our word for it. Here's what industry leaders have to say about their experience with Vistone.
           </p>
@@ -139,9 +139,9 @@ export default function Testimonials({ darkMode }) {
       {/* Marquee Container */}
       <div className="relative z-10 pause-on-hover">
         {/* Gradient Masks for smooth fade */}
-        <div className={`absolute left-0 top-0 bottom-0 w-32 z-20 bg-gradient-to-r ${darkMode ? 'from-slate-900 to-transparent' : 'from-slate-50 to-transparent'
+        <div className={`absolute left-0 top-0 bottom-0 w-12 sm:w-32 z-20 bg-gradient-to-r ${darkMode ? 'from-slate-900 to-transparent' : 'from-slate-50 to-transparent'
           }`} />
-        <div className={`absolute right-0 top-0 bottom-0 w-32 z-20 bg-gradient-to-l ${darkMode ? 'from-slate-900 to-transparent' : 'from-slate-50 to-transparent'
+        <div className={`absolute right-0 top-0 bottom-0 w-12 sm:w-32 z-20 bg-gradient-to-l ${darkMode ? 'from-slate-900 to-transparent' : 'from-slate-50 to-transparent'
           }`} />
 
         {/* Marquee Track - Row 1 */}

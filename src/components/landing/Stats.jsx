@@ -99,7 +99,7 @@ export default function Stats({ darkMode }) {
   const { ref, isVisible } = useScrollAnimation({ threshold: 0.1 });
 
   return (
-    <section className={`py-20 relative overflow-hidden ${darkMode
+    <section className={`py-12 sm:py-16 lg:py-20 relative overflow-hidden ${darkMode
       ? 'bg-slate-900'
       : 'bg-slate-50'
       }`}>
@@ -107,8 +107,8 @@ export default function Stats({ darkMode }) {
       <div className="absolute inset-0 overflow-hidden">
         {/* Gradient Mesh Base */}
         <div className={`absolute inset-0 ${darkMode
-            ? 'bg-[radial-gradient(ellipse_at_top,_var(--tw-gradient-stops))] from-slate-900 via-[#0B1120] to-black'
-            : 'bg-[radial-gradient(ellipse_at_top,_var(--tw-gradient-stops))] from-white via-slate-50 to-slate-100'
+          ? 'bg-[radial-gradient(ellipse_at_top,_var(--tw-gradient-stops))] from-slate-900 via-[#0B1120] to-black'
+          : 'bg-[radial-gradient(ellipse_at_top,_var(--tw-gradient-stops))] from-white via-slate-50 to-slate-100'
           }`} />
 
         {/* Moving Grid with Radial Mask */}
@@ -144,8 +144,8 @@ export default function Stats({ darkMode }) {
 
         {/* Shooting Star */}
         <div className={`absolute top-0 right-0 w-[300px] h-[1px] rotate-[315deg] animate-shooting-star opacity-0 ${darkMode
-            ? 'bg-gradient-to-r from-transparent via-white to-transparent'
-            : 'bg-gradient-to-r from-transparent via-blue-500 to-transparent'
+          ? 'bg-gradient-to-r from-transparent via-white to-transparent'
+          : 'bg-gradient-to-r from-transparent via-blue-500 to-transparent'
           }`} style={{
             top: '20%',
             right: '10%',
@@ -154,8 +154,8 @@ export default function Stats({ darkMode }) {
           }} />
 
         <div className={`absolute top-0 right-0 w-[200px] h-[1px] rotate-[315deg] animate-shooting-star opacity-0 ${darkMode
-            ? 'bg-gradient-to-r from-transparent via-indigo-300 to-transparent'
-            : 'bg-gradient-to-r from-transparent via-blue-400 to-transparent'
+          ? 'bg-gradient-to-r from-transparent via-indigo-300 to-transparent'
+          : 'bg-gradient-to-r from-transparent via-blue-400 to-transparent'
           }`} style={{
             top: '40%',
             right: '20%',
@@ -164,9 +164,9 @@ export default function Stats({ darkMode }) {
           }} />
 
         {/* Ambient Glow Blobs */}
-        <div className={`absolute top-1/4 left-1/4 w-[500px] h-[500px] rounded-full mix-blend-screen filter blur-[100px] opacity-20 animate-blob ${darkMode ? 'bg-indigo-600' : 'bg-blue-300'
+        <div className={`absolute top-1/4 left-1/4 w-[300px] sm:w-[500px] h-[300px] sm:h-[500px] rounded-full mix-blend-screen filter blur-[60px] sm:blur-[100px] opacity-20 animate-blob ${darkMode ? 'bg-indigo-600' : 'bg-blue-300'
           }`} />
-        <div className={`absolute bottom-1/4 right-1/4 w-[500px] h-[500px] rounded-full mix-blend-screen filter blur-[100px] opacity-20 animate-blob animation-delay-2000 ${darkMode ? 'bg-purple-600' : 'bg-purple-300'
+        <div className={`absolute bottom-1/4 right-1/4 w-[300px] sm:w-[500px] h-[300px] sm:h-[500px] rounded-full mix-blend-screen filter blur-[60px] sm:blur-[100px] opacity-20 animate-blob animation-delay-2000 ${darkMode ? 'bg-purple-600' : 'bg-purple-300'
           }`} />
       </div>
 
@@ -174,48 +174,48 @@ export default function Stats({ darkMode }) {
         {/* Section Title */}
         <div
           ref={ref}
-          className={`text-center mb-16 transition-all duration-1000 ${isVisible ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-10'
+          className={`text-center mb-10 sm:mb-16 transition-all duration-1000 ${isVisible ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-10'
             }`}
         >
-          <div className="inline-flex items-center justify-center gap-2 mb-4">
-            <Sparkles className={`w-6 h-6 animate-pulse ${darkMode ? 'text-indigo-400' : 'text-blue-500'}`} />
-            <span className={`text-sm font-bold tracking-widest uppercase ${darkMode ? 'text-indigo-400' : 'text-blue-500'}`}>
+          <div className="inline-flex items-center justify-center gap-2 mb-3 sm:mb-4">
+            <Sparkles className={`w-5 h-5 sm:w-6 sm:h-6 animate-pulse ${darkMode ? 'text-indigo-400' : 'text-blue-500'}`} />
+            <span className={`text-xs sm:text-sm font-bold tracking-widest uppercase ${darkMode ? 'text-indigo-400' : 'text-blue-500'}`}>
               Our Growth
             </span>
-            <Sparkles className={`w-6 h-6 animate-pulse ${darkMode ? 'text-indigo-400' : 'text-blue-500'}`} />
+            <Sparkles className={`w-5 h-5 sm:w-6 sm:h-6 animate-pulse ${darkMode ? 'text-indigo-400' : 'text-blue-500'}`} />
           </div>
 
-          <h2 className={`text-4xl sm:text-5xl font-black mb-6 bg-gradient-to-r ${darkMode
+          <h2 className={`text-3xl sm:text-4xl lg:text-5xl font-black mb-4 sm:mb-6 bg-gradient-to-r ${darkMode
             ? 'from-white via-indigo-200 to-slate-400'
             : 'from-slate-900 via-blue-800 to-slate-600'
             } bg-clip-text text-transparent animate-text-shimmer bg-[length:200%_auto]`}>
             Vistone at A Glance
           </h2>
 
-          <div className={`h-1.5 mx-auto rounded-full bg-gradient-to-r from-blue-500 via-purple-500 to-pink-500 transition-all duration-1000 delay-500 ${isVisible ? 'w-32 opacity-100' : 'w-0 opacity-0'
+          <div className={`h-1.5 mx-auto rounded-full bg-gradient-to-r from-blue-500 via-purple-500 to-pink-500 transition-all duration-1000 delay-500 ${isVisible ? 'w-24 sm:w-32 opacity-100' : 'w-0 opacity-0'
             }`} />
         </div>
 
-        <div className="grid grid-cols-2 lg:grid-cols-4 gap-8 relative z-10">
+        <div className="grid grid-cols-2 lg:grid-cols-4 gap-6 sm:gap-8 relative z-10">
           {stats.map((stat, index) => (
             <div
               key={index}
               className="flex flex-col items-center text-center group"
             >
               {/* Icon - Subtle and clean */}
-              <div className={`mb-4 p-3 rounded-2xl transition-transform duration-300 group-hover:scale-110 ${darkMode ? 'bg-slate-800/50' : 'bg-white/60'
+              <div className={`mb-3 sm:mb-4 p-2 sm:p-3 rounded-2xl transition-transform duration-300 group-hover:scale-110 ${darkMode ? 'bg-slate-800/50' : 'bg-white/60'
                 }`}>
-                <stat.icon className={`w-6 h-6 ${darkMode ? 'text-slate-400' : 'text-slate-500'
+                <stat.icon className={`w-5 h-5 sm:w-6 sm:h-6 ${darkMode ? 'text-slate-400' : 'text-slate-500'
                   }`} />
               </div>
 
               {/* Number - Big and Bold with Shine */}
-              <div className={`text-4xl sm:text-5xl font-black mb-2 tracking-tight bg-gradient-to-r ${stat.gradient} bg-clip-text text-transparent animate-text-shimmer`}>
+              <div className={`text-3xl sm:text-4xl lg:text-5xl font-black mb-1 sm:mb-2 tracking-tight bg-gradient-to-r ${stat.gradient} bg-clip-text text-transparent animate-text-shimmer`}>
                 <CountUp end={stat.number} suffix={stat.suffix} />
               </div>
 
               {/* Label */}
-              <div className={`font-medium text-sm sm:text-base ${darkMode ? 'text-slate-400' : 'text-slate-600'
+              <div className={`font-medium text-xs sm:text-sm sm:text-base ${darkMode ? 'text-slate-400' : 'text-slate-600'
                 }`}>
                 {stat.label}
               </div>
