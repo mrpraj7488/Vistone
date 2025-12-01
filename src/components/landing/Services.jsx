@@ -50,13 +50,13 @@ export default function Services({ darkMode }) {
 
       <Container>
         {/* Section Header */}
-        <div className="text-center mb-12 sm:mb-16 lg:mb-20 space-y-4 relative z-10">
+        <div className="text-center mb-10 sm:mb-14 lg:mb-20 space-y-3 sm:space-y-4 relative z-10">
           <h2 
             className={`font-black ${
               darkMode ? 'text-white' : 'text-slate-900'
             }`}
             style={{
-              fontSize: 'clamp(1.75rem, 4vw + 0.5rem, 2.75rem)', // 28px - 44px
+              fontSize: 'clamp(1.6rem, 3.5vw + 0.5rem, 2.6rem)', // slightly smaller on mobile
               lineHeight: '1.2',
               letterSpacing: '-0.02em',
             }}
@@ -64,7 +64,7 @@ export default function Services({ darkMode }) {
             Quality <span className="text-gradient-gamified">Services</span> We Provide
           </h2>
           <p 
-            className={`max-w-3xl mx-auto px-4 ${
+            className={`max-w-3xl mx-auto px-3 sm:px-4 ${
               darkMode ? 'text-slate-300' : 'text-slate-700'
             }`}
             style={{
@@ -77,7 +77,7 @@ export default function Services({ darkMode }) {
         </div>
 
         {/* Services Grid - Premium 2-column mobile layout */}
-        <div className="grid grid-cols-2 lg:grid-cols-4 gap-3 sm:gap-4 md:gap-6 relative z-10">
+        <div className="grid grid-cols-2 lg:grid-cols-4 gap-2.5 sm:gap-3.5 md:gap-6 relative z-10">
           {services.map((service, index) => (
             <ServiceCard key={index} service={service} index={index} darkMode={darkMode} />
           ))}
@@ -113,16 +113,16 @@ function ServiceCard({ service, index, darkMode }) {
           borderRadius: 'clamp(0.75rem, 1.5vw + 0.25rem, 1rem)', // 12px - 16px
         }}
       >
-        <CardHeader>
+        <CardHeader className="pb-3 sm:pb-4">
           {/* Icon with gradient background - Premium mobile sizing */}
-          <div className="relative mb-3 sm:mb-4 md:mb-6">
-            <div className={`absolute top-0 right-0 w-12 h-12 sm:w-16 sm:h-16 opacity-20 bg-[radial-gradient(circle,_#000_1px,_transparent_1px)] bg-[length:6px_6px] sm:bg-[length:8px_8px] dark:opacity-10`} />
+          <div className="relative mb-2.5 sm:mb-3.5 md:mb-5">
+            <div className={`absolute top-0 right-0 w-10 h-10 sm:w-14 sm:h-14 opacity-20 bg-[radial-gradient(circle,_#000_1px,_transparent_1px)] bg-[length:5px_5px] sm:bg-[length:7px_7px] dark:opacity-10`} />
             <div className={`
-              relative w-12 h-12 sm:w-14 sm:h-14 md:w-16 md:h-16 rounded-lg sm:rounded-xl bg-gradient-to-br ${service.color}
+              relative w-11 h-11 sm:w-13 sm:h-13 md:w-15 md:h-15 rounded-lg sm:rounded-xl bg-gradient-to-br ${service.color}
               flex items-center justify-center
               transform group-hover:scale-110 group-hover:rotate-3 transition-all duration-300 shadow-lg
             `}>
-              <Icon size={24} className="sm:w-7 sm:h-7 md:w-8 md:h-8 text-white" />
+              <Icon size={22} className="sm:w-6 sm:h-6 md:w-7 md:h-7 text-white" />
             </div>
           </div>
 
@@ -132,14 +132,14 @@ function ServiceCard({ service, index, darkMode }) {
               darkMode ? 'text-white' : 'text-slate-900'
             }`}
             style={{
-              fontSize: 'clamp(1rem, 2vw + 0.5rem, 1.25rem)', // 16px - 20px
+              fontSize: 'clamp(0.95rem, 2vw + 0.5rem, 1.2rem)', // slightly tighter
             }}
           >
             {service.title}
           </h3>
         </CardHeader>
 
-        <CardContent>
+        <CardContent className="pt-0">
           <p 
             className={`${
               darkMode ? 'text-slate-300' : 'text-slate-700'

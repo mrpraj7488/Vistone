@@ -497,8 +497,8 @@ body {
   
   /* Responsive spacing */
   .section-padding {
-    padding-top: clamp(3rem, 8vw, 6rem);
-    padding-bottom: clamp(3rem, 8vw, 6rem);
+    padding-top: clamp(2.5rem, 7vw, 5.5rem);
+    padding-bottom: clamp(2.5rem, 7vw, 5.5rem);
   }
   
   /* Container responsive */

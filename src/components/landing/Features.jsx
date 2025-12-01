@@ -75,10 +75,10 @@ export default function Features({ darkMode }) {
 
       <Container>
         {/* Section Header */}
-        <div className={`text-center mb-12 sm:mb-16 lg:mb-20 transition-all duration-1000 relative z-10 ${
+        <div className={`text-center mb-10 sm:mb-14 lg:mb-20 transition-all duration-1000 relative z-10 ${
           animate ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-10'
         }`}>
-          <div className={`inline-flex items-center gap-2 px-3 py-1.5 sm:px-4 sm:py-2 rounded-full mb-4 sm:mb-6 text-xs sm:text-sm font-semibold ${
+          <div className={`inline-flex items-center gap-1.5 px-3 py-1.5 sm:px-4 sm:py-2 rounded-full mb-3 sm:mb-5 text-xs sm:text-sm font-semibold ${
             darkMode ? 'bg-blue-500/20 text-blue-400 border border-blue-500/30' : 'bg-blue-500/10 text-blue-600'
           }`}>
             <Rocket className="w-3 h-3 sm:w-4 sm:h-4" />
@@ -86,11 +86,11 @@ export default function Features({ darkMode }) {
           </div>
           
           <h2 
-            className={`font-black mb-4 sm:mb-6 ${
+            className={`font-black mb-3 sm:mb-5 ${
               darkMode ? 'text-white' : 'text-slate-900'
             }`}
             style={{
-              fontSize: 'clamp(1.75rem, 4vw + 0.5rem, 2.75rem)', // 28px - 44px
+              fontSize: 'clamp(1.6rem, 3.5vw + 0.5rem, 2.6rem)', // slightly smaller on mobile
               lineHeight: '1.2',
               letterSpacing: '-0.02em',
             }}
@@ -100,7 +100,7 @@ export default function Features({ darkMode }) {
           </h2>
           
           <p 
-            className={`max-w-3xl mx-auto px-4 ${
+            className={`max-w-3xl mx-auto px-3 sm:px-4 ${
               darkMode ? 'text-slate-300' : 'text-slate-700'
             }`}
             style={{
@@ -114,7 +114,7 @@ export default function Features({ darkMode }) {
         </div>
 
         {/* Core Features Grid - Premium 2-column mobile layout */}
-        <div className={`grid grid-cols-2 lg:grid-cols-4 gap-3 sm:gap-4 md:gap-6 mb-12 sm:mb-16 lg:mb-20 transition-all duration-1000 delay-300 relative z-10 ${
+        <div className={`grid grid-cols-2 lg:grid-cols-4 gap-2.5 sm:gap-3.5 md:gap-6 mb-10 sm:mb-14 lg:mb-20 transition-all duration-1000 delay-300 relative z-10 ${
           animate ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-10'
         }`}>
           {coreFeatures.map((feature, idx) => {
@@ -122,18 +122,18 @@ export default function Features({ darkMode }) {
             return (
               <div 
                 key={idx} 
-                className={`text-center p-3 sm:p-4 md:p-6 rounded-xl sm:rounded-2xl transition-all duration-300 hover:-translate-y-2 cursor-pointer group futuristic-card ${
+                className={`text-center p-2.5 sm:p-3.5 md:p-5 rounded-xl sm:rounded-2xl transition-all duration-300 hover:-translate-y-2 cursor-pointer group futuristic-card ${
                   darkMode ? 'bg-slate-800/95 border border-slate-700/60 hover:border-primary-500/60 hover:shadow-2xl hover:shadow-primary-500/20' : 'bg-white/98 border-2 border-gray-200/80 hover:border-primary-500/60 hover:shadow-2xl hover:shadow-primary-500/20'
                 }`}
                 style={{
                   borderRadius: 'clamp(0.75rem, 1.5vw + 0.25rem, 1rem)', // 12px - 16px
                 }}
               >
-                <div className={`w-10 h-10 sm:w-12 sm:h-12 md:w-16 md:h-16 mx-auto mb-2 sm:mb-3 md:mb-4 rounded-lg sm:rounded-xl md:rounded-2xl bg-gradient-to-br from-primary-500 to-accent-500 flex items-center justify-center group-hover:scale-110 transition-transform duration-300 shadow-lg`}>
-                  <Icon className="w-5 h-5 sm:w-6 sm:h-6 md:w-8 md:h-8 text-white" />
+                <div className={`w-9 h-9 sm:w-11 sm:h-11 md:w-14 md:h-14 mx-auto mb-2 sm:mb-3 md:mb-4 rounded-lg sm:rounded-xl md:rounded-2xl bg-gradient-to-br from-primary-500 to-accent-500 flex items-center justify-center group-hover:scale-110 transition-transform duration-300 shadow-lg`}>
+                  <Icon className="w-4.5 h-4.5 sm:w-5.5 sm:h-5.5 md:w-7 md:h-7 text-white" />
                 </div>
                 <h3 
-                  className={`font-bold mb-2 ${
+                  className={`font-bold mb-1.5 sm:mb-2 ${
                     darkMode ? 'text-white' : 'text-slate-900'
                   }`}
                   style={{

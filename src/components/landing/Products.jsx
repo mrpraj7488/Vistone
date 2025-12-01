@@ -135,7 +135,7 @@ export default function Products({ darkMode }) {
   }, []);
 
   return (
-    <section className={`section-padding relative overflow-hidden py-24 sm:py-32 ${darkMode
+    <section className={`section-padding relative overflow-hidden py-16 sm:py-24 ${darkMode
       ? 'bg-[#0B0F19]'
       : 'bg-slate-50'
       }`}>
@@ -149,7 +149,7 @@ export default function Products({ darkMode }) {
 
       <Container>
         {/* Section Header */}
-        <div className="text-center mb-16 sm:mb-24 space-y-6 relative z-10 px-4">
+        <div className="text-center mb-12 sm:mb-20 space-y-4 sm:space-y-6 relative z-10 px-3 sm:px-4">
           <Badge
             variant="outline"
             className={`px-4 py-1.5 rounded-full text-sm font-medium backdrop-blur-sm ${darkMode
@@ -163,8 +163,8 @@ export default function Products({ darkMode }) {
             className={`font-black tracking-tight ${darkMode ? 'text-white' : 'text-slate-900'
               }`}
             style={{
-              fontSize: 'clamp(2.25rem, 5vw + 1rem, 4rem)',
-              lineHeight: '1.1',
+              fontSize: 'clamp(1.9rem, 4.5vw + 0.75rem, 3.25rem)', // slightly smaller on mobile
+              lineHeight: '1.15',
             }}
           >
             Software Solutions for <br className="hidden sm:block" />
@@ -173,22 +173,26 @@ export default function Products({ darkMode }) {
             </span>
           </h2>
           <p
-            className={`max-w-2xl mx-auto text-lg sm:text-xl leading-relaxed ${darkMode ? 'text-slate-400' : 'text-slate-600'
+            className={`max-w-2xl mx-auto ${darkMode ? 'text-slate-400' : 'text-slate-600'
               }`}
+            style={{
+              fontSize: 'clamp(0.95rem, 1.6vw + 0.3rem, 1.15rem)', // 15px - 18px
+              lineHeight: '1.6',
+            }}
           >
             Powerful, scalable, and secure digital products designed to accelerate your growth.
           </p>
         </div>
 
         {/* Products Grid - Optimized for 2 cards per row on mobile */}
-        <div className="grid grid-cols-2 lg:grid-cols-3 gap-3 sm:gap-4 md:gap-6 lg:gap-8 mb-12 sm:mb-16 relative z-10">
+        <div className="grid grid-cols-2 lg:grid-cols-3 gap-3 sm:gap-4 md:gap-6 lg:gap-8 mb-10 sm:mb-14 md:mb-16 relative z-10">
           {(loading ? fallbackProducts : products).map((product, index) => (
             <ProductCard key={product.id || product.slug || index} product={product} index={index} darkMode={darkMode} />
           ))}
         </div>
 
         {/* View All Button */}
-        <div className="flex justify-center mt-16">
+        <div className="flex justify-center mt-10 sm:mt-14 md:mt-16">
           <Link to="/products">
             <Button
               size="lg"

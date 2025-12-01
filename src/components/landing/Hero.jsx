@@ -15,13 +15,13 @@ const stats = [
 ];
 
 // Floating icons configuration with improved positioning and responsive values
-// Floating icons configuration with improved positioning and responsive values
 const getFloatingIcons = (isMobile = false) => [
   {
     icon: Store,
     title: 'Dashboard',
     value: '$49',
-    position: isMobile ? { top: '0%', right: '0%' } : { top: '5%', right: '-5%' },
+    // Keep icons slightly inside on mobile
+    position: isMobile ? { top: '6%', right: '4%' } : { top: '5%', right: '-5%' },
     delay: '0.5s',
     duration: 6,
     color: 'from-blue-500 to-cyan-500',
@@ -31,7 +31,7 @@ const getFloatingIcons = (isMobile = false) => [
     icon: ShoppingBag,
     title: 'UI Kit',
     value: '$79',
-    position: isMobile ? { bottom: '5%', left: '0%' } : { bottom: '10%', left: '-5%' },
+    position: isMobile ? { bottom: '10%', left: '4%' } : { bottom: '10%', left: '-5%' },
     delay: '1s',
     duration: 7,
     color: 'from-purple-500 to-pink-500',
@@ -41,7 +41,7 @@ const getFloatingIcons = (isMobile = false) => [
     icon: Zap,
     title: 'Plugin',
     value: '$29',
-    position: isMobile ? { top: '40%', left: '-5%' } : { top: '40%', left: '-10%' },
+    position: isMobile ? { top: '52%', left: '6%' } : { top: '40%', left: '-10%' },
     delay: '1.5s',
     duration: 8,
     color: 'from-orange-500 to-red-500',
@@ -264,14 +264,17 @@ const MainFloatingCard = ({ darkMode, isVisible, isMobile }) => {
   useEffect(() => {
     if (!isVisible) return;
 
+    const floatStrength = isMobile ? 8 : 15;
+    const rotateStrength = isMobile ? 1.2 : 2;
+
     const interval = setInterval(() => {
       const time = Date.now() / 1000;
-      y.set(Math.sin(time * 0.5) * 15);
-      rotate.set(Math.sin(time * 0.3) * 2);
+      y.set(Math.sin(time * 0.5) * floatStrength);
+      rotate.set(Math.sin(time * 0.3) * rotateStrength);
     }, 16); // ~60fps
 
     return () => clearInterval(interval);
-  }, [isVisible, y, rotate]);
+  }, [isVisible, isMobile, y, rotate]);
 
   const springY = useSpring(y, { stiffness: 50, damping: 20 });
   const springRotate = useSpring(rotate, { stiffness: 50, damping: 20 });
@@ -365,11 +368,14 @@ const FloatingProductCard = ({ item, index, darkMode, isVisible, isMobile, mouse
   useEffect(() => {
     if (!isVisible) return;
 
+    const baseY = isMobile ? 7 : 12;
+    const baseX = isMobile ? 3 : 5;
+
     const interval = setInterval(() => {
       const time = Date.now() / 1000;
       const offset = index * 0.3;
-      y.set(Math.sin(time * (0.4 + offset)) * 12);
-      x.set(Math.cos(time * (0.3 + offset)) * 5);
+      y.set(Math.sin(time * (0.4 + offset)) * baseY);
+      x.set(Math.cos(time * (0.3 + offset)) * baseX);
     }, 16);
 
     return () => clearInterval(interval);
@@ -377,14 +383,14 @@ const FloatingProductCard = ({ item, index, darkMode, isVisible, isMobile, mouse
 
   // Parallax effect based on mouse position
   useEffect(() => {
-    if (!mousePosition || !isVisible) return;
+    if (!mousePosition || !isVisible || isMobile) return;
 
     const parallaxX = (mousePosition.x - 0.5) * 10;
     const parallaxY = (mousePosition.y - 0.5) * 10;
 
     x.set(parallaxX * (0.3 + index * 0.1));
     y.set(parallaxY * (0.3 + index * 0.1));
-  }, [mousePosition, index, isVisible, x, y]);
+  }, [mousePosition, index, isVisible, isMobile, x, y]);
 
   const springY = useSpring(y, { stiffness: 100, damping: 25 });
   const springX = useSpring(x, { stiffness: 100, damping: 25 });
@@ -536,7 +542,11 @@ export default function Hero({ darkMode }) {
     { text: 'Grow', gradient: false },
   ], []);
 
-  const floatingIcons = useMemo(() => getFloatingIcons(isMobile), [isMobile]);
+  const floatingIcons = useMemo(() => {
+    const base = getFloatingIcons(isMobile);
+    // On very small screens keep only two floating cards for cleaner layout
+    return isMobile ? base.slice(0, 2) : base;
+  }, [isMobile]);
 
   // Optimize particle count based on screen size and motion preference
   const particleCount = useMemo(() => {
@@ -550,7 +560,7 @@ export default function Hero({ darkMode }) {
       ref={containerRef}
       onMouseMove={handleMouseMove}
       onMouseLeave={handleMouseLeave}
-      className="relative min-h-[100dvh] flex items-center overflow-hidden pt-24 sm:pt-32 pb-16 sm:pb-24"
+      className="relative min-h-[100dvh] flex items-center overflow-hidden pt-20 sm:pt-28 lg:pt-32 pb-12 sm:pb-20 lg:pb-24"
       aria-label="Hero section"
     >
       {/* Enhanced Background Elements */}
@@ -689,15 +699,15 @@ export default function Hero({ darkMode }) {
               }`}
           >
             {/* Main Headline - Optimized responsive typography */}
-            <header className="space-y-3 sm:space-y-4 md:space-y-5">
+            <header className="space-y-2.5 sm:space-y-3.5 md:space-y-5">
               <h1
                 className={`font-black leading-[1.15] tracking-tight ${darkMode
                   ? 'text-white'
                   : 'text-slate-900'
                   }`}
                 style={{
-                  fontSize: 'clamp(2rem, 5vw + 0.5rem, 3.5rem)', // 32px - 56px (was 64px-128px)
-                  lineHeight: '1.15',
+                  fontSize: 'clamp(1.75rem, 4.5vw + 0.5rem, 3.25rem)', // 28px - 52px
+                  lineHeight: '1.12',
                   letterSpacing: '-0.02em',
                 }}
               >
@@ -752,7 +762,7 @@ export default function Hero({ darkMode }) {
             </header>
 
             {/* Stats Row */}
-            <div className="flex flex-wrap gap-4 sm:gap-6 lg:gap-8 pt-2">
+            <div className="flex flex-wrap gap-3 sm:gap-5 lg:gap-8 pt-1.5 sm:pt-2">
               {stats.map((stat, idx) => (
                 <StatCard
                   key={idx}
@@ -764,33 +774,33 @@ export default function Hero({ darkMode }) {
             </div>
 
             {/* CTA Buttons */}
-            <div className="flex flex-wrap gap-3 sm:gap-4 pt-4">
+            <div className="flex flex-wrap gap-2.5 sm:gap-3.5 pt-3 sm:pt-4">
               <Button
                 variant="primary"
                 size="lg"
-                className={`relative overflow-hidden group shadow-xl transition-all duration-300 transform hover:-translate-y-1 hover:shadow-2xl px-8 py-4 rounded-full font-bold tracking-wide ${darkMode
+                className={`relative overflow-hidden group shadow-xl transition-all duration-300 transform hover:-translate-y-1 hover:shadow-2xl px-6 sm:px-8 py-3.5 sm:py-4 rounded-full font-bold tracking-wide ${darkMode
                   ? 'shadow-blue-500/40 hover:shadow-blue-500/60 bg-gradient-to-r from-blue-600 via-indigo-600 to-blue-700'
                   : 'shadow-blue-500/30 hover:shadow-blue-500/50 bg-gradient-to-r from-blue-600 via-indigo-600 to-blue-700'
                   }`}
                 aria-label="Browse our products"
               >
                 <span className="absolute inset-0 w-full h-full bg-gradient-to-r from-transparent via-white/20 to-transparent -translate-x-full group-hover:animate-[shine_1.5s_ease-in-out_infinite]" />
-                <span className="relative z-10 flex items-center gap-2 text-white">
+                <span className="relative z-10 flex items-center gap-1.5 sm:gap-2 text-white text-sm sm:text-base">
                   Browse Products
-                  <ArrowRight size={20} className="transition-transform group-hover:translate-x-1" />
+                  <ArrowRight size={18} className="transition-transform group-hover:translate-x-1" />
                 </span>
               </Button>
               <Button
                 variant="outline"
                 size="lg"
-                className={`group backdrop-blur-md transition-all duration-300 px-8 rounded-full font-bold tracking-wide ${darkMode
+                className={`group backdrop-blur-md transition-all duration-300 px-6 sm:px-8 rounded-full font-bold tracking-wide ${darkMode
                   ? 'bg-white/5 border-white/20 text-white hover:bg-white/10 hover:border-white/40'
                   : 'bg-white/60 border-white/60 text-slate-800 hover:bg-white/80 hover:border-blue-200'
                   }`}
                 aria-label="Learn more about us"
               >
-                <span className="flex items-center gap-2">
-                  <Play size={20} className="fill-current transition-transform group-hover:scale-110" />
+                <span className="flex items-center gap-1.5 sm:gap-2 text-sm sm:text-base">
+                  <Play size={18} className="fill-current transition-transform group-hover:scale-110" />
                   About Us
                 </span>
               </Button>

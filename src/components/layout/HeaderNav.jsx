@@ -84,19 +84,31 @@ export default function HeaderNav({ darkMode, setDarkMode }) {
       <header
         className={`fixed top-0 left-0 right-0 z-50 transition-all duration-300 ${isScrolled
           ? darkMode
-            ? 'glass-dark shadow-lg py-2 sm:py-3'
-            : 'glass-light shadow-lg py-2 sm:py-3'
-          : 'bg-transparent py-2 sm:py-4'
+            ? 'glass-dark shadow-lg py-1.5 sm:py-2.5'
+            : 'glass-light shadow-lg py-1.5 sm:py-2.5'
+          : 'bg-transparent py-2 sm:py-3.5'
           }`}
       >
         <div className="max-w-7xl mx-auto px-3 sm:px-4 lg:px-8">
-          <div className="flex items-center justify-between">
+          <div className="flex items-center justify-between gap-2">
             <Link to="/" className="flex items-center gap-1.5 sm:gap-2 group">
-              <div className={`w-8 h-8 sm:w-10 sm:h-10 rounded-lg flex items-center justify-center font-bold text-lg sm:text-xl transition-all duration-300 ${darkMode ? 'bg-cyan-500 text-white' : 'bg-gradient-to-br from-cyan-500 to-blue-600 text-white'
-                } group-hover:glow-cyan`}>
+              <div className={`rounded-lg flex items-center justify-center font-bold transition-all duration-300 ${darkMode ? 'bg-cyan-500 text-white' : 'bg-gradient-to-br from-cyan-500 to-blue-600 text-white'
+                } group-hover:glow-cyan`}
+                style={{
+                  width: 'clamp(1.75rem, 4vw, 2.5rem)',   // 28px - 40px
+                  height: 'clamp(1.75rem, 4vw, 2.5rem)',
+                  fontSize: 'clamp(1rem, 2.5vw, 1.25rem)', // 16px - 20px
+                }}
+              >
                 V
               </div>
-              <span className={`text-base sm:text-xl font-bold ${darkMode ? 'text-white' : 'text-gray-900'}`}>
+              <span
+                className={`font-bold ${darkMode ? 'text-white' : 'text-gray-900'}`}
+                style={{
+                  fontSize: 'clamp(0.9rem, 2.4vw, 1.125rem)', // 14px - 18px
+                  letterSpacing: '0.05em',
+                }}
+              >
                 VISTONE
               </span>
             </Link>
@@ -116,7 +128,7 @@ export default function HeaderNav({ darkMode, setDarkMode }) {
               ))}
             </nav>
 
-            <div className="flex items-center gap-2 sm:gap-3 md:gap-4">
+            <div className="flex items-center gap-1.5 sm:gap-2.5 md:gap-3.5">
               <form onSubmit={handleSearch} className="hidden md:block">
                 <input
                   type="search"
@@ -132,13 +144,19 @@ export default function HeaderNav({ darkMode, setDarkMode }) {
 
               <button
                 onClick={() => setDarkMode(!darkMode)}
-                className={`p-1.5 sm:p-2 rounded-lg transition-all text-lg sm:text-xl ${darkMode
+                className={`p-1.5 sm:p-2 rounded-lg transition-all ${darkMode
                   ? 'bg-gray-700 text-yellow-400 hover:bg-gray-600'
                   : 'bg-gray-100 text-gray-700 hover:bg-gray-200'
                   }`}
                 aria-label="Toggle dark mode"
               >
-                {darkMode ? '☀️' : '🌙'}
+                <span
+                  style={{
+                    fontSize: 'clamp(0.9rem, 2.4vw, 1.15rem)', // 14px - 18px
+                  }}
+                >
+                  {darkMode ? '☀️' : '🌙'}
+                </span>
               </button>
 
               <Link
@@ -147,7 +165,13 @@ export default function HeaderNav({ darkMode, setDarkMode }) {
                   }`}
                 aria-label="Wishlist"
               >
-                <span className="text-xl sm:text-2xl">❤️</span>
+                <span
+                  style={{
+                    fontSize: 'clamp(1.1rem, 2.8vw, 1.4rem)', // 17px - 22px
+                  }}
+                >
+                  ❤️
+                </span>
               </Link>
 
               <Link
@@ -156,9 +180,15 @@ export default function HeaderNav({ darkMode, setDarkMode }) {
                   }`}
                 aria-label="Cart"
               >
-                <span className="text-xl sm:text-2xl">🛒</span>
+                <span
+                  style={{
+                    fontSize: 'clamp(1.1rem, 2.8vw, 1.4rem)',
+                  }}
+                >
+                  🛒
+                </span>
                 {cartItemCount > 0 && (
-                  <span className="absolute -top-0.5 -right-0.5 sm:-top-1 sm:-right-1 bg-red-500 text-white text-[10px] sm:text-xs font-bold rounded-full w-4 h-4 sm:w-5 sm:h-5 flex items-center justify-center animate-pulse">
+                  <span className="absolute -top-0.5 -right-0.5 sm:-top-1 sm:-right-1 bg-red-500 text-white text-[9px] sm:text-[11px] font-bold rounded-full w-4 h-4 sm:w-5 sm:h-5 flex items-center justify-center animate-pulse">
                     {cartItemCount}
                   </span>
                 )}
@@ -261,8 +291,20 @@ export default function HeaderNav({ darkMode, setDarkMode }) {
                       : 'bg-cyan-500 text-white hover:bg-cyan-600'
                       }`}
                   >
-                    <span className="text-lg">👤</span>
-                    Login
+                    <span
+                      style={{
+                        fontSize: 'clamp(0.95rem, 2.4vw, 1.1rem)', // 15px - 17px
+                      }}
+                    >
+                      👤
+                    </span>
+                    <span
+                      style={{
+                        fontSize: 'clamp(0.85rem, 2.2vw, 1rem)', // 13px - 16px
+                      }}
+                    >
+                      Login
+                    </span>
                   </Link>
                 )}
               </div>
@@ -284,7 +326,7 @@ export default function HeaderNav({ darkMode, setDarkMode }) {
 
       {mobileMenuOpen && (
         <div className={`fixed inset-0 z-40 lg:hidden ${darkMode ? 'bg-gray-900' : 'bg-white'}`}>
-          <div className="flex flex-col items-center justify-center h-full gap-6 sm:gap-8 px-4">
+          <div className="flex flex-col items-center justify-center h-full gap-5 sm:gap-7 px-4">
             <button
               onClick={() => setMobileMenuOpen(false)}
               className={`absolute top-4 sm:top-6 right-4 sm:right-6 text-2xl sm:text-3xl ${darkMode ? 'text-white' : 'text-gray-900'}`}
@@ -306,14 +348,17 @@ export default function HeaderNav({ darkMode, setDarkMode }) {
               </div>
             )}
 
-            <nav className="flex flex-col gap-4 sm:gap-6 mb-8">
+            <nav className="flex flex-col gap-3.5 sm:gap-5 mb-6 sm:mb-8">
               {navLinks.map((link) => (
                 <Link
                   key={link.name}
                   to={link.path}
                   onClick={() => setMobileMenuOpen(false)}
-                  className={`text-2xl sm:text-3xl font-bold transition-colors ${darkMode ? 'text-white hover:text-cyan-400' : 'text-gray-900 hover:text-cyan-600'
+                  className={`font-bold transition-colors ${darkMode ? 'text-white hover:text-cyan-400' : 'text-gray-900 hover:text-cyan-600'
                     }`}
+                  style={{
+                    fontSize: 'clamp(1.4rem, 5vw, 2rem)', // 22px - 32px
+                  }}
                 >
                   {link.name}
                 </Link>
