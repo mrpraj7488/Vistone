@@ -142,17 +142,22 @@ export default function HeaderNav({ darkMode, setDarkMode }) {
                 />
               </form>
 
+              {/* Desktop theme toggle */}
               <button
+                type="button"
                 onClick={() => setDarkMode(!darkMode)}
-                className={`p-1.5 sm:p-2 rounded-lg transition-all ${darkMode
+                className={`hidden md:inline-flex items-center justify-center rounded-lg transition-all ${darkMode
                   ? 'bg-gray-700 text-yellow-400 hover:bg-gray-600'
                   : 'bg-gray-100 text-gray-700 hover:bg-gray-200'
                   }`}
+                style={{
+                  padding: '0.4rem 0.55rem',
+                }}
                 aria-label="Toggle dark mode"
               >
                 <span
                   style={{
-                    fontSize: 'clamp(0.9rem, 2.4vw, 1.15rem)', // 14px - 18px
+                    fontSize: 'clamp(0.95rem, 1.8vw, 1.15rem)', // 15px - 18px on desktop
                   }}
                 >
                   {darkMode ? '☀️' : '🌙'}
@@ -286,25 +291,27 @@ export default function HeaderNav({ darkMode, setDarkMode }) {
                 ) : (
                   <Link
                     to="/login"
-                    className={`flex items-center gap-2 px-4 py-2 rounded-lg font-bold transition-all ${darkMode
-                      ? 'bg-cyan-500 text-white hover:bg-cyan-600'
-                      : 'bg-cyan-500 text-white hover:bg-cyan-600'
+                    className={`flex items-center gap-2 rounded-lg font-semibold transition-all duration-300 transform hover:scale-105 shadow-lg hover:shadow-xl relative overflow-hidden group ${darkMode
+                      ? 'bg-gradient-to-r from-cyan-500 to-blue-600 text-white hover:from-cyan-600 hover:to-blue-700'
+                      : 'bg-gradient-to-r from-cyan-500 to-blue-600 text-white hover:from-cyan-600 hover:to-blue-700'
                       }`}
+                    style={{
+                      padding: 'clamp(0.5rem, 1.2vw + 0.3rem, 0.75rem) clamp(1rem, 2.5vw + 0.5rem, 1.25rem)', // 8px-12px vertical, 16px-20px horizontal
+                      fontSize: 'clamp(0.8rem, 1.5vw + 0.25rem, 0.95rem)', // 13px - 15px
+                    }}
                   >
-                    <span
-                      style={{
-                        fontSize: 'clamp(0.95rem, 2.4vw, 1.1rem)', // 15px - 17px
-                      }}
-                    >
-                      👤
+                    <span className="relative z-10 flex items-center gap-1.5">
+                      <svg
+                        className="w-4 h-4 sm:w-5 sm:h-5"
+                        fill="none"
+                        stroke="currentColor"
+                        viewBox="0 0 24 24"
+                      >
+                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z" />
+                      </svg>
+                      <span>Login</span>
                     </span>
-                    <span
-                      style={{
-                        fontSize: 'clamp(0.85rem, 2.2vw, 1rem)', // 13px - 16px
-                      }}
-                    >
-                      Login
-                    </span>
+                    <span className="absolute inset-0 w-full h-full bg-gradient-to-r from-transparent via-white/20 to-transparent -translate-x-full group-hover:translate-x-full transition-transform duration-700" />
                   </Link>
                 )}
               </div>
@@ -401,7 +408,7 @@ export default function HeaderNav({ darkMode, setDarkMode }) {
             )}
 
             {/* Main nav links */}
-            <nav className="flex flex-col gap-3.5 mb-6">
+            <nav className="flex flex-col gap-3.5 mb-4 sm:mb-5">
               {navLinks.map((link) => (
                 <Link
                   key={link.name}
@@ -419,6 +426,47 @@ export default function HeaderNav({ darkMode, setDarkMode }) {
                 </Link>
               ))}
             </nav>
+
+            {/* Theme toggle */}
+            <button
+              type="button"
+              onClick={() => setDarkMode(!darkMode)}
+              className={`flex items-center justify-between px-3 py-2 rounded-lg border transition-colors mb-4 ${darkMode
+                ? 'border-gray-700 bg-gray-800 text-gray-100 hover:border-cyan-500 hover:bg-gray-700'
+                : 'border-gray-200 bg-gray-50 text-gray-800 hover:border-cyan-500 hover:bg-white'
+                }`}
+            >
+              <div className="flex items-center gap-2">
+                <span
+                  aria-hidden="true"
+                  style={{
+                    fontSize: 'clamp(1.1rem, 2.6vw, 1.3rem)',
+                  }}
+                >
+                  {darkMode ? '☀️' : '🌙'}
+                </span>
+                <span
+                  className="font-medium"
+                  style={{
+                    fontSize: 'clamp(0.85rem, 2.3vw, 1rem)', // 13px - 16px
+                  }}
+                >
+                  {darkMode ? 'Light mode' : 'Dark mode'}
+                </span>
+              </div>
+
+              {/* Simple pill indicator */}
+              <span
+                className={`relative inline-flex items-center h-5 w-9 rounded-full transition-colors ${darkMode ? 'bg-cyan-500/70' : 'bg-gray-300'
+                  }`}
+                aria-hidden="true"
+              >
+                <span
+                  className={`absolute h-4 w-4 bg-white rounded-full shadow transform transition-transform duration-200 ${darkMode ? 'translate-x-4' : 'translate-x-0'
+                    }`}
+                />
+              </span>
+            </button>
 
             {/* Bottom actions */}
             <div className="mt-auto flex flex-col gap-3 pt-2">
@@ -475,10 +523,25 @@ export default function HeaderNav({ darkMode, setDarkMode }) {
                 <Link
                   to="/login"
                   onClick={() => setMobileMenuOpen(false)}
-                  className={`w-full text-center px-4 py-2.5 rounded-lg font-semibold text-sm transition-all ${darkMode ? 'bg-cyan-500 text-white hover:bg-cyan-600' : 'bg-cyan-500 text-white hover:bg-cyan-600'
+                  className={`w-full text-center rounded-lg font-semibold transition-all duration-300 transform hover:scale-[1.02] shadow-lg hover:shadow-xl relative overflow-hidden group ${darkMode ? 'bg-gradient-to-r from-cyan-500 to-blue-600 text-white hover:from-cyan-600 hover:to-blue-700' : 'bg-gradient-to-r from-cyan-500 to-blue-600 text-white hover:from-cyan-600 hover:to-blue-700'
                     }`}
+                  style={{
+                    padding: 'clamp(0.65rem, 1.5vw + 0.4rem, 0.85rem) clamp(1.25rem, 3vw + 0.75rem, 1.5rem)', // 10px-14px vertical, 20px-24px horizontal
+                    fontSize: 'clamp(0.85rem, 1.8vw + 0.3rem, 1rem)', // 14px - 16px
+                  }}
                 >
-                  Login
+                  <span className="relative z-10 flex items-center justify-center gap-2">
+                    <svg
+                      className="w-4 h-4"
+                      fill="none"
+                      stroke="currentColor"
+                      viewBox="0 0 24 24"
+                    >
+                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z" />
+                    </svg>
+                    <span>Login</span>
+                  </span>
+                  <span className="absolute inset-0 w-full h-full bg-gradient-to-r from-transparent via-white/20 to-transparent -translate-x-full group-hover:translate-x-full transition-transform duration-700" />
                 </Link>
               )}
             </div>

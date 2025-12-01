@@ -45,7 +45,7 @@ export default function Blog({ darkMode }) {
 
       <Container>
         {/* Section Header */}
-        <div className={`text-center mb-12 sm:mb-16 transition-all duration-1000 relative z-10 ${isVisible ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-10'
+        <div className={`text-center mb-10 sm:mb-14 lg:mb-16 transition-all duration-1000 relative z-10 ${isVisible ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-10'
           }`}>
           <h2
             className={`font-black mb-4 leading-tight ${darkMode ? 'text-white' : 'text-slate-900'
@@ -60,10 +60,10 @@ export default function Blog({ darkMode }) {
           </h2>
         </div>
 
-        {/* Blog Posts Grid - 2 columns as requested */}
+        {/* Blog Posts Grid - responsive columns */}
         <div
           ref={ref}
-          className={`grid grid-cols-2 gap-3 sm:gap-6 lg:gap-8 mb-8 sm:mb-12 transition-all duration-1000 delay-300 relative z-10 ${isVisible ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-10'
+          className={`grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-3 sm:gap-5 lg:gap-7 mb-8 sm:mb-12 transition-all duration-1000 delay-300 relative z-10 ${isVisible ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-10'
             }`}
         >
           {blogPosts.map((post, index) => (
@@ -104,8 +104,9 @@ export default function Blog({ darkMode }) {
 
 function BlogPostCard({ post, index, darkMode }) {
   return (
-    <div
-      className={`overflow-hidden futuristic-card h-full flex flex-col rounded-xl transition-all duration-300 group ${darkMode
+    <Link
+      to={`/blog/${post.id}`}
+      className={`block overflow-hidden futuristic-card h-full flex flex-col rounded-xl transition-all duration-300 group cursor-pointer ${darkMode
         ? 'bg-slate-800/95 border border-slate-700/60 hover:border-primary-500/60 hover:shadow-2xl hover:shadow-primary-500/20'
         : 'bg-white border border-slate-200 shadow-lg shadow-slate-200/50 hover:border-primary-500/30 hover:shadow-xl hover:shadow-primary-500/10 hover:-translate-y-1'
         }`}
@@ -118,20 +119,25 @@ function BlogPostCard({ post, index, darkMode }) {
         <img
           src={post.image}
           alt={post.title}
-          className="w-full h-full object-cover transition-transform duration-500 hover:scale-110"
+          className="w-full h-full object-cover transition-transform duration-500 group-hover:scale-110"
         />
       </div>
 
       {/* Content */}
-      <div className="p-3 sm:p-6 flex flex-col flex-1">
-        <div className={`flex items-center gap-1.5 sm:gap-2 text-[10px] sm:text-sm mb-2 sm:mb-3 font-medium ${darkMode ? 'text-slate-400' : 'text-slate-500'
-          }`}>
+      <div className="p-3 sm:p-4 lg:p-5 flex flex-col flex-1">
+        <div
+          className={`flex items-center gap-1.5 sm:gap-2 mb-1.5 sm:mb-2.5 font-medium ${darkMode ? 'text-slate-400' : 'text-slate-500'
+            }`}
+          style={{
+            fontSize: 'clamp(0.7rem, 1.3vw + 0.2rem, 0.85rem)', // ~11px - 14px
+          }}
+        >
           <Calendar size={12} className="sm:w-4 sm:h-4" />
           <span>{post.date}</span>
         </div>
 
         <h3
-          className={`font-bold sm:font-black mb-2 sm:mb-3 line-clamp-2 hover:text-blue-600 dark:hover:text-blue-400 transition-colors flex-1 ${darkMode ? 'text-white' : 'text-slate-900'
+          className={`font-bold sm:font-black mb-1.5 sm:mb-2.5 line-clamp-2 group-hover:text-blue-600 dark:group-hover:text-blue-400 transition-colors flex-1 ${darkMode ? 'text-white' : 'text-slate-900'
             }`}
           style={{
             fontSize: 'clamp(0.875rem, 2vw + 0.5rem, 1.25rem)', // 14px - 20px
@@ -142,7 +148,7 @@ function BlogPostCard({ post, index, darkMode }) {
         </h3>
 
         <p
-          className={`leading-relaxed mb-3 sm:mb-4 line-clamp-2 hidden sm:block ${darkMode ? 'text-slate-300' : 'text-slate-600'
+          className={`leading-relaxed line-clamp-2 hidden sm:block ${darkMode ? 'text-slate-300' : 'text-slate-600'
             }`}
           style={{
             fontSize: 'clamp(0.875rem, 1.25vw + 0.25rem, 1rem)', // 14px - 16px
@@ -151,16 +157,7 @@ function BlogPostCard({ post, index, darkMode }) {
         >
           {post.excerpt}
         </p>
-
-        <Link
-          to={`/blog/${post.id}`}
-          className={`inline-flex items-center gap-1.5 sm:gap-2 font-bold text-xs sm:text-base mt-auto transition-colors ${darkMode ? 'text-blue-400 hover:text-blue-300' : 'text-blue-600 hover:text-blue-700'
-            }`}
-        >
-          Read more
-          <ArrowRight size={14} className="sm:w-4 sm:h-4" />
-        </Link>
       </div>
-    </div>
+    </Link>
   );
 }

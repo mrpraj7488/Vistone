@@ -289,8 +289,8 @@ function ProductCard({ product, index, darkMode }) {
             : '!bg-white !border-slate-200 shadow-md hover:!border-blue-300 hover:shadow-xl hover:shadow-blue-500/10'
             }`}
         >
-          {/* Image Section - Much larger on mobile */}
-          <div className={`relative aspect-square sm:aspect-[16/10] overflow-hidden ${darkMode ? 'bg-slate-800' : 'bg-slate-100'
+          {/* Image Section - More compact on mobile for SaaS-style cards */}
+          <div className={`relative aspect-[4/5] sm:aspect-[16/10] overflow-hidden ${darkMode ? 'bg-slate-800' : 'bg-slate-100'
             }`}>
             <img
               src={imageSrc}
@@ -304,18 +304,28 @@ function ProductCard({ product, index, darkMode }) {
               : 'bg-gradient-to-t from-white/10 via-transparent to-transparent'
               }`} />
 
-            {/* Badges - Very compact for mobile */}
-            <div className="absolute top-1 sm:top-2 left-1 sm:left-2 flex flex-col sm:flex-row gap-0.5 sm:gap-1">
+            {/* Badges - Clean SaaS pills */}
+            <div className="absolute top-1.5 sm:top-2 left-1.5 sm:left-2 flex flex-col sm:flex-row gap-0.5 sm:gap-1">
               {product.badge && (
-                <span className={`px-1 sm:px-2 py-0.5 text-[9px] sm:text-[10px] font-bold rounded shadow-sm ${darkMode
-                  ? 'bg-indigo-500 text-white'
-                  : 'bg-blue-600 text-white'
-                  }`}>
+                <span
+                  className={`inline-flex items-center px-1.5 sm:px-2 py-0.5 rounded-full font-semibold shadow-sm ${darkMode
+                    ? 'bg-indigo-500/90 text-white'
+                    : 'bg-blue-600 text-white'
+                    }`}
+                  style={{
+                    fontSize: 'clamp(0.65rem, 1.2vw + 0.2rem, 0.75rem)', // ~10px - 12px
+                  }}
+                >
                   {product.badge}
                 </span>
               )}
               {discount > 0 && (
-                <span className="px-1 sm:px-2 py-0.5 text-[9px] sm:text-[10px] font-bold rounded bg-red-500 text-white shadow-sm">
+                <span
+                  className="inline-flex items-center px-1.5 sm:px-2 py-0.5 rounded-full font-semibold bg-rose-500 text-white shadow-sm"
+                  style={{
+                    fontSize: 'clamp(0.65rem, 1.2vw + 0.2rem, 0.75rem)',
+                  }}
+                >
                   -{discount}%
                 </span>
               )}
@@ -335,84 +345,117 @@ function ProductCard({ product, index, darkMode }) {
             </button>
           </div>
 
-          <CardContent className="flex-1 p-1.5 sm:p-3 md:p-4 flex flex-col">
-            {/* Title & Rating - Ultra compact */}
-            <div className="flex items-start justify-between gap-1 mb-0.5 sm:mb-1">
-              <h3 className={`font-bold text-[11px] sm:text-sm md:text-base leading-tight flex-1 transition-colors ${darkMode
-                ? 'text-white group-hover:text-indigo-400'
-                : 'text-slate-900 group-hover:text-blue-600'
-                }`}>
+          <CardContent className="flex-1 p-2 sm:p-3 md:p-4 flex flex-col">
+            {/* Title & Rating - Responsive */}
+            <div className="flex items-start justify-between gap-1.5 mb-1 sm:mb-1.5">
+              <h3
+                className={`font-bold leading-tight flex-1 transition-colors ${darkMode
+                  ? 'text-white group-hover:text-indigo-400'
+                  : 'text-slate-900 group-hover:text-blue-600'
+                  }`}
+                style={{
+                  fontSize: 'clamp(0.8rem, 1.6vw + 0.3rem, 1rem)', // ~13px - 16px
+                }}
+              >
                 {product.name}
               </h3>
               <div className="flex items-center gap-0.5 shrink-0">
-                <Star size={9} className="sm:w-3 sm:h-3 text-yellow-500 fill-yellow-500" />
-                <span className={`text-[9px] sm:text-xs font-semibold ${darkMode ? 'text-slate-300' : 'text-slate-900'
-                  }`}>
+                <Star size={10} className="sm:w-3 sm:h-3 text-yellow-500 fill-yellow-500" />
+                <span
+                  className={`font-semibold ${darkMode ? 'text-slate-300' : 'text-slate-900'
+                    }`}
+                  style={{
+                    fontSize: 'clamp(0.7rem, 1.3vw + 0.25rem, 0.8rem)', // ~11px - 13px
+                  }}
+                >
                   {product.rating_average || product.rating || 4.8}
                 </span>
               </div>
             </div>
 
-            {/* Description - Hidden on very small screens */}
-            <p className={`hidden sm:block text-xs sm:text-sm mb-2 sm:mb-4 line-clamp-2 leading-relaxed ${darkMode ? 'text-slate-400' : 'text-slate-600'
-              }`}>
+            {/* Description - Hidden on very small screens, readable on sm+ */}
+            <p
+              className={`hidden sm:block mb-2 sm:mb-3 line-clamp-2 leading-relaxed ${darkMode ? 'text-slate-400' : 'text-slate-600'
+                }`}
+              style={{
+                fontSize: 'clamp(0.8rem, 1.4vw + 0.25rem, 0.9rem)', // ~13px - 14px
+              }}
+            >
               {product.short_description || product.description}
             </p>
 
-            <div className="mt-auto space-y-1 sm:space-y-2 md:space-y-3">
-              {/* Sales & Price - Ultra compact */}
+            <div className="mt-auto space-y-1.5 sm:space-y-2.5 md:space-y-3">
+              {/* Price & Sales - Clean SaaS style */}
               <div>
-                <div className={`inline-flex items-center gap-0.5 px-1 py-0.5 rounded-full mb-0.5 sm:mb-1 ${darkMode ? 'bg-orange-500/10 border border-orange-500/20' : 'bg-orange-50 border border-orange-100'
-                  }`}>
-                  <Flame size={8} className={`sm:w-2.5 sm:h-2.5 animate-pulse ${darkMode ? 'text-orange-400 fill-orange-400' : 'text-orange-500 fill-orange-500'
-                    }`} />
-                  <p className={`text-[8px] sm:text-[10px] font-bold ${darkMode ? 'text-orange-300' : 'text-orange-600'
-                    }`}>
-                    {(product.sales_count || product.sales || 0).toLocaleString()}
-                  </p>
-                </div>
-                <div className="flex items-baseline gap-0.5 sm:gap-1">
-                  <span className={`text-base sm:text-xl md:text-2xl font-black ${darkMode ? 'text-white' : 'text-slate-900'
-                    }`}>
+                <div className="flex items-baseline gap-0.5 sm:gap-1 mb-0.5 sm:mb-1">
+                  <span
+                    className={`font-black ${darkMode ? 'text-white' : 'text-slate-900'
+                      }`}
+                    style={{
+                      fontSize: 'clamp(0.95rem, 2vw + 0.4rem, 1.4rem)', // ~15px - 22px
+                    }}
+                  >
                     ${product.current_price || product.price || product.regular_price}
                   </span>
                   {(product.on_sale || product.originalPrice) && (
-                    <span className={`text-[10px] sm:text-sm line-through font-medium ${darkMode ? 'text-slate-600' : 'text-slate-400'
-                      }`}>
+                    <span
+                      className={`line-through font-medium ${darkMode ? 'text-slate-600' : 'text-slate-400'
+                        }`}
+                      style={{
+                        fontSize: 'clamp(0.7rem, 1.3vw + 0.2rem, 0.85rem)', // ~11px - 14px
+                      }}
+                    >
                       ${product.regular_price || product.originalPrice}
                     </span>
                   )}
                 </div>
+                <p
+                  className={`${darkMode ? 'text-slate-500' : 'text-slate-500'
+                    }`}
+                  style={{
+                    fontSize: 'clamp(0.7rem, 1.3vw + 0.2rem, 0.8rem)', // ~11px - 13px
+                  }}
+                >
+                  {(product.sales_count || product.sales || 0).toLocaleString()}+ sales
+                </p>
               </div>
 
-              {/* Action Buttons - Ultra compact */}
-              <div className="flex gap-1">
+              {/* Action Buttons - Responsive & touch friendly */}
+              <div className="flex gap-1.5">
                 <Button
                   variant="outline"
-                  className={`flex-1 h-6 sm:h-7 md:h-8 rounded text-[9px] sm:text-[10px] font-semibold transition-all px-1.5 ${darkMode
+                  className={`flex-1 rounded font-semibold transition-all px-2 ${darkMode
                     ? 'border-slate-700 text-slate-300 hover:bg-slate-800 hover:text-white hover:border-slate-600'
                     : 'border-slate-200 text-slate-700 hover:border-blue-300 hover:text-blue-600 hover:bg-blue-50'
                     }`}
                   onClick={handleBuyNow}
+                  style={{
+                    height: 'clamp(2.1rem, 3.8vw, 2.4rem)', // ~34px - 38px
+                    fontSize: 'clamp(0.75rem, 1.4vw + 0.2rem, 0.85rem)', // ~12px - 14px
+                  }}
                 >
                   Buy
                 </Button>
                 <Button
                   variant="primary"
-                  className={`flex-1 h-6 sm:h-7 md:h-8 rounded text-[9px] sm:text-[10px] font-semibold transition-all px-1.5 ${darkMode
+                  className={`flex-1 rounded font-semibold transition-all px-2 ${darkMode
                     ? 'bg-indigo-600 hover:bg-indigo-500 text-white'
                     : 'bg-blue-600 hover:bg-blue-700 text-white shadow-md hover:shadow-lg'
                     }`}
                   onClick={handleAddToCart}
                   disabled={isAdding}
+                  style={{
+                    height: 'clamp(2.1rem, 3.8vw, 2.4rem)',
+                    fontSize: 'clamp(0.75rem, 1.4vw + 0.2rem, 0.85rem)',
+                  }}
                 >
                   {isAdding ? (
                     <div className="flex items-center justify-center">
-                      <div className="w-2 h-2 sm:w-2.5 sm:h-2.5 border-2 border-white/30 border-t-white rounded-full animate-spin" />
+                      <div className="w-2.5 h-2.5 sm:w-3 sm:h-3 border-2 border-white/30 border-t-white rounded-full animate-spin" />
                     </div>
                   ) : (
                     <span className="flex items-center gap-0.5 sm:gap-1">
-                      <ShoppingCartIcon size={10} className="sm:w-3 sm:h-3" />
+                      <ShoppingCartIcon size={11} className="sm:w-3 sm:h-3" />
                       Add
                     </span>
                   )}
