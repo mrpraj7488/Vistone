@@ -325,39 +325,94 @@ export default function HeaderNav({ darkMode, setDarkMode }) {
       </header>
 
       {mobileMenuOpen && (
-        <div className={`fixed inset-0 z-40 lg:hidden ${darkMode ? 'bg-gray-900' : 'bg-white'}`}>
-          <div className="flex flex-col items-center justify-center h-full gap-5 sm:gap-7 px-4">
-            <button
-              onClick={() => setMobileMenuOpen(false)}
-              className={`absolute top-4 sm:top-6 right-4 sm:right-6 text-2xl sm:text-3xl ${darkMode ? 'text-white' : 'text-gray-900'}`}
-            >
-              ✕
-            </button>
+        <div className="fixed inset-0 z-40 lg:hidden">
+          {/* Backdrop */}
+          <button
+            type="button"
+            onClick={() => setMobileMenuOpen(false)}
+            aria-label="Close menu"
+            className={`${darkMode ? 'bg-black/60' : 'bg-black/40'} absolute inset-0`}
+          />
 
+          {/* Sliding panel */}
+          <div
+            className={`absolute inset-y-0 left-0 w-[80%] max-w-sm ${darkMode ? 'bg-gray-900' : 'bg-white'
+              } shadow-2xl rounded-r-2xl overflow-y-auto flex flex-col px-4 pt-4 pb-6 animate-mobile-menu-slide-in`}
+          >
+            {/* Top row: logo + close */}
+            <div className="flex items-center justify-between mb-6">
+              <Link
+                to="/"
+                onClick={() => setMobileMenuOpen(false)}
+                className="flex items-center gap-2"
+              >
+                <div
+                  className={`rounded-lg flex items-center justify-center font-bold ${darkMode ? 'bg-cyan-500 text-white' : 'bg-gradient-to-br from-cyan-500 to-blue-600 text-white'
+                    }`}
+                  style={{
+                    width: 'clamp(1.75rem, 4vw, 2.3rem)',
+                    height: 'clamp(1.75rem, 4vw, 2.3rem)',
+                    fontSize: 'clamp(1rem, 2.4vw, 1.2rem)',
+                  }}
+                >
+                  V
+                </div>
+                <span
+                  className={`font-bold ${darkMode ? 'text-white' : 'text-gray-900'}`}
+                  style={{
+                    fontSize: 'clamp(0.9rem, 2.4vw, 1.05rem)',
+                    letterSpacing: '0.05em',
+                  }}
+                >
+                  VISTONE
+                </span>
+              </Link>
+
+              <button
+                onClick={() => setMobileMenuOpen(false)}
+                className={`${darkMode ? 'text-gray-300 hover:text-white' : 'text-gray-700 hover:text-gray-900'
+                  } p-1 rounded-lg transition-colors`}
+              >
+                <span
+                  style={{
+                    fontSize: 'clamp(1.5rem, 4.5vw, 1.9rem)',
+                  }}
+                >
+                  ✕
+                </span>
+              </button>
+            </div>
+
+            {/* User summary */}
             {user && (
-              <div className="text-center mb-4">
-                <div className="w-16 h-16 mx-auto mb-3 rounded-full bg-gradient-to-br from-cyan-500 to-blue-600 flex items-center justify-center text-white font-bold text-2xl">
+              <div className="flex items-center gap-3 mb-6">
+                <div className="w-11 h-11 rounded-full bg-gradient-to-br from-cyan-500 to-blue-600 flex items-center justify-center text-white font-bold text-lg">
                   {user.email?.charAt(0).toUpperCase() || 'U'}
                 </div>
-                <p className={`font-bold ${darkMode ? 'text-white' : 'text-gray-900'}`}>
-                  {user.user_metadata?.full_name || 'User'}
-                </p>
-                <p className={`text-sm ${darkMode ? 'text-gray-400' : 'text-gray-600'}`}>
-                  {user.email}
-                </p>
+                <div>
+                  <p className={`font-bold ${darkMode ? 'text-white' : 'text-gray-900'}`}>
+                    {user.user_metadata?.full_name || 'User'}
+                  </p>
+                  <p className={`text-xs ${darkMode ? 'text-gray-400' : 'text-gray-600'}`}>
+                    {user.email}
+                  </p>
+                </div>
               </div>
             )}
 
-            <nav className="flex flex-col gap-3.5 sm:gap-5 mb-6 sm:mb-8">
+            {/* Main nav links */}
+            <nav className="flex flex-col gap-3.5 mb-6">
               {navLinks.map((link) => (
                 <Link
                   key={link.name}
                   to={link.path}
                   onClick={() => setMobileMenuOpen(false)}
-                  className={`font-bold transition-colors ${darkMode ? 'text-white hover:text-cyan-400' : 'text-gray-900 hover:text-cyan-600'
+                  className={`font-semibold rounded-lg px-3 py-2 transition-colors ${darkMode
+                    ? 'text-gray-100 hover:bg-gray-800'
+                    : 'text-gray-900 hover:bg-gray-100'
                     }`}
                   style={{
-                    fontSize: 'clamp(1.4rem, 5vw, 2rem)', // 22px - 32px
+                    fontSize: 'clamp(0.95rem, 2.7vw, 1.1rem)', // 15px - 17px
                   }}
                 >
                   {link.name}
@@ -365,57 +420,68 @@ export default function HeaderNav({ darkMode, setDarkMode }) {
               ))}
             </nav>
 
-            {user ? (
-              <div className="flex flex-col gap-4 w-full max-w-xs">
+            {/* Bottom actions */}
+            <div className="mt-auto flex flex-col gap-3 pt-2">
+              {user ? (
+                <>
+                  <Link
+                    to="/dashboard"
+                    onClick={() => setMobileMenuOpen(false)}
+                    className={`flex items-center gap-3 px-3 py-2 rounded-lg transition-colors ${darkMode
+                      ? 'text-gray-200 hover:bg-gray-800'
+                      : 'text-gray-800 hover:bg-gray-100'
+                      }`}
+                  >
+                    <span className="text-lg">📊</span>
+                    <span className="text-sm font-medium">Dashboard</span>
+                  </Link>
+                  <Link
+                    to="/orders"
+                    onClick={() => setMobileMenuOpen(false)}
+                    className={`flex items-center gap-3 px-3 py-2 rounded-lg transition-colors ${darkMode
+                      ? 'text-gray-200 hover:bg-gray-800'
+                      : 'text-gray-800 hover:bg-gray-100'
+                      }`}
+                  >
+                    <span className="text-lg">📦</span>
+                    <span className="text-sm font-medium">My Orders</span>
+                  </Link>
+                  <Link
+                    to="/profile"
+                    onClick={() => setMobileMenuOpen(false)}
+                    className={`flex items-center gap-3 px-3 py-2 rounded-lg transition-colors ${darkMode
+                      ? 'text-gray-200 hover:bg-gray-800'
+                      : 'text-gray-800 hover:bg-gray-100'
+                      }`}
+                  >
+                    <span className="text-lg">⚙️</span>
+                    <span className="text-sm font-medium">Settings</span>
+                  </Link>
+                  <button
+                    onClick={() => {
+                      handleLogout();
+                      setMobileMenuOpen(false);
+                    }}
+                    className={`flex items-center gap-3 px-3 py-2 rounded-lg text-left transition-colors ${darkMode
+                      ? 'text-red-400 hover:bg-gray-800'
+                      : 'text-red-600 hover:bg-gray-100'
+                      }`}
+                  >
+                    <span className="text-lg">🚪</span>
+                    <span className="text-sm font-medium">Logout</span>
+                  </button>
+                </>
+              ) : (
                 <Link
-                  to="/dashboard"
+                  to="/login"
                   onClick={() => setMobileMenuOpen(false)}
-                  className={`flex items-center gap-3 px-4 py-3 rounded-lg text-lg transition-colors ${darkMode ? 'text-gray-300 hover:bg-gray-800 hover:text-white' : 'text-gray-700 hover:bg-gray-100 hover:text-gray-900'
+                  className={`w-full text-center px-4 py-2.5 rounded-lg font-semibold text-sm transition-all ${darkMode ? 'bg-cyan-500 text-white hover:bg-cyan-600' : 'bg-cyan-500 text-white hover:bg-cyan-600'
                     }`}
                 >
-                  <span className="text-xl">📊</span>
-                  Dashboard
+                  Login
                 </Link>
-                <Link
-                  to="/orders"
-                  onClick={() => setMobileMenuOpen(false)}
-                  className={`flex items-center gap-3 px-4 py-3 rounded-lg text-lg transition-colors ${darkMode ? 'text-gray-300 hover:bg-gray-800 hover:text-white' : 'text-gray-700 hover:bg-gray-100 hover:text-gray-900'
-                    }`}
-                >
-                  <span className="text-xl">📦</span>
-                  My Orders
-                </Link>
-                <Link
-                  to="/profile"
-                  onClick={() => setMobileMenuOpen(false)}
-                  className={`flex items-center gap-3 px-4 py-3 rounded-lg text-lg transition-colors ${darkMode ? 'text-gray-300 hover:bg-gray-800 hover:text-white' : 'text-gray-700 hover:bg-gray-100 hover:text-gray-900'
-                    }`}
-                >
-                  <span className="text-xl">⚙️</span>
-                  Settings
-                </Link>
-                <button
-                  onClick={() => {
-                    handleLogout();
-                    setMobileMenuOpen(false);
-                  }}
-                  className={`w-full flex items-center gap-3 px-4 py-3 rounded-lg text-lg transition-colors text-left ${darkMode ? 'text-red-400 hover:bg-gray-800' : 'text-red-600 hover:bg-gray-100'
-                    }`}
-                >
-                  <span className="text-xl">🚪</span>
-                  Logout
-                </button>
-              </div>
-            ) : (
-              <Link
-                to="/login"
-                onClick={() => setMobileMenuOpen(false)}
-                className={`w-full max-w-xs text-center px-6 py-3 rounded-lg font-bold text-lg transition-all ${darkMode ? 'bg-cyan-500 text-white hover:bg-cyan-600' : 'bg-cyan-500 text-white hover:bg-cyan-600'
-                  }`}
-              >
-                Login
-              </Link>
-            )}
+              )}
+            </div>
           </div>
         </div>
       )}

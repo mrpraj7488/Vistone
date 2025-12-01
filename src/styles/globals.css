@@ -500,6 +500,22 @@ body {
     padding-top: clamp(2.5rem, 7vw, 5.5rem);
     padding-bottom: clamp(2.5rem, 7vw, 5.5rem);
   }
+
+  /* Mobile header menu slide-in animation */
+  @keyframes mobile-menu-slide-in {
+    0% {
+      transform: translateX(-100%);
+      opacity: 0;
+    }
+    100% {
+      transform: translateX(0);
+      opacity: 1;
+    }
+  }
+
+  .animate-mobile-menu-slide-in {
+    animation: mobile-menu-slide-in 0.28s ease-out forwards;
+  }
   
   /* Container responsive */
   .container-custom {
