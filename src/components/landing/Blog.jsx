@@ -60,10 +60,10 @@ export default function Blog({ darkMode }) {
           </h2>
         </div>
 
-        {/* Blog Posts Grid - Premium 2-column mobile layout */}
+        {/* Blog Posts Grid - 2 columns as requested */}
         <div
           ref={ref}
-          className={`grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-3 sm:gap-4 md:gap-6 lg:gap-8 mb-8 sm:mb-12 transition-all duration-1000 delay-300 relative z-10 ${isVisible ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-10'
+          className={`grid grid-cols-2 gap-3 sm:gap-6 lg:gap-8 mb-8 sm:mb-12 transition-all duration-1000 delay-300 relative z-10 ${isVisible ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-10'
             }`}
         >
           {blogPosts.map((post, index) => (
@@ -114,7 +114,7 @@ function BlogPostCard({ post, index, darkMode }) {
       }}
     >
       {/* Image */}
-      <div className="relative aspect-video overflow-hidden">
+      <div className="relative aspect-[4/3] sm:aspect-video overflow-hidden">
         <img
           src={post.image}
           alt={post.title}
@@ -123,25 +123,26 @@ function BlogPostCard({ post, index, darkMode }) {
       </div>
 
       {/* Content */}
-      <div className="p-4 sm:p-6 flex flex-col flex-1">
-        <div className={`flex items-center gap-2 text-xs sm:text-sm mb-3 font-medium ${darkMode ? 'text-slate-400' : 'text-slate-500'
+      <div className="p-3 sm:p-6 flex flex-col flex-1">
+        <div className={`flex items-center gap-1.5 sm:gap-2 text-[10px] sm:text-sm mb-2 sm:mb-3 font-medium ${darkMode ? 'text-slate-400' : 'text-slate-500'
           }`}>
-          <Calendar size={14} className="sm:w-4 sm:h-4" />
+          <Calendar size={12} className="sm:w-4 sm:h-4" />
           <span>{post.date}</span>
         </div>
 
         <h3
-          className={`font-black mb-3 line-clamp-2 hover:text-blue-600 dark:hover:text-blue-400 transition-colors flex-1 ${darkMode ? 'text-white' : 'text-slate-900'
+          className={`font-bold sm:font-black mb-2 sm:mb-3 line-clamp-2 hover:text-blue-600 dark:hover:text-blue-400 transition-colors flex-1 ${darkMode ? 'text-white' : 'text-slate-900'
             }`}
           style={{
-            fontSize: 'clamp(1rem, 2vw + 0.5rem, 1.25rem)', // 16px - 20px
+            fontSize: 'clamp(0.875rem, 2vw + 0.5rem, 1.25rem)', // 14px - 20px
+            lineHeight: '1.3',
           }}
         >
           {post.title}
         </h3>
 
         <p
-          className={`leading-relaxed mb-4 line-clamp-2 ${darkMode ? 'text-slate-300' : 'text-slate-600'
+          className={`leading-relaxed mb-3 sm:mb-4 line-clamp-2 hidden sm:block ${darkMode ? 'text-slate-300' : 'text-slate-600'
             }`}
           style={{
             fontSize: 'clamp(0.875rem, 1.25vw + 0.25rem, 1rem)', // 14px - 16px
@@ -153,11 +154,11 @@ function BlogPostCard({ post, index, darkMode }) {
 
         <Link
           to={`/blog/${post.id}`}
-          className={`inline-flex items-center gap-2 font-bold text-sm sm:text-base mt-auto transition-colors ${darkMode ? 'text-blue-400 hover:text-blue-300' : 'text-blue-600 hover:text-blue-700'
+          className={`inline-flex items-center gap-1.5 sm:gap-2 font-bold text-xs sm:text-base mt-auto transition-colors ${darkMode ? 'text-blue-400 hover:text-blue-300' : 'text-blue-600 hover:text-blue-700'
             }`}
         >
           Read more
-          <ArrowRight size={16} />
+          <ArrowRight size={14} className="sm:w-4 sm:h-4" />
         </Link>
       </div>
     </div>
