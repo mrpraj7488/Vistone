@@ -82,7 +82,7 @@ export default function HeaderNav({ darkMode, setDarkMode }) {
   return (
     <>
       <header
-        className={`fixed top-0 left-0 right-0 z-50 transition-all duration-300 ${isScrolled
+        className={`fixed top-0 left-0 right-0 z-40 transition-all duration-300 ${isScrolled
           ? darkMode
             ? 'glass-dark shadow-lg py-1.5 sm:py-2.5'
             : 'glass-light shadow-lg py-1.5 sm:py-2.5'
@@ -325,7 +325,7 @@ export default function HeaderNav({ darkMode, setDarkMode }) {
       </header>
 
       {mobileMenuOpen && (
-        <div className="fixed inset-0 z-40 lg:hidden">
+        <div className="fixed inset-0 z-50 lg:hidden">
           {/* Backdrop */}
           <button
             type="button"
