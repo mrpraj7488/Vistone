@@ -229,9 +229,8 @@ const Dashboard = () => {
                     {stat.value}
                   </p>
                   <div className="flex items-center gap-2">
-                    <span className={`text-sm font-medium flex items-center gap-1 ${
-                      stat.trend === 'up' ? 'text-green-600 dark:text-green-400' : 'text-red-600 dark:text-red-400'
-                    }`}>
+                    <span className={`text-sm font-medium flex items-center gap-1 ${stat.trend === 'up' ? 'text-green-600 dark:text-green-400' : 'text-red-600 dark:text-red-400'
+                      }`}>
                       {stat.trend === 'up' ? <ArrowUp size={16} /> : <ArrowDown size={16} />}
                       {stat.change}
                     </span>
@@ -259,31 +258,28 @@ const Dashboard = () => {
           <div className="flex gap-2">
             <button
               onClick={() => setTimeRange('week')}
-              className={`px-3 py-1 text-sm rounded-lg transition-colors ${
-                timeRange === 'week'
+              className={`px-3 py-1 text-sm rounded-lg transition-colors ${timeRange === 'week'
                   ? 'bg-blue-500 text-white'
                   : 'bg-gray-100 dark:bg-gray-700 text-gray-600 dark:text-gray-400 hover:bg-gray-200 dark:hover:bg-gray-600'
-              }`}
+                }`}
             >
               Week
             </button>
             <button
               onClick={() => setTimeRange('month')}
-              className={`px-3 py-1 text-sm rounded-lg transition-colors ${
-                timeRange === 'month'
+              className={`px-3 py-1 text-sm rounded-lg transition-colors ${timeRange === 'month'
                   ? 'bg-blue-500 text-white'
                   : 'bg-gray-100 dark:bg-gray-700 text-gray-600 dark:text-gray-400 hover:bg-gray-200 dark:hover:bg-gray-600'
-              }`}
+                }`}
             >
               Month
             </button>
             <button
               onClick={() => setTimeRange('year')}
-              className={`px-3 py-1 text-sm rounded-lg transition-colors ${
-                timeRange === 'year'
+              className={`px-3 py-1 text-sm rounded-lg transition-colors ${timeRange === 'year'
                   ? 'bg-blue-500 text-white'
                   : 'bg-gray-100 dark:bg-gray-700 text-gray-600 dark:text-gray-400 hover:bg-gray-200 dark:hover:bg-gray-600'
-              }`}
+                }`}
             >
               Year
             </button>
@@ -294,8 +290,8 @@ const Dashboard = () => {
             <AreaChart data={revenueChartData}>
               <defs>
                 <linearGradient id="colorRevenue" x1="0" y1="0" x2="0" y2="1">
-                  <stop offset="5%" stopColor="#3B82F6" stopOpacity={0.3}/>
-                  <stop offset="95%" stopColor="#3B82F6" stopOpacity={0}/>
+                  <stop offset="5%" stopColor="#3B82F6" stopOpacity={0.3} />
+                  <stop offset="95%" stopColor="#3B82F6" stopOpacity={0} />
                 </linearGradient>
               </defs>
               <XAxis dataKey="name" />
@@ -342,19 +338,28 @@ const Dashboard = () => {
                   <div className="flex-shrink-0 w-8 h-8 bg-gradient-to-r from-blue-500 to-purple-600 rounded-full flex items-center justify-center text-white font-bold text-sm">
                     {index + 1}
                   </div>
-                  
+
                   {/* Product Image */}
                   <div className="flex-shrink-0 w-16 h-16 bg-gray-100 dark:bg-gray-700 rounded-lg overflow-hidden">
-                    <img
-                      src={product.image}
-                      alt={product.name}
-                      className="w-full h-full object-cover"
-                      onError={(e) => {
-                        e.target.src = `https://via.placeholder.com/64x64/3B82F6/FFFFFF?text=${product.name.charAt(0)}`;
-                      }}
-                    />
+                    {product.image && product.image !== '/placeholder.png' ? (
+                      <img
+                        src={product.image}
+                        alt={product.name}
+                        className="w-full h-full object-cover"
+                        onError={(e) => {
+                          e.target.style.display = 'none';
+                          e.target.nextSibling.style.display = 'flex';
+                        }}
+                      />
+                    ) : null}
+                    <div
+                      className="w-full h-full bg-gradient-to-br from-blue-500 to-purple-600 flex items-center justify-center text-white font-bold text-xl"
+                      style={{ display: product.image && product.image !== '/placeholder.png' ? 'none' : 'flex' }}
+                    >
+                      {product.name.charAt(0).toUpperCase()}
+                    </div>
                   </div>
-                  
+
                   {/* Product Info */}
                   <div className="flex-1 min-w-0">
                     <h3 className="font-semibold text-gray-900 dark:text-white group-hover:text-blue-600 dark:group-hover:text-blue-400 transition-colors">
@@ -373,7 +378,7 @@ const Dashboard = () => {
                         ${product.revenue.toLocaleString()} revenue
                       </span>
                     </div>
-                    
+
                     {/* Progress Bar */}
                     <div className="mt-3">
                       <div className="flex items-center justify-between text-xs text-gray-500 dark:text-gray-400 mb-1">
@@ -492,8 +497,8 @@ const Dashboard = () => {
             ].map((item, index) => (
               <div key={index} className="flex items-center justify-between">
                 <div className="flex items-center gap-2">
-                  <div 
-                    className="w-3 h-3 rounded-full" 
+                  <div
+                    className="w-3 h-3 rounded-full"
                     style={{ backgroundColor: item.color }}
                   />
                   <span className="text-sm text-gray-600 dark:text-gray-400">{item.name}</span>

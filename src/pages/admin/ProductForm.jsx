@@ -158,56 +158,22 @@ const ProductFormFixed = () => {
           lastUpdate: product.last_update || '',
           seoTitle: product.seo_title || '',
           seoDescription: product.seo_description || '',
-          focusKeyword: product.focus_keyword || '',
+          focusKeyword: product.seo_keywords || '',
           mainFile: null,
           extendedFile: null,
           documentationFile: null,
           demoFiles: []
         });
 
-        // Fetch product statistics
-        const { data: stats, error: statsError } = await supabase
-          .from('product_stats')
-          .select('*')
-          .eq('product_id', id)
-          .single();
-
-        if (!statsError && stats) {
-          setProductStats({
-            sales: stats.sales_count || 0,
-            revenue: stats.total_revenue || 0,
-            views: stats.view_count || 0,
-            favorites: stats.favorite_count || 0,
-            rating: stats.average_rating || 0,
-            reviews: stats.review_count || 0
-          });
-        } else {
-          // If no stats exist, fetch from related tables
-          const { data: orderItems } = await supabase
-            .from('order_items')
-            .select('quantity, price')
-            .eq('product_id', id);
-
-          const { data: reviews } = await supabase
-            .from('product_reviews')
-            .select('rating')
-            .eq('product_id', id);
-
-          const sales = orderItems?.reduce((sum, item) => sum + item.quantity, 0) || 0;
-          const revenue = orderItems?.reduce((sum, item) => sum + (item.price * item.quantity), 0) || 0;
-          const avgRating = reviews?.length > 0
-            ? reviews.reduce((sum, r) => sum + r.rating, 0) / reviews.length
-            : 0;
-
-          setProductStats({
-            sales,
-            revenue,
-            views: product.view_count || 0,
-            favorites: product.favorite_count || 0,
-            rating: avgRating,
-            reviews: reviews?.length || 0
-          });
-        }
+        // Set product statistics from the product table itself (no separate tables needed)
+        setProductStats({
+          sales: product.download_count || 0,
+          revenue: 0, // Would need orders table
+          views: product.view_count || 0,
+          favorites: 0, // Would need favorites table
+          rating: product.rating || 0,
+          reviews: product.rating_count || 0
+        });
       }
     } catch (error) {
       console.error('Error fetching product data:', error);
