@@ -35,8 +35,8 @@ import {
 } from 'lucide-react';
 import { toast } from '../../utils/notifications';
 import { supabase } from '../../lib/supabase';
-import { 
-  ProductFilesSection, 
+import {
+  ProductFilesSection,
   TechnicalSpecsSection,
   DemoPreviewSection,
   LicenseTermsSection,
@@ -53,7 +53,7 @@ const ProductFormFixed = () => {
   const [loading, setLoading] = useState(false);
   const [characterCount, setCharacterCount] = useState(0);
   const [productStats, setProductStats] = useState(null);
-  
+
   const [formData, setFormData] = useState({
     name: '',
     slug: '',
@@ -117,7 +117,7 @@ const ProductFormFixed = () => {
   const fetchProductData = async () => {
     try {
       setLoading(true);
-      
+
       // Fetch product details
       const { data: product, error: productError } = await supabase
         .from('products')
@@ -195,8 +195,8 @@ const ProductFormFixed = () => {
 
           const sales = orderItems?.reduce((sum, item) => sum + item.quantity, 0) || 0;
           const revenue = orderItems?.reduce((sum, item) => sum + (item.price * item.quantity), 0) || 0;
-          const avgRating = reviews?.length > 0 
-            ? reviews.reduce((sum, r) => sum + r.rating, 0) / reviews.length 
+          const avgRating = reviews?.length > 0
+            ? reviews.reduce((sum, r) => sum + r.rating, 0) / reviews.length
             : 0;
 
           setProductStats({
@@ -223,11 +223,11 @@ const ProductFormFixed = () => {
 
   const handleInputChange = (field, value) => {
     setFormData(prev => ({ ...prev, [field]: value }));
-    
+
     if (field === 'name' && !formData.slug) {
       setFormData(prev => ({ ...prev, slug: generateSlug(value) }));
     }
-    
+
     if (field === 'shortDescription') {
       setCharacterCount(value.length);
     }
@@ -310,11 +310,51 @@ const ProductFormFixed = () => {
     setLoading(true);
 
     try {
+      // Transform camelCase formData to snake_case for database
+      const productData = {
+        name: formData.name,
+        slug: formData.slug,
+        short_description: formData.shortDescription,
+        full_description: formData.fullDescription,
+        category: formData.category,
+        categories: formData.categories,
+        tags: formData.tags,
+        regular_price: parseFloat(formData.regularPrice) || 0,
+        extended_price: parseFloat(formData.extendedPrice) || 0,
+        sale_price: parseFloat(formData.salePrice) || null,
+        sale_start_date: formData.promoStartDate || null,
+        sale_end_date: formData.promoEndDate || null,
+        status: formData.status,
+        is_featured: formData.featured,
+        is_new: formData.newArrival,
+        is_on_sale: formData.onSale || formData.enablePromo,
+        is_trending: formData.trending,
+        features: formData.features,
+        tech_stack: formData.techStack,
+        version: formData.version,
+        compatibility: formData.compatibility,
+        file_size: formData.fileSize,
+        demo_url: formData.demoUrl || formData.livePreviewUrl,
+        preview_url: formData.previewUrl,
+        video_url: formData.videoUrl || formData.videoPreviewUrl,
+        documentation_url: formData.documentationUrl,
+        support_url: formData.supportUrl,
+        license_type: formData.licenseType,
+        license_terms: formData.regularLicenseTerms,
+        download_limit: formData.downloadLimit === 'unlimited' ? -1 : formData.downloadLimitCount,
+        download_expiry: formData.downloadExpiry === 'never' ? -1 : formData.downloadExpiryDays,
+        require_license: formData.requireLicense,
+        auto_update: formData.autoUpdate,
+        seo_title: formData.seoTitle || formData.name,
+        seo_description: formData.seoDescription || formData.shortDescription,
+        focus_keyword: formData.focusKeyword
+      };
+
       if (isEditing) {
         // Update existing product
         const { error } = await supabase
           .from('products')
-          .update(formData)
+          .update(productData)
           .eq('id', id);
 
         if (error) throw error;
@@ -323,7 +363,7 @@ const ProductFormFixed = () => {
         // Create new product
         const { error } = await supabase
           .from('products')
-          .insert([formData]);
+          .insert([productData]);
 
         if (error) throw error;
         toast.success('Product created successfully!');
@@ -331,7 +371,7 @@ const ProductFormFixed = () => {
       navigate('/admin/products');
     } catch (error) {
       console.error('Error saving product:', error);
-      toast.error('Failed to save product');
+      toast.error(`Failed to save product: ${error.message}`);
     } finally {
       setLoading(false);
     }
@@ -346,8 +386,8 @@ const ProductFormFixed = () => {
       <div className="max-w-7xl mx-auto space-y-6">
         {/* Enhanced Header */}
         <div className="bg-white dark:bg-gray-800 rounded-xl shadow-sm border border-gray-200 dark:border-gray-700 p-6">
-          <Link 
-            to="/admin/products" 
+          <Link
+            to="/admin/products"
             className="inline-flex items-center gap-2 text-gray-600 dark:text-gray-400 hover:text-blue-600 dark:hover:text-blue-400 mb-4 transition-colors group"
           >
             <ArrowLeft size={20} className="group-hover:-translate-x-1 transition-transform" />
@@ -382,531 +422,531 @@ const ProductFormFixed = () => {
           </div>
         </div>
 
-      <form onSubmit={handleSubmit}>
-        <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
-          
-          {/* Main Content - Left Column */}
-          <div className="lg:col-span-2 space-y-6">
-            
-            {/* Product Information */}
-            <div className="bg-white dark:bg-gray-800 rounded-xl shadow-sm border border-gray-200 dark:border-gray-700 overflow-hidden">
-              <div className="p-6 border-b border-gray-200 dark:border-gray-700 bg-gradient-to-r from-blue-50 to-purple-50 dark:from-blue-900/20 dark:to-purple-900/20">
-                <h2 className="text-xl font-semibold text-gray-900 dark:text-white flex items-center gap-3">
-                  <div className="p-2 bg-blue-100 dark:bg-blue-900/30 rounded-lg">
-                    <FileText size={20} className="text-blue-600 dark:text-blue-400" />
-                  </div>
-                  Product Information
-                </h2>
-                <p className="text-sm text-gray-600 dark:text-gray-400 mt-1">Basic product details and descriptions</p>
-              </div>
-              <div className="p-6 space-y-4">
-                <div>
-                  <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
-                    Product Name *
-                  </label>
-                  <input
-                    type="text"
-                    value={formData.name}
-                    onChange={(e) => handleInputChange('name', e.target.value)}
-                    placeholder="React Dashboard Pro"
-                    className="w-full px-4 py-2 bg-gray-50 dark:bg-gray-700 border border-gray-200 dark:border-gray-600 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 dark:text-white"
-                    required
-                  />
-                </div>
+        <form onSubmit={handleSubmit}>
+          <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
 
-                <div>
-                  <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
-                    Slug
-                  </label>
-                  <div className="flex gap-2">
+            {/* Main Content - Left Column */}
+            <div className="lg:col-span-2 space-y-6">
+
+              {/* Product Information */}
+              <div className="bg-white dark:bg-gray-800 rounded-xl shadow-sm border border-gray-200 dark:border-gray-700 overflow-hidden">
+                <div className="p-6 border-b border-gray-200 dark:border-gray-700 bg-gradient-to-r from-blue-50 to-purple-50 dark:from-blue-900/20 dark:to-purple-900/20">
+                  <h2 className="text-xl font-semibold text-gray-900 dark:text-white flex items-center gap-3">
+                    <div className="p-2 bg-blue-100 dark:bg-blue-900/30 rounded-lg">
+                      <FileText size={20} className="text-blue-600 dark:text-blue-400" />
+                    </div>
+                    Product Information
+                  </h2>
+                  <p className="text-sm text-gray-600 dark:text-gray-400 mt-1">Basic product details and descriptions</p>
+                </div>
+                <div className="p-6 space-y-4">
+                  <div>
+                    <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
+                      Product Name *
+                    </label>
                     <input
                       type="text"
-                      value={formData.slug}
-                      onChange={(e) => handleInputChange('slug', e.target.value)}
-                      placeholder="react-dashboard-pro"
-                      className="flex-1 px-4 py-2 bg-gray-50 dark:bg-gray-700 border border-gray-200 dark:border-gray-600 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 dark:text-white"
+                      value={formData.name}
+                      onChange={(e) => handleInputChange('name', e.target.value)}
+                      placeholder="React Dashboard Pro"
+                      className="w-full px-4 py-2 bg-gray-50 dark:bg-gray-700 border border-gray-200 dark:border-gray-600 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 dark:text-white"
+                      required
                     />
-                    <button
-                      type="button"
-                      onClick={() => handleInputChange('slug', generateSlug(formData.name))}
-                      className="px-4 py-2 bg-gray-600 hover:bg-gray-700 text-white rounded-lg transition-colors"
+                  </div>
+
+                  <div>
+                    <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
+                      Slug
+                    </label>
+                    <div className="flex gap-2">
+                      <input
+                        type="text"
+                        value={formData.slug}
+                        onChange={(e) => handleInputChange('slug', e.target.value)}
+                        placeholder="react-dashboard-pro"
+                        className="flex-1 px-4 py-2 bg-gray-50 dark:bg-gray-700 border border-gray-200 dark:border-gray-600 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 dark:text-white"
+                      />
+                      <button
+                        type="button"
+                        onClick={() => handleInputChange('slug', generateSlug(formData.name))}
+                        className="px-4 py-2 bg-gray-600 hover:bg-gray-700 text-white rounded-lg transition-colors"
+                      >
+                        Auto-generate
+                      </button>
+                    </div>
+                  </div>
+
+                  <div>
+                    <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
+                      Category
+                    </label>
+                    <select
+                      value={formData.category}
+                      onChange={(e) => handleInputChange('category', e.target.value)}
+                      className="w-full px-4 py-2 bg-gray-50 dark:bg-gray-700 border border-gray-200 dark:border-gray-600 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 dark:text-white"
+                      required
                     >
-                      Auto-generate
-                    </button>
+                      <option value="">Select Category</option>
+                      {categories.map(cat => (
+                        <option key={cat} value={cat}>{cat}</option>
+                      ))}
+                    </select>
+                  </div>
+
+                  <div>
+                    <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
+                      Short Description *
+                    </label>
+                    <textarea
+                      value={formData.shortDescription}
+                      onChange={(e) => handleInputChange('shortDescription', e.target.value)}
+                      placeholder="Brief description for search results (2-3 sentences)"
+                      rows={3}
+                      maxLength={250}
+                      className="w-full px-4 py-2 bg-gray-50 dark:bg-gray-700 border border-gray-200 dark:border-gray-600 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 dark:text-white"
+                      required
+                    />
+                    <p className="text-sm text-gray-500 mt-1">{characterCount}/250 characters</p>
+                  </div>
+
+                  <div>
+                    <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
+                      Full Description *
+                    </label>
+                    <textarea
+                      value={formData.fullDescription}
+                      onChange={(e) => handleInputChange('fullDescription', e.target.value)}
+                      placeholder="Detailed product description..."
+                      rows={8}
+                      className="w-full px-4 py-2 bg-gray-50 dark:bg-gray-700 border border-gray-200 dark:border-gray-600 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 dark:text-white"
+                      required
+                    />
                   </div>
                 </div>
+              </div>
 
-                <div>
-                  <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
-                    Category
-                  </label>
-                  <select
-                    value={formData.category}
-                    onChange={(e) => handleInputChange('category', e.target.value)}
-                    className="w-full px-4 py-2 bg-gray-50 dark:bg-gray-700 border border-gray-200 dark:border-gray-600 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 dark:text-white"
-                    required
-                  >
-                    <option value="">Select Category</option>
-                    {categories.map(cat => (
-                      <option key={cat} value={cat}>{cat}</option>
-                    ))}
-                  </select>
+              {/* Pricing */}
+              <div className="bg-white dark:bg-gray-800 rounded-lg shadow-sm">
+                <div className="p-6 border-b border-gray-200 dark:border-gray-700">
+                  <h2 className="text-lg font-semibold text-gray-900 dark:text-white flex items-center gap-2">
+                    <DollarSign size={20} />
+                    Pricing
+                  </h2>
                 </div>
+                <div className="p-6 space-y-4">
+                  <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                    <div>
+                      <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
+                        Regular License Price *
+                      </label>
+                      <div className="relative">
+                        <span className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-500">$</span>
+                        <input
+                          type="number"
+                          step="0.01"
+                          value={formData.regularPrice}
+                          onChange={(e) => handleInputChange('regularPrice', e.target.value)}
+                          placeholder="49.00"
+                          className="w-full pl-8 pr-4 py-2 bg-gray-50 dark:bg-gray-700 border border-gray-200 dark:border-gray-600 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 dark:text-white"
+                          required
+                        />
+                      </div>
+                      <p className="text-xs text-gray-500 mt-1 flex items-center gap-1">
+                        <Info size={12} />
+                        For single end product (not for resale)
+                      </p>
+                    </div>
 
-                <div>
-                  <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
-                    Short Description *
-                  </label>
-                  <textarea
-                    value={formData.shortDescription}
-                    onChange={(e) => handleInputChange('shortDescription', e.target.value)}
-                    placeholder="Brief description for search results (2-3 sentences)"
-                    rows={3}
-                    maxLength={250}
-                    className="w-full px-4 py-2 bg-gray-50 dark:bg-gray-700 border border-gray-200 dark:border-gray-600 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 dark:text-white"
-                    required
-                  />
-                  <p className="text-sm text-gray-500 mt-1">{characterCount}/250 characters</p>
-                </div>
+                    <div>
+                      <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
+                        Extended License Price *
+                      </label>
+                      <div className="relative">
+                        <span className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-500">$</span>
+                        <input
+                          type="number"
+                          step="0.01"
+                          value={formData.extendedPrice}
+                          onChange={(e) => handleInputChange('extendedPrice', e.target.value)}
+                          placeholder="199.00"
+                          className="w-full pl-8 pr-4 py-2 bg-gray-50 dark:bg-gray-700 border border-gray-200 dark:border-gray-600 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 dark:text-white"
+                          required
+                        />
+                      </div>
+                      <p className="text-xs text-gray-500 mt-1 flex items-center gap-1">
+                        <Info size={12} />
+                        For end products offered for sale
+                      </p>
+                    </div>
+                  </div>
 
-                <div>
-                  <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
-                    Full Description *
-                  </label>
-                  <textarea
-                    value={formData.fullDescription}
-                    onChange={(e) => handleInputChange('fullDescription', e.target.value)}
-                    placeholder="Detailed product description..."
-                    rows={8}
-                    className="w-full px-4 py-2 bg-gray-50 dark:bg-gray-700 border border-gray-200 dark:border-gray-600 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 dark:text-white"
-                    required
-                  />
+                  <div className="border-t border-gray-200 dark:border-gray-700 pt-4">
+                    <label className="flex items-center gap-2">
+                      <input
+                        type="checkbox"
+                        checked={formData.enablePromo}
+                        onChange={(e) => handleInputChange('enablePromo', e.target.checked)}
+                        className="rounded border-gray-300 dark:border-gray-600"
+                      />
+                      <span className="text-sm font-medium text-gray-700 dark:text-gray-300">
+                        Enable Promotional Pricing
+                      </span>
+                    </label>
+
+                    {formData.enablePromo && (
+                      <div className="mt-4 space-y-4 pl-6">
+                        <div>
+                          <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
+                            Sale Price
+                          </label>
+                          <div className="relative">
+                            <span className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-500">$</span>
+                            <input
+                              type="number"
+                              step="0.01"
+                              value={formData.salePrice}
+                              onChange={(e) => handleInputChange('salePrice', e.target.value)}
+                              placeholder="29.00"
+                              className="w-full pl-8 pr-4 py-2 bg-gray-50 dark:bg-gray-700 border border-gray-200 dark:border-gray-600 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 dark:text-white"
+                            />
+                          </div>
+                        </div>
+
+                        <div className="grid grid-cols-2 gap-4">
+                          <div>
+                            <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
+                              Start Date
+                            </label>
+                            <input
+                              type="date"
+                              value={formData.promoStartDate}
+                              onChange={(e) => handleInputChange('promoStartDate', e.target.value)}
+                              className="w-full px-4 py-2 bg-gray-50 dark:bg-gray-700 border border-gray-200 dark:border-gray-600 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 dark:text-white"
+                            />
+                          </div>
+                          <div>
+                            <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
+                              End Date
+                            </label>
+                            <input
+                              type="date"
+                              value={formData.promoEndDate}
+                              onChange={(e) => handleInputChange('promoEndDate', e.target.value)}
+                              className="w-full px-4 py-2 bg-gray-50 dark:bg-gray-700 border border-gray-200 dark:border-gray-600 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 dark:text-white"
+                            />
+                          </div>
+                        </div>
+                      </div>
+                    )}
+                  </div>
                 </div>
               </div>
+
+              {/* Product Features */}
+              <div className="bg-white dark:bg-gray-800 rounded-lg shadow-sm">
+                <div className="p-6 border-b border-gray-200 dark:border-gray-700">
+                  <h2 className="text-lg font-semibold text-gray-900 dark:text-white">
+                    ✨ Product Features
+                  </h2>
+                </div>
+                <div className="p-6 space-y-3">
+                  {formData.features.map((feature, index) => (
+                    <div key={index} className="flex items-center gap-3">
+                      <span className="text-gray-500 dark:text-gray-400">{index + 1}.</span>
+                      <Check className="w-5 h-5 text-green-500" />
+                      <input
+                        type="text"
+                        value={feature}
+                        onChange={(e) => {
+                          const newFeatures = [...formData.features];
+                          newFeatures[index] = e.target.value;
+                          setFormData(prev => ({ ...prev, features: newFeatures }));
+                        }}
+                        className="flex-1 px-3 py-2 bg-gray-50 dark:bg-gray-700 border border-gray-200 dark:border-gray-600 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 dark:text-white"
+                      />
+                      <button
+                        type="button"
+                        onClick={() => handleRemoveFeature(index)}
+                        className="p-2 text-red-500 hover:bg-red-50 dark:hover:bg-red-900/20 rounded-lg transition-colors"
+                      >
+                        <X size={16} />
+                      </button>
+                    </div>
+                  ))}
+                  <button
+                    type="button"
+                    onClick={handleAddFeature}
+                    className="inline-flex items-center gap-2 px-4 py-2 bg-blue-600 hover:bg-blue-700 text-white rounded-lg transition-colors"
+                  >
+                    <Plus size={16} />
+                    Add Another Feature
+                  </button>
+                </div>
+              </div>
+
+              {/* Product Images */}
+              <div className="bg-white dark:bg-gray-800 rounded-lg shadow-sm">
+                <div className="p-6 border-b border-gray-200 dark:border-gray-700">
+                  <h2 className="text-lg font-semibold text-gray-900 dark:text-white flex items-center gap-2">
+                    <ImageIcon size={20} />
+                    Product Images
+                  </h2>
+                </div>
+                <div className="p-6 space-y-6">
+                  <div>
+                    <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
+                      Featured Image *
+                    </label>
+                    <div className="border-2 border-dashed border-gray-300 dark:border-gray-600 rounded-lg p-6 text-center hover:border-blue-500 transition-colors">
+                      <ImageIcon className="mx-auto h-12 w-12 text-gray-400 mb-3" />
+                      <p className="text-sm text-gray-600 dark:text-gray-400 mb-2">
+                        Upload Area - 1200×800px recommended
+                      </p>
+                      <label className="inline-block px-4 py-2 bg-blue-600 hover:bg-blue-700 text-white rounded-lg cursor-pointer transition-colors">
+                        Choose Image
+                        <input type="file" className="hidden" accept="image/*" />
+                      </label>
+                    </div>
+                  </div>
+
+                  <div>
+                    <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
+                      Gallery Images (Max 10)
+                    </label>
+                    <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
+                      <label className="border-2 border-dashed border-gray-300 dark:border-gray-600 rounded-lg p-4 flex flex-col items-center justify-center cursor-pointer hover:border-blue-500 transition-colors h-32">
+                        <Plus className="h-8 w-8 text-gray-400 mb-2" />
+                        <span className="text-xs text-gray-500">Upload Images</span>
+                        <input type="file" className="hidden" accept="image/*" multiple />
+                      </label>
+                    </div>
+                  </div>
+                </div>
+              </div>
+
+              {/* Product Files Section */}
+              <ProductFilesSection
+                formData={formData}
+                onFileChange={handleFileChange}
+              />
+
+              {/* Technical Specifications */}
+              <TechnicalSpecsSection
+                formData={formData}
+                techStackOptions={['React', 'Vue', 'Angular', 'TypeScript', 'JavaScript', 'Tailwind CSS', 'Bootstrap', 'Material-UI', 'Node.js', 'Express']}
+                compatibilityOptions={['Chrome', 'Firefox', 'Safari', 'Edge', 'Windows', 'macOS', 'Linux', 'iOS', 'Android']}
+                onToggleTech={handleTechStackToggle}
+                onToggleCompat={handleCompatibilityToggle}
+                onInputChange={handleInputChange}
+              />
+
+              {/* Demo & Preview */}
+              <DemoPreviewSection
+                formData={formData}
+                onInputChange={handleInputChange}
+              />
+
+              {/* License Terms */}
+              <LicenseTermsSection
+                formData={formData}
+                onInputChange={handleInputChange}
+              />
             </div>
 
-            {/* Pricing */}
-            <div className="bg-white dark:bg-gray-800 rounded-lg shadow-sm">
-              <div className="p-6 border-b border-gray-200 dark:border-gray-700">
-                <h2 className="text-lg font-semibold text-gray-900 dark:text-white flex items-center gap-2">
-                  <DollarSign size={20} />
-                  Pricing
-                </h2>
-              </div>
-              <div className="p-6 space-y-4">
-                <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                  <div>
-                    <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
-                      Regular License Price *
-                    </label>
-                    <div className="relative">
-                      <span className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-500">$</span>
-                      <input
-                        type="number"
-                        step="0.01"
-                        value={formData.regularPrice}
-                        onChange={(e) => handleInputChange('regularPrice', e.target.value)}
-                        placeholder="49.00"
-                        className="w-full pl-8 pr-4 py-2 bg-gray-50 dark:bg-gray-700 border border-gray-200 dark:border-gray-600 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 dark:text-white"
-                        required
-                      />
-                    </div>
-                    <p className="text-xs text-gray-500 mt-1 flex items-center gap-1">
-                      <Info size={12} />
-                      For single end product (not for resale)
-                    </p>
-                  </div>
+            {/* Sidebar - Right Column */}
+            <div className="lg:col-span-1 space-y-6">
 
-                  <div>
-                    <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
-                      Extended License Price *
-                    </label>
-                    <div className="relative">
-                      <span className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-500">$</span>
-                      <input
-                        type="number"
-                        step="0.01"
-                        value={formData.extendedPrice}
-                        onChange={(e) => handleInputChange('extendedPrice', e.target.value)}
-                        placeholder="199.00"
-                        className="w-full pl-8 pr-4 py-2 bg-gray-50 dark:bg-gray-700 border border-gray-200 dark:border-gray-600 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 dark:text-white"
-                        required
-                      />
-                    </div>
-                    <p className="text-xs text-gray-500 mt-1 flex items-center gap-1">
-                      <Info size={12} />
-                      For end products offered for sale
-                    </p>
-                  </div>
+              {/* Publish Box */}
+              <div className="bg-white dark:bg-gray-800 rounded-lg shadow-sm">
+                <div className="p-6 border-b border-gray-200 dark:border-gray-700">
+                  <h2 className="text-lg font-semibold text-gray-900 dark:text-white">
+                    📤 Publish
+                  </h2>
                 </div>
+                <div className="p-6 space-y-4">
+                  <div>
+                    <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
+                      Status
+                    </label>
+                    <select
+                      value={formData.status}
+                      onChange={(e) => handleInputChange('status', e.target.value)}
+                      className="w-full px-4 py-2 bg-gray-50 dark:bg-gray-700 border border-gray-200 dark:border-gray-600 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 dark:text-white"
+                    >
+                      <option value="draft">Draft</option>
+                      <option value="published">Published</option>
+                      <option value="scheduled">Scheduled</option>
+                    </select>
+                  </div>
 
-                <div className="border-t border-gray-200 dark:border-gray-700 pt-4">
                   <label className="flex items-center gap-2">
                     <input
                       type="checkbox"
-                      checked={formData.enablePromo}
-                      onChange={(e) => handleInputChange('enablePromo', e.target.checked)}
+                      checked={formData.featured}
+                      onChange={(e) => handleInputChange('featured', e.target.checked)}
                       className="rounded border-gray-300 dark:border-gray-600"
                     />
-                    <span className="text-sm font-medium text-gray-700 dark:text-gray-300">
-                      Enable Promotional Pricing
+                    <span className="text-sm text-gray-700 dark:text-gray-300">
+                      Mark as Featured Product
                     </span>
                   </label>
 
-                  {formData.enablePromo && (
-                    <div className="mt-4 space-y-4 pl-6">
-                      <div>
-                        <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
-                          Sale Price
-                        </label>
-                        <div className="relative">
-                          <span className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-500">$</span>
-                          <input
-                            type="number"
-                            step="0.01"
-                            value={formData.salePrice}
-                            onChange={(e) => handleInputChange('salePrice', e.target.value)}
-                            placeholder="29.00"
-                            className="w-full pl-8 pr-4 py-2 bg-gray-50 dark:bg-gray-700 border border-gray-200 dark:border-gray-600 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 dark:text-white"
-                          />
-                        </div>
-                      </div>
-
-                      <div className="grid grid-cols-2 gap-4">
-                        <div>
-                          <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
-                            Start Date
-                          </label>
-                          <input
-                            type="date"
-                            value={formData.promoStartDate}
-                            onChange={(e) => handleInputChange('promoStartDate', e.target.value)}
-                            className="w-full px-4 py-2 bg-gray-50 dark:bg-gray-700 border border-gray-200 dark:border-gray-600 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 dark:text-white"
-                          />
-                        </div>
-                        <div>
-                          <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
-                            End Date
-                          </label>
-                          <input
-                            type="date"
-                            value={formData.promoEndDate}
-                            onChange={(e) => handleInputChange('promoEndDate', e.target.value)}
-                            className="w-full px-4 py-2 bg-gray-50 dark:bg-gray-700 border border-gray-200 dark:border-gray-600 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 dark:text-white"
-                          />
-                        </div>
-                      </div>
-                    </div>
-                  )}
-                </div>
-              </div>
-            </div>
-
-            {/* Product Features */}
-            <div className="bg-white dark:bg-gray-800 rounded-lg shadow-sm">
-              <div className="p-6 border-b border-gray-200 dark:border-gray-700">
-                <h2 className="text-lg font-semibold text-gray-900 dark:text-white">
-                  ✨ Product Features
-                </h2>
-              </div>
-              <div className="p-6 space-y-3">
-                {formData.features.map((feature, index) => (
-                  <div key={index} className="flex items-center gap-3">
-                    <span className="text-gray-500 dark:text-gray-400">{index + 1}.</span>
-                    <Check className="w-5 h-5 text-green-500" />
-                    <input
-                      type="text"
-                      value={feature}
-                      onChange={(e) => {
-                        const newFeatures = [...formData.features];
-                        newFeatures[index] = e.target.value;
-                        setFormData(prev => ({ ...prev, features: newFeatures }));
-                      }}
-                      className="flex-1 px-3 py-2 bg-gray-50 dark:bg-gray-700 border border-gray-200 dark:border-gray-600 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 dark:text-white"
-                    />
+                  <div className="space-y-2 pt-4 border-t border-gray-200 dark:border-gray-700">
                     <button
                       type="button"
-                      onClick={() => handleRemoveFeature(index)}
-                      className="p-2 text-red-500 hover:bg-red-50 dark:hover:bg-red-900/20 rounded-lg transition-colors"
+                      onClick={handleSaveDraft}
+                      className="w-full px-4 py-2 bg-gray-600 hover:bg-gray-700 text-white rounded-lg transition-colors"
                     >
-                      <X size={16} />
+                      Save Draft
+                    </button>
+                    <button
+                      type="button"
+                      className="w-full px-4 py-2 bg-blue-100 hover:bg-blue-200 text-blue-700 rounded-lg transition-colors"
+                    >
+                      <Eye className="inline w-4 h-4 mr-2" />
+                      Preview
+                    </button>
+                    <button
+                      type="submit"
+                      disabled={loading}
+                      className="w-full px-4 py-2 bg-blue-600 hover:bg-blue-700 text-white rounded-lg transition-colors disabled:opacity-50"
+                    >
+                      {loading ? 'Publishing...' : 'Publish'}
                     </button>
                   </div>
-                ))}
-                <button
-                  type="button"
-                  onClick={handleAddFeature}
-                  className="inline-flex items-center gap-2 px-4 py-2 bg-blue-600 hover:bg-blue-700 text-white rounded-lg transition-colors"
-                >
-                  <Plus size={16} />
-                  Add Another Feature
-                </button>
+                </div>
               </div>
-            </div>
 
-            {/* Product Images */}
-            <div className="bg-white dark:bg-gray-800 rounded-lg shadow-sm">
-              <div className="p-6 border-b border-gray-200 dark:border-gray-700">
-                <h2 className="text-lg font-semibold text-gray-900 dark:text-white flex items-center gap-2">
-                  <ImageIcon size={20} />
-                  Product Images
-                </h2>
-              </div>
-              <div className="p-6 space-y-6">
-                <div>
-                  <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
-                    Featured Image *
-                  </label>
-                  <div className="border-2 border-dashed border-gray-300 dark:border-gray-600 rounded-lg p-6 text-center hover:border-blue-500 transition-colors">
-                    <ImageIcon className="mx-auto h-12 w-12 text-gray-400 mb-3" />
-                    <p className="text-sm text-gray-600 dark:text-gray-400 mb-2">
-                      Upload Area - 1200×800px recommended
-                    </p>
-                    <label className="inline-block px-4 py-2 bg-blue-600 hover:bg-blue-700 text-white rounded-lg cursor-pointer transition-colors">
-                      Choose Image
-                      <input type="file" className="hidden" accept="image/*" />
+              {/* Categories */}
+              <div className="bg-white dark:bg-gray-800 rounded-xl shadow-sm border border-gray-200 dark:border-gray-700">
+                <div className="p-6 border-b border-gray-200 dark:border-gray-700">
+                  <h2 className="text-lg font-semibold text-gray-900 dark:text-white flex items-center gap-2">
+                    <span className="text-blue-500">🏷️</span>
+                    Categories
+                  </h2>
+                </div>
+                <div className="p-6 space-y-3">
+                  {categories.map(category => (
+                    <label key={category} className="flex items-center gap-3 p-3 rounded-lg hover:bg-gray-50 dark:hover:bg-gray-700 transition-colors">
+                      <input
+                        type="checkbox"
+                        checked={formData.categories.includes(category)}
+                        onChange={() => handleCategoryToggle(category)}
+                        className="rounded border-gray-300 dark:border-gray-600 text-blue-600 focus:ring-blue-500"
+                      />
+                      <span className="text-gray-700 dark:text-gray-300">{category}</span>
                     </label>
-                  </div>
-                </div>
-
-                <div>
-                  <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
-                    Gallery Images (Max 10)
-                  </label>
-                  <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
-                    <label className="border-2 border-dashed border-gray-300 dark:border-gray-600 rounded-lg p-4 flex flex-col items-center justify-center cursor-pointer hover:border-blue-500 transition-colors h-32">
-                      <Plus className="h-8 w-8 text-gray-400 mb-2" />
-                      <span className="text-xs text-gray-500">Upload Images</span>
-                      <input type="file" className="hidden" accept="image/*" multiple />
-                    </label>
-                  </div>
-                </div>
-              </div>
-            </div>
-
-            {/* Product Files Section */}
-            <ProductFilesSection 
-              formData={formData}
-              onFileChange={handleFileChange}
-            />
-
-            {/* Technical Specifications */}
-            <TechnicalSpecsSection
-              formData={formData}
-              techStackOptions={['React', 'Vue', 'Angular', 'TypeScript', 'JavaScript', 'Tailwind CSS', 'Bootstrap', 'Material-UI', 'Node.js', 'Express']}
-              compatibilityOptions={['Chrome', 'Firefox', 'Safari', 'Edge', 'Windows', 'macOS', 'Linux', 'iOS', 'Android']}
-              onToggleTech={handleTechStackToggle}
-              onToggleCompat={handleCompatibilityToggle}
-              onInputChange={handleInputChange}
-            />
-
-            {/* Demo & Preview */}
-            <DemoPreviewSection
-              formData={formData}
-              onInputChange={handleInputChange}
-            />
-
-            {/* License Terms */}
-            <LicenseTermsSection
-              formData={formData}
-              onInputChange={handleInputChange}
-            />
-          </div>
-
-          {/* Sidebar - Right Column */}
-          <div className="lg:col-span-1 space-y-6">
-            
-            {/* Publish Box */}
-            <div className="bg-white dark:bg-gray-800 rounded-lg shadow-sm">
-              <div className="p-6 border-b border-gray-200 dark:border-gray-700">
-                <h2 className="text-lg font-semibold text-gray-900 dark:text-white">
-                  📤 Publish
-                </h2>
-              </div>
-              <div className="p-6 space-y-4">
-                <div>
-                  <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
-                    Status
-                  </label>
-                  <select
-                    value={formData.status}
-                    onChange={(e) => handleInputChange('status', e.target.value)}
-                    className="w-full px-4 py-2 bg-gray-50 dark:bg-gray-700 border border-gray-200 dark:border-gray-600 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 dark:text-white"
-                  >
-                    <option value="draft">Draft</option>
-                    <option value="published">Published</option>
-                    <option value="scheduled">Scheduled</option>
-                  </select>
-                </div>
-
-                <label className="flex items-center gap-2">
-                  <input
-                    type="checkbox"
-                    checked={formData.featured}
-                    onChange={(e) => handleInputChange('featured', e.target.checked)}
-                    className="rounded border-gray-300 dark:border-gray-600"
-                  />
-                  <span className="text-sm text-gray-700 dark:text-gray-300">
-                    Mark as Featured Product
-                  </span>
-                </label>
-
-                <div className="space-y-2 pt-4 border-t border-gray-200 dark:border-gray-700">
-                  <button
-                    type="button"
-                    onClick={handleSaveDraft}
-                    className="w-full px-4 py-2 bg-gray-600 hover:bg-gray-700 text-white rounded-lg transition-colors"
-                  >
-                    Save Draft
-                  </button>
-                  <button
-                    type="button"
-                    className="w-full px-4 py-2 bg-blue-100 hover:bg-blue-200 text-blue-700 rounded-lg transition-colors"
-                  >
-                    <Eye className="inline w-4 h-4 mr-2" />
-                    Preview
-                  </button>
-                  <button
-                    type="submit"
-                    disabled={loading}
-                    className="w-full px-4 py-2 bg-blue-600 hover:bg-blue-700 text-white rounded-lg transition-colors disabled:opacity-50"
-                  >
-                    {loading ? 'Publishing...' : 'Publish'}
-                  </button>
-                </div>
-              </div>
-            </div>
-
-            {/* Categories */}
-            <div className="bg-white dark:bg-gray-800 rounded-xl shadow-sm border border-gray-200 dark:border-gray-700">
-              <div className="p-6 border-b border-gray-200 dark:border-gray-700">
-                <h2 className="text-lg font-semibold text-gray-900 dark:text-white flex items-center gap-2">
-                  <span className="text-blue-500">🏷️</span>
-                  Categories
-                </h2>
-              </div>
-              <div className="p-6 space-y-3">
-                {categories.map(category => (
-                  <label key={category} className="flex items-center gap-3 p-3 rounded-lg hover:bg-gray-50 dark:hover:bg-gray-700 transition-colors">
-                    <input
-                      type="checkbox"
-                      checked={formData.categories.includes(category)}
-                      onChange={() => handleCategoryToggle(category)}
-                      className="rounded border-gray-300 dark:border-gray-600 text-blue-600 focus:ring-blue-500"
-                    />
-                    <span className="text-gray-700 dark:text-gray-300">{category}</span>
-                  </label>
-                ))}
-              </div>
-            </div>
-
-            {/* Tags */}
-            <div className="bg-white dark:bg-gray-800 rounded-xl shadow-sm border border-gray-200 dark:border-gray-700">
-              <div className="p-6 border-b border-gray-200 dark:border-gray-700">
-                <h2 className="text-lg font-semibold text-gray-900 dark:text-white flex items-center gap-2">
-                  <span className="text-green-500">🏷️</span>
-                  Tags
-                </h2>
-              </div>
-              <div className="p-6 space-y-4">
-                <div className="flex flex-wrap gap-2">
-                  {formData.tags.map(tag => (
-                    <span key={tag} className="inline-flex items-center gap-1 px-3 py-1 bg-blue-100 dark:bg-blue-900/30 text-blue-800 dark:text-blue-300 rounded-full text-sm">
-                      {tag}
-                      <button
-                        type="button"
-                        onClick={() => handleRemoveTag(tag)}
-                        className="hover:text-red-600 transition-colors"
-                      >
-                        <X size={14} />
-                      </button>
-                    </span>
                   ))}
                 </div>
-                <input
-                  type="text"
-                  placeholder="Add tag and press Enter"
-                  onKeyPress={(e) => {
-                    if (e.key === 'Enter' && e.target.value.trim()) {
-                      handleAddTag(e.target.value.trim());
-                      e.target.value = '';
-                    }
-                  }}
-                  className="w-full px-4 py-2 bg-gray-50 dark:bg-gray-700 border border-gray-200 dark:border-gray-600 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 dark:text-white"
-                />
               </div>
-            </div>
 
-            {/* Product Attributes */}
-            <div className="bg-white dark:bg-gray-800 rounded-xl shadow-sm border border-gray-200 dark:border-gray-700">
-              <div className="p-6 border-b border-gray-200 dark:border-gray-700">
-                <h2 className="text-lg font-semibold text-gray-900 dark:text-white flex items-center gap-2">
-                  <span className="text-purple-500">⭐</span>
-                  Product Attributes
-                </h2>
+              {/* Tags */}
+              <div className="bg-white dark:bg-gray-800 rounded-xl shadow-sm border border-gray-200 dark:border-gray-700">
+                <div className="p-6 border-b border-gray-200 dark:border-gray-700">
+                  <h2 className="text-lg font-semibold text-gray-900 dark:text-white flex items-center gap-2">
+                    <span className="text-green-500">🏷️</span>
+                    Tags
+                  </h2>
+                </div>
+                <div className="p-6 space-y-4">
+                  <div className="flex flex-wrap gap-2">
+                    {formData.tags.map(tag => (
+                      <span key={tag} className="inline-flex items-center gap-1 px-3 py-1 bg-blue-100 dark:bg-blue-900/30 text-blue-800 dark:text-blue-300 rounded-full text-sm">
+                        {tag}
+                        <button
+                          type="button"
+                          onClick={() => handleRemoveTag(tag)}
+                          className="hover:text-red-600 transition-colors"
+                        >
+                          <X size={14} />
+                        </button>
+                      </span>
+                    ))}
+                  </div>
+                  <input
+                    type="text"
+                    placeholder="Add tag and press Enter"
+                    onKeyPress={(e) => {
+                      if (e.key === 'Enter' && e.target.value.trim()) {
+                        handleAddTag(e.target.value.trim());
+                        e.target.value = '';
+                      }
+                    }}
+                    className="w-full px-4 py-2 bg-gray-50 dark:bg-gray-700 border border-gray-200 dark:border-gray-600 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 dark:text-white"
+                  />
+                </div>
               </div>
-              <div className="p-6 space-y-4">
-                {[
-                  { key: 'featured', label: 'Featured Product', desc: 'Show in featured section' },
-                  { key: 'newArrival', label: 'New Arrival', desc: 'Mark as new arrival' },
-                  { key: 'onSale', label: 'On Sale', desc: 'Show sale badge' },
-                  { key: 'trending', label: 'Trending', desc: 'Mark as trending' }
-                ].map(attr => (
-                  <label key={attr.key} className="flex items-start gap-3 p-3 rounded-lg hover:bg-gray-50 dark:hover:bg-gray-700 transition-colors">
-                    <input
-                      type="checkbox"
-                      checked={formData[attr.key]}
-                      onChange={() => handleAttributeToggle(attr.key)}
-                      className="mt-1 rounded border-gray-300 dark:border-gray-600 text-blue-600 focus:ring-blue-500"
-                    />
-                    <div>
-                      <div className="font-medium text-gray-900 dark:text-white">{attr.label}</div>
-                      <div className="text-sm text-gray-500 dark:text-gray-400">{attr.desc}</div>
-                    </div>
-                  </label>
-                ))}
+
+              {/* Product Attributes */}
+              <div className="bg-white dark:bg-gray-800 rounded-xl shadow-sm border border-gray-200 dark:border-gray-700">
+                <div className="p-6 border-b border-gray-200 dark:border-gray-700">
+                  <h2 className="text-lg font-semibold text-gray-900 dark:text-white flex items-center gap-2">
+                    <span className="text-purple-500">⭐</span>
+                    Product Attributes
+                  </h2>
+                </div>
+                <div className="p-6 space-y-4">
+                  {[
+                    { key: 'featured', label: 'Featured Product', desc: 'Show in featured section' },
+                    { key: 'newArrival', label: 'New Arrival', desc: 'Mark as new arrival' },
+                    { key: 'onSale', label: 'On Sale', desc: 'Show sale badge' },
+                    { key: 'trending', label: 'Trending', desc: 'Mark as trending' }
+                  ].map(attr => (
+                    <label key={attr.key} className="flex items-start gap-3 p-3 rounded-lg hover:bg-gray-50 dark:hover:bg-gray-700 transition-colors">
+                      <input
+                        type="checkbox"
+                        checked={formData[attr.key]}
+                        onChange={() => handleAttributeToggle(attr.key)}
+                        className="mt-1 rounded border-gray-300 dark:border-gray-600 text-blue-600 focus:ring-blue-500"
+                      />
+                      <div>
+                        <div className="font-medium text-gray-900 dark:text-white">{attr.label}</div>
+                        <div className="text-sm text-gray-500 dark:text-gray-400">{attr.desc}</div>
+                      </div>
+                    </label>
+                  ))}
+                </div>
               </div>
-            </div>
 
-            {/* Download Settings */}
-            <DownloadSettingsSection
-              formData={formData}
-              onInputChange={handleInputChange}
-            />
-
-            {/* SEO Settings */}
-            <SEOSettingsSection
-              formData={formData}
-              onInputChange={handleInputChange}
-            />
-
-            {/* Product Statistics (Edit Mode Only) */}
-            {isEditing && productStats && (
-              <ProductStatisticsSection
-                stats={{
-                  sales: productStats.sales || 0,
-                  revenue: productStats.revenue || 0,
-                  views: productStats.views || 0,
-                  favorites: productStats.favorites || 0,
-                  rating: productStats.rating || 0,
-                  reviews: productStats.reviews || 0
-                }}
+              {/* Download Settings */}
+              <DownloadSettingsSection
+                formData={formData}
+                onInputChange={handleInputChange}
               />
-            )}
 
-            {/* Quick Tips */}
-            <div className="bg-blue-50 dark:bg-blue-900/20 rounded-lg p-4">
-              <h3 className="font-medium text-blue-900 dark:text-blue-300 mb-2">Quick Tips</h3>
-              <ul className="text-sm text-blue-700 dark:text-blue-400 space-y-1">
-                <li>• Use high-quality images (1200×800px)</li>
-                <li>• Write clear, descriptive titles</li>
-                <li>• Set competitive pricing</li>
-                <li>• Add detailed product features</li>
-              </ul>
+              {/* SEO Settings */}
+              <SEOSettingsSection
+                formData={formData}
+                onInputChange={handleInputChange}
+              />
+
+              {/* Product Statistics (Edit Mode Only) */}
+              {isEditing && productStats && (
+                <ProductStatisticsSection
+                  stats={{
+                    sales: productStats.sales || 0,
+                    revenue: productStats.revenue || 0,
+                    views: productStats.views || 0,
+                    favorites: productStats.favorites || 0,
+                    rating: productStats.rating || 0,
+                    reviews: productStats.reviews || 0
+                  }}
+                />
+              )}
+
+              {/* Quick Tips */}
+              <div className="bg-blue-50 dark:bg-blue-900/20 rounded-lg p-4">
+                <h3 className="font-medium text-blue-900 dark:text-blue-300 mb-2">Quick Tips</h3>
+                <ul className="text-sm text-blue-700 dark:text-blue-400 space-y-1">
+                  <li>• Use high-quality images (1200×800px)</li>
+                  <li>• Write clear, descriptive titles</li>
+                  <li>• Set competitive pricing</li>
+                  <li>• Add detailed product features</li>
+                </ul>
+              </div>
             </div>
           </div>
-        </div>
-      </form>
+        </form>
       </div>
     </div>
   );

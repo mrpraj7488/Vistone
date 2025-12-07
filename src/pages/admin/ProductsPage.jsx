@@ -18,7 +18,7 @@ import {
   BarChart3
 } from 'lucide-react';
 import { toast } from '../../utils/notifications';
-import { api } from '../../lib/api';
+import { supabase } from '../../lib/supabase';
 
 const ProductsPage = () => {
   const [products, setProducts] = useState([]);
@@ -66,10 +66,15 @@ const ProductsPage = () => {
   const fetchProducts = async () => {
     setLoading(true);
     try {
-      const res = await api.getProducts({ limit: 100, sort: 'created_at', order: 'desc' });
-      const data = res?.products || [];
+      const { data, error } = await supabase
+        .from('products')
+        .select('*')
+        .order('created_at', { ascending: false })
+        .limit(100);
 
-      const transformedProducts = data.map(product => ({
+      if (error) throw error;
+
+      const transformedProducts = (data || []).map(product => ({
         id: product.id,
         name: product.name,
         slug: product.slug,
@@ -79,9 +84,9 @@ const ProductsPage = () => {
         salesCount: product.sales_count || 0,
         regularPrice: product.regular_price,
         extendedPrice: product.extended_price,
-        status: 'active',
+        status: product.status || 'active',
         featured: product.is_featured || false,
-        category: product.category_name || 'Uncategorized',
+        category: product.category || 'Uncategorized',
         publishDate: product.created_at,
         lastUpdated: product.updated_at || product.created_at,
         views: product.views_count || 0
@@ -669,8 +674,8 @@ const ProductsPage = () => {
                     <td className="px-6 py-5">
                       <div className="flex flex-col gap-2">
                         <span className={`inline-flex items-center px-3 py-1.5 text-xs font-semibold rounded-full border ${product.status === 'active'
-                            ? 'bg-green-50 text-green-700 border-green-200 dark:bg-green-900/20 dark:text-green-400 dark:border-green-700'
-                            : 'bg-gray-50 text-gray-600 border-gray-200 dark:bg-gray-700 dark:text-gray-300 dark:border-gray-600'
+                          ? 'bg-green-50 text-green-700 border-green-200 dark:bg-green-900/20 dark:text-green-400 dark:border-green-700'
+                          : 'bg-gray-50 text-gray-600 border-gray-200 dark:bg-gray-700 dark:text-gray-300 dark:border-gray-600'
                           }`}>
                           <div className={`w-1.5 h-1.5 rounded-full mr-2 ${product.status === 'active' ? 'bg-green-500' : 'bg-gray-400'
                             }`}></div>
@@ -743,8 +748,8 @@ const ProductsPage = () => {
                       key={i + 1}
                       onClick={() => setCurrentPage(i + 1)}
                       className={`px-3 py-1 text-sm border rounded ${currentPage === i + 1
-                          ? 'bg-blue-600 text-white border-blue-600'
-                          : 'border-gray-300 dark:border-gray-600 hover:bg-gray-50 dark:hover:bg-gray-700'
+                        ? 'bg-blue-600 text-white border-blue-600'
+                        : 'border-gray-300 dark:border-gray-600 hover:bg-gray-50 dark:hover:bg-gray-700'
                         }`}
                     >
                       {i + 1}
