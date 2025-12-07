@@ -310,45 +310,38 @@ const ProductFormFixed = () => {
     setLoading(true);
 
     try {
-      // Match exact database schema columns
+      // Generate a unique slug
+      const baseSlug = formData.slug || formData.name.toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/^-|-$/g, '');
+      const uniqueSlug = `${baseSlug}-${Date.now()}`;
+
+      // Start with only the REQUIRED columns from your schema
       const productData = {
         name: formData.name,
-        slug: formData.slug || formData.name.toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/^-|-$/g, ''),
-        description: formData.fullDescription || '',
-        short_description: formData.shortDescription || '',
-        regular_price: parseFloat(formData.regularPrice) || 0,
-        extended_price: parseFloat(formData.extendedPrice) || null,
-        status: formData.status || 'draft',
-        visibility: formData.visibility || 'public',
-        is_featured: formData.featured || false,
-        is_digital: true
+        slug: uniqueSlug,
+        regular_price: parseFloat(formData.regularPrice) || 0
       };
 
-      // Optional fields - only add if they have values
-      if (formData.salePrice) productData.sale_price = parseFloat(formData.salePrice);
-      if (formData.promoStartDate) productData.sale_start_date = formData.promoStartDate;
-      if (formData.promoEndDate) productData.sale_end_date = formData.promoEndDate;
-      if (formData.version) productData.version = formData.version;
-      if (formData.fileSize) productData.file_size = formData.fileSize;
-      if (formData.livePreviewUrl) productData.demo_url = formData.livePreviewUrl;
-      if (formData.previewUrl) productData.preview_url = formData.previewUrl;
-      if (formData.videoPreviewUrl) productData.preview_url = formData.videoPreviewUrl;
-      if (formData.compatibility) productData.compatibility = Array.isArray(formData.compatibility) ? formData.compatibility.join(', ') : formData.compatibility;
-      if (formData.requirements) productData.requirements = formData.requirements;
-      if (formData.documentationUrl) productData.documentation_url = formData.documentationUrl;
-      if (formData.seoTitle) productData.seo_title = formData.seoTitle;
-      if (formData.seoDescription) productData.seo_description = formData.seoDescription;
-      if (formData.focusKeyword) productData.seo_keywords = formData.focusKeyword;
+      // Add optional text fields one by one
+      if (formData.shortDescription) {
+        productData.short_description = formData.shortDescription;
+      }
+      if (formData.fullDescription) {
+        productData.description = formData.fullDescription;
+      }
+      if (formData.status) {
+        productData.status = formData.status;
+      }
+      if (formData.extendedPrice) {
+        productData.extended_price = parseFloat(formData.extendedPrice);
+      }
 
-      // JSONB fields
-      if (formData.features?.length) productData.features = formData.features;
-      if (formData.galleryImages?.length) productData.gallery_images = formData.galleryImages;
-      if (formData.featuredImage) productData.featured_image = formData.featuredImage;
+      // Boolean fields
+      productData.is_featured = formData.featured === true;
+      productData.is_digital = true;
 
-      console.log('📦 Submitting product data:', productData);
+      console.log('📦 Submitting product data:', JSON.stringify(productData, null, 2));
 
       if (isEditing) {
-        // Update existing product
         const { data, error } = await supabase
           .from('products')
           .update(productData)
@@ -356,20 +349,19 @@ const ProductFormFixed = () => {
           .select();
 
         if (error) {
-          console.error('❌ Update error:', error);
+          console.error('❌ Update error:', JSON.stringify(error, null, 2));
           throw error;
         }
         console.log('✅ Product updated:', data);
         toast.success('Product updated successfully!');
       } else {
-        // Create new product
         const { data, error } = await supabase
           .from('products')
           .insert([productData])
           .select();
 
         if (error) {
-          console.error('❌ Insert error:', error);
+          console.error('❌ Insert error:', JSON.stringify(error, null, 2));
           throw error;
         }
         console.log('✅ Product created:', data);
@@ -377,11 +369,10 @@ const ProductFormFixed = () => {
       }
       navigate('/admin/products');
     } catch (error) {
-      console.error('Error saving product:', error);
-      // Show detailed error message
-      const errorMsg = error.details || error.message || 'Unknown error';
+      console.error('Full error object:', error);
+      const errorMsg = error.details || error.message || error.code || 'Unknown error';
       const errorHint = error.hint || '';
-      toast.error(`Failed to save product: ${errorMsg}${errorHint ? ` (${errorHint})` : ''}`);
+      toast.error(`Failed: ${errorMsg}${errorHint ? ` - ${errorHint}` : ''}`);
     } finally {
       setLoading(false);
     }
