@@ -44,7 +44,7 @@ import websocketService from '../../services/websocket';
 import notificationService from '../../services/notificationService';
 
 const AdminLayout = () => {
-  const [sidebarCollapsed, setSidebarCollapsed] = useState(() => 
+  const [sidebarCollapsed, setSidebarCollapsed] = useState(() =>
     localStorage.getItem('sidebarCollapsed') === 'true'
   );
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
@@ -63,7 +63,7 @@ const AdminLayout = () => {
   const [showNotificationSettings, setShowNotificationSettings] = useState(false);
   const [showRolePermissions, setShowRolePermissions] = useState(false);
   const [unreadCount, setUnreadCount] = useState(0);
-  
+
   // Refs for click outside handling
   const searchRef = useRef(null);
   const notificationRef = useRef(null);
@@ -90,7 +90,7 @@ const AdminLayout = () => {
     else if (notification.type === 'support') notificationType = 'SUPPORT_TICKET';
     else if (notification.type === 'review') notificationType = 'REVIEW';
     else if (notification.type === 'user') notificationType = 'USER_REGISTRATION';
-    
+
     notificationService.addNotification(notificationType, notification);
   }, []);
 
@@ -107,7 +107,7 @@ const AdminLayout = () => {
   useEffect(() => {
     // Connect to WebSocket for real-time updates (gracefully handles server absence)
     websocketService.connect();
-    
+
     // Sound notification service will be initialized on first user interaction
     // No need to preload here to avoid AudioContext warnings
 
@@ -141,6 +141,62 @@ const AdminLayout = () => {
     };
   }, [handleNotification, handleOrderUpdate]);
 
+  // Session Expiry Monitoring - Check every minute and on user activity
+  useEffect(() => {
+    const SESSION_TIMEOUT = 2 * 60 * 60 * 1000; // 2 hours in milliseconds
+
+    const checkSessionExpiry = () => {
+      const sessionExpiry = localStorage.getItem('adminSessionExpiry');
+      const lastActivity = localStorage.getItem('adminLastActivity');
+      const now = Date.now();
+
+      // Check if session has expired based on stored expiry time
+      if (sessionExpiry && now > parseInt(sessionExpiry)) {
+        console.log('⏰ Session expired (exceeded 2 hours)');
+        toast.warning('Session expired. Please login again.');
+        handleLogout();
+        return;
+      }
+
+      // Check if inactive for more than 2 hours
+      if (lastActivity && (now - parseInt(lastActivity)) > SESSION_TIMEOUT) {
+        console.log('⏰ Session expired (inactive for 2 hours)');
+        toast.warning('Session expired due to inactivity. Please login again.');
+        handleLogout();
+        return;
+      }
+    };
+
+    // Update last activity on user actions
+    const updateActivity = () => {
+      const now = Date.now();
+      localStorage.setItem('adminLastActivity', now.toString());
+
+      // Also extend expiry if user is active (sliding expiration)
+      const newExpiry = now + SESSION_TIMEOUT;
+      localStorage.setItem('adminSessionExpiry', newExpiry.toString());
+    };
+
+    // Check session every minute
+    const intervalId = setInterval(checkSessionExpiry, 60000);
+
+    // Check immediately on mount
+    checkSessionExpiry();
+
+    // Update activity on user interactions
+    const events = ['mousedown', 'keydown', 'scroll', 'touchstart'];
+    events.forEach(event => {
+      document.addEventListener(event, updateActivity, { passive: true });
+    });
+
+    return () => {
+      clearInterval(intervalId);
+      events.forEach(event => {
+        document.removeEventListener(event, updateActivity);
+      });
+    };
+  }, []);
+
 
   // Click outside handlers
   useEffect(() => {
@@ -172,18 +228,20 @@ const AdminLayout = () => {
 
   const handleLogout = async () => {
     try {
-      // Clear admin authentication
+      // Clear all admin authentication data
       localStorage.removeItem('adminAuthenticated');
       localStorage.removeItem('adminRole');
-      
+      localStorage.removeItem('adminSessionExpiry');
+      localStorage.removeItem('adminLastActivity');
+
       // Sign out from Supabase
       const { error } = await supabase.auth.signOut();
       if (error) throw error;
-      
+
       if (logout) {
         logout();
       }
-      
+
       // Redirect to admin login page
       navigate('/admin-1253223');
       toast.success('Logged out successfully');
@@ -244,7 +302,7 @@ const AdminLayout = () => {
             >
               {mobileMenuOpen ? <X size={24} /> : <Menu size={24} />}
             </button>
-            
+
             <Link to="/admin/dashboard" className="flex items-center gap-3 hover:opacity-80 transition-opacity">
               <div className="w-10 h-10 bg-gradient-to-br from-blue-500 via-purple-500 to-purple-600 rounded-lg flex items-center justify-center shadow-lg">
                 <span className="text-white font-bold text-xl">🎯</span>
@@ -282,9 +340,8 @@ const AdminLayout = () => {
             <div className="relative" ref={notificationRef}>
               <button
                 onClick={() => setNotificationDropdownOpen(!notificationDropdownOpen)}
-                className={`relative p-2 hover:bg-gray-100 dark:hover:bg-gray-700 rounded-lg transition-all ${
-                  notificationDropdownOpen ? 'bg-gray-100 dark:bg-gray-700' : ''
-                } ${unreadCount > 0 ? 'text-blue-600 dark:text-blue-400' : 'text-gray-600 dark:text-gray-400'}`}
+                className={`relative p-2 hover:bg-gray-100 dark:hover:bg-gray-700 rounded-lg transition-all ${notificationDropdownOpen ? 'bg-gray-100 dark:bg-gray-700' : ''
+                  } ${unreadCount > 0 ? 'text-blue-600 dark:text-blue-400' : 'text-gray-600 dark:text-gray-400'}`}
               >
                 <Bell size={20} className={unreadCount > 0 ? 'animate-pulse' : ''} />
                 {unreadCount > 0 && (
@@ -344,15 +401,15 @@ const AdminLayout = () => {
                     </div>
                   </div>
                   <div className="p-2">
-                    <Link 
-                      to="/admin/profile" 
+                    <Link
+                      to="/admin/profile"
                       className="flex items-center gap-3 px-3 py-2 text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-700 rounded transition-colors"
                       onClick={() => setProfileDropdownOpen(false)}
                     >
                       <Users size={16} /> My Profile
                     </Link>
-                    <Link 
-                      to="/admin/settings" 
+                    <Link
+                      to="/admin/settings"
                       className="flex items-center gap-3 px-3 py-2 text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-700 rounded transition-colors"
                       onClick={() => setProfileDropdownOpen(false)}
                     >
@@ -403,25 +460,23 @@ const AdminLayout = () => {
       </header>
 
       {/* Sidebar - 260px width, collapsible to 80px */}
-      <aside className={`fixed left-0 top-[70px] bottom-0 bg-white dark:bg-gray-800 border-r border-gray-200 dark:border-gray-700 transition-all duration-300 z-40 ${
-        sidebarCollapsed ? 'w-20' : 'w-[260px]'
-      } ${mobileMenuOpen ? 'translate-x-0' : '-translate-x-full lg:translate-x-0'}`}>
+      <aside className={`fixed left-0 top-[70px] bottom-0 bg-white dark:bg-gray-800 border-r border-gray-200 dark:border-gray-700 transition-all duration-300 z-40 ${sidebarCollapsed ? 'w-20' : 'w-[260px]'
+        } ${mobileMenuOpen ? 'translate-x-0' : '-translate-x-full lg:translate-x-0'}`}>
         <div className="flex flex-col h-full">
           {/* Navigation */}
           <nav className="flex-1 p-2 overflow-y-auto">
             {navigationItems.map((item) => {
               const Icon = item.icon;
               const isActive = location.pathname === item.path;
-              
+
               return (
                 <Link
                   key={item.path}
                   to={item.path}
-                  className={`flex items-center justify-between px-3 py-2.5 mb-1 rounded-lg transition-colors ${
-                    isActive
-                      ? 'bg-gradient-to-r from-blue-50 to-purple-50 dark:from-blue-900/20 dark:to-purple-900/20 text-blue-600 dark:text-blue-400 border-l-3 border-blue-600'
-                      : 'text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-700'
-                  }`}
+                  className={`flex items-center justify-between px-3 py-2.5 mb-1 rounded-lg transition-colors ${isActive
+                    ? 'bg-gradient-to-r from-blue-50 to-purple-50 dark:from-blue-900/20 dark:to-purple-900/20 text-blue-600 dark:text-blue-400 border-l-3 border-blue-600'
+                    : 'text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-700'
+                    }`}
                 >
                   <div className="flex items-center gap-3">
                     <Icon size={20} />
@@ -450,22 +505,21 @@ const AdminLayout = () => {
                   <ChevronDown size={16} className={`transition-transform ${otherMenuOpen ? 'rotate-180' : ''}`} />
                 )}
               </button>
-              
+
               {otherMenuOpen && !sidebarCollapsed && (
                 <div className="ml-4 mt-1">
                   {otherMenuItems.map((item) => {
                     const Icon = item.icon;
                     const isActive = location.pathname === item.path;
-                    
+
                     return (
                       <Link
                         key={item.path}
                         to={item.path}
-                        className={`flex items-center gap-3 px-3 py-2 rounded-lg transition-colors ${
-                          isActive
-                            ? 'bg-gray-100 dark:bg-gray-700 text-blue-600 dark:text-blue-400'
-                            : 'text-gray-600 dark:text-gray-400 hover:bg-gray-50 dark:hover:bg-gray-700/50'
-                        }`}
+                        className={`flex items-center gap-3 px-3 py-2 rounded-lg transition-colors ${isActive
+                          ? 'bg-gray-100 dark:bg-gray-700 text-blue-600 dark:text-blue-400'
+                          : 'text-gray-600 dark:text-gray-400 hover:bg-gray-50 dark:hover:bg-gray-700/50'
+                          }`}
                       >
                         <Icon size={18} />
                         <span className="text-sm">{item.label}</span>
@@ -479,11 +533,10 @@ const AdminLayout = () => {
             {/* Settings */}
             <Link
               to="/admin/settings"
-              className={`flex items-center gap-3 px-3 py-2.5 mt-2 rounded-lg transition-colors ${
-                location.pathname === '/admin/settings'
-                  ? 'bg-gradient-to-r from-blue-50 to-purple-50 dark:from-blue-900/20 dark:to-purple-900/20 text-blue-600 dark:text-blue-400'
-                  : 'text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-700'
-              }`}
+              className={`flex items-center gap-3 px-3 py-2.5 mt-2 rounded-lg transition-colors ${location.pathname === '/admin/settings'
+                ? 'bg-gradient-to-r from-blue-50 to-purple-50 dark:from-blue-900/20 dark:to-purple-900/20 text-blue-600 dark:text-blue-400'
+                : 'text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-700'
+                }`}
             >
               <Settings size={20} />
               {!sidebarCollapsed && <span>Settings</span>}
@@ -513,9 +566,8 @@ const AdminLayout = () => {
       </aside>
 
       {/* Main Content */}
-      <main className={`transition-all duration-300 pt-[70px] ${
-        sidebarCollapsed ? 'lg:ml-20' : 'lg:ml-[260px]'
-      }`}>
+      <main className={`transition-all duration-300 pt-[70px] ${sidebarCollapsed ? 'lg:ml-20' : 'lg:ml-[260px]'
+        }`}>
         <div className="p-6">
           <Outlet />
         </div>

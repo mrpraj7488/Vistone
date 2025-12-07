@@ -24,22 +24,15 @@ const createPublicClient = () => {
   }
 
   console.log('🆕 Creating new public client');
-  
-  // Clear any existing auth storage to prevent conflicts
-  if (typeof window !== 'undefined') {
-    localStorage.removeItem('vistone-public-auth');
-    localStorage.removeItem('vistone-admin-auth');
-    // Also clear any old storage keys
-    localStorage.removeItem('vistone-auth-token');
-    localStorage.removeItem('vistone-main-auth');
-  }
-  
+
   publicClient = createClient(supabaseUrl, supabaseAnonKey, {
     auth: {
-      storageKey: 'vistone-public-auth',
+      storageKey: 'vistone-auth',
       autoRefreshToken: true,
       persistSession: true,
-      detectSessionInUrl: true
+      detectSessionInUrl: true,
+      // Session will be refreshed automatically before expiry
+      // The session refresh happens in background as long as user is active
     },
     global: {
       headers: {
@@ -57,20 +50,20 @@ const createAdminClient = () => {
     console.log('🔄 Reusing existing admin client');
     return adminClient;
   }
-  
+
   if (!supabaseServiceKey) {
     console.warn('⚠️ Service key not available - admin operations will be limited');
     return null;
   }
 
   console.log('🆕 Creating new admin client');
-  
+
   // Clear any existing admin auth storage
   if (typeof window !== 'undefined') {
     localStorage.removeItem('vistone-admin-auth');
     localStorage.removeItem('vistone-admin-auth-token');
   }
-  
+
   adminClient = createClient(supabaseUrl, supabaseServiceKey, {
     auth: {
       autoRefreshToken: false,

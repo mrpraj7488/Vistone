@@ -59,10 +59,13 @@ const AdminLogin = () => {
         profile
       });
 
-      // Store admin session
+      // Store admin session with 2-hour expiry
+      const sessionExpiry = Date.now() + (2 * 60 * 60 * 1000); // 2 hours in milliseconds
       localStorage.setItem('adminAuthenticated', 'true');
       localStorage.setItem('adminRole', profile.role);
-      
+      localStorage.setItem('adminSessionExpiry', sessionExpiry.toString());
+      localStorage.setItem('adminLastActivity', Date.now().toString());
+
       // Redirect to admin dashboard
       navigate('/admin');
     } catch (err) {
