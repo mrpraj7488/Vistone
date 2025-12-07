@@ -44,6 +44,7 @@ import {
   SEOSettingsSection,
   ProductStatisticsSection
 } from '../../components/admin/ProductFormComponents';
+import ImageUploader from '../../components/common/ImageUploader';
 
 const ProductFormFixed = () => {
   const { id } = useParams();
@@ -102,7 +103,9 @@ const ProductFormFixed = () => {
     mainFile: null,
     extendedFile: null,
     documentationFile: null,
-    demoFiles: []
+    demoFiles: [],
+    featuredImage: '',
+    galleryImages: []
   });
 
   const categories = ['Dashboards', 'Templates', 'Plugins', 'Themes', 'Mobile Apps', 'UI Kits'];
@@ -162,7 +165,9 @@ const ProductFormFixed = () => {
           mainFile: null,
           extendedFile: null,
           documentationFile: null,
-          demoFiles: []
+          demoFiles: [],
+          featuredImage: product.featured_image || '',
+          galleryImages: product.gallery_images || []
         });
 
         // Set product statistics from the product table itself (no separate tables needed)
@@ -311,6 +316,14 @@ const ProductFormFixed = () => {
       // Boolean fields
       productData.is_featured = formData.featured === true;
       productData.is_digital = true;
+
+      // Image fields
+      if (formData.featuredImage) {
+        productData.featured_image = formData.featuredImage;
+      }
+      if (formData.galleryImages?.length > 0) {
+        productData.gallery_images = formData.galleryImages;
+      }
 
       console.log('📦 Submitting product data:', JSON.stringify(productData, null, 2));
 
@@ -667,33 +680,72 @@ const ProductFormFixed = () => {
                   </h2>
                 </div>
                 <div className="p-6 space-y-6">
+                  {/* Featured Image Upload */}
                   <div>
-                    <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
-                      Featured Image *
-                    </label>
-                    <div className="border-2 border-dashed border-gray-300 dark:border-gray-600 rounded-lg p-6 text-center hover:border-blue-500 transition-colors">
-                      <ImageIcon className="mx-auto h-12 w-12 text-gray-400 mb-3" />
-                      <p className="text-sm text-gray-600 dark:text-gray-400 mb-2">
-                        Upload Area - 1200×800px recommended
-                      </p>
-                      <label className="inline-block px-4 py-2 bg-blue-600 hover:bg-blue-700 text-white rounded-lg cursor-pointer transition-colors">
-                        Choose Image
-                        <input type="file" className="hidden" accept="image/*" />
-                      </label>
-                    </div>
+                    <ImageUploader
+                      context="productFeatured"
+                      label="Featured Image *"
+                      existingImageUrl={formData.featuredImage}
+                      showContextInfo={true}
+                      onUploadComplete={(data) => {
+                        handleInputChange('featuredImage', data.publicUrl);
+                        toast.success('Featured image uploaded!');
+                      }}
+                      onError={(error) => {
+                        toast.error(`Upload failed: ${error.message}`);
+                      }}
+                    />
                   </div>
 
+                  {/* Gallery Images */}
                   <div>
                     <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
                       Gallery Images (Max 10)
                     </label>
-                    <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
-                      <label className="border-2 border-dashed border-gray-300 dark:border-gray-600 rounded-lg p-4 flex flex-col items-center justify-center cursor-pointer hover:border-blue-500 transition-colors h-32">
-                        <Plus className="h-8 w-8 text-gray-400 mb-2" />
-                        <span className="text-xs text-gray-500">Upload Images</span>
-                        <input type="file" className="hidden" accept="image/*" multiple />
-                      </label>
+                    <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+                      {/* Show existing gallery images */}
+                      {formData.galleryImages?.map((url, index) => (
+                        <div key={index} className="relative group">
+                          <img
+                            src={url}
+                            alt={`Gallery ${index + 1}`}
+                            className="w-full h-32 object-cover rounded-lg border border-gray-200 dark:border-gray-700"
+                          />
+                          <button
+                            type="button"
+                            onClick={() => {
+                              const newGallery = formData.galleryImages.filter((_, i) => i !== index);
+                              handleInputChange('galleryImages', newGallery);
+                            }}
+                            className="absolute top-2 right-2 p-1 bg-red-500 text-white rounded-full opacity-0 group-hover:opacity-100 transition-opacity"
+                          >
+                            <X size={14} />
+                          </button>
+                        </div>
+                      ))}
+
+                      {/* Add new gallery image */}
+                      {(!formData.galleryImages || formData.galleryImages.length < 10) && (
+                        <ImageUploader
+                          context="productGallery"
+                          label="Add Gallery Image"
+                          compact={true}
+                          onUploadComplete={(data) => {
+                            const currentGallery = formData.galleryImages || [];
+                            handleInputChange('galleryImages', [...currentGallery, data.publicUrl]);
+                            toast.success('Gallery image added!');
+                          }}
+                          onError={(error) => {
+                            toast.error(`Upload failed: ${error.message}`);
+                          }}
+                        />
+                      )}
                     </div>
+                    {formData.galleryImages?.length > 0 && (
+                      <p className="text-sm text-gray-500 mt-2">
+                        {formData.galleryImages.length}/10 images uploaded
+                      </p>
+                    )}
                   </div>
                 </div>
               </div>
