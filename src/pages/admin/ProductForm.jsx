@@ -782,8 +782,9 @@ const ProductFormFixed = () => {
                       className="w-full px-4 py-2 bg-gray-50 dark:bg-gray-700 border border-gray-200 dark:border-gray-600 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 dark:text-white"
                     >
                       <option value="draft">Draft</option>
-                      <option value="published">Published</option>
-                      <option value="scheduled">Scheduled</option>
+                      <option value="active">Active (Published)</option>
+                      <option value="inactive">Inactive</option>
+                      <option value="archived">Archived</option>
                     </select>
                   </div>
 
