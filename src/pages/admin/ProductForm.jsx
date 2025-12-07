@@ -328,9 +328,16 @@ const ProductFormFixed = () => {
       if (formData.fullDescription) {
         productData.description = formData.fullDescription;
       }
-      if (formData.status) {
-        productData.status = formData.status;
-      }
+
+      // Status must be one of: draft, active, inactive, archived
+      const validStatuses = ['draft', 'active', 'inactive', 'archived'];
+      let status = formData.status?.toLowerCase() || 'draft';
+      // Map common alternatives to valid values
+      if (status === 'published') status = 'active';
+      if (status === 'pending') status = 'draft';
+      if (!validStatuses.includes(status)) status = 'draft';
+      productData.status = status;
+
       if (formData.extendedPrice) {
         productData.extended_price = parseFloat(formData.extendedPrice);
       }
