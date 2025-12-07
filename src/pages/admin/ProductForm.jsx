@@ -310,68 +310,78 @@ const ProductFormFixed = () => {
     setLoading(true);
 
     try {
-      // Transform camelCase formData to snake_case for database
+      // Match exact database schema columns
       const productData = {
         name: formData.name,
-        slug: formData.slug,
-        short_description: formData.shortDescription,
-        full_description: formData.fullDescription,
-        category: formData.category,
-        categories: formData.categories,
-        tags: formData.tags,
+        slug: formData.slug || formData.name.toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/^-|-$/g, ''),
+        description: formData.fullDescription || '',
+        short_description: formData.shortDescription || '',
         regular_price: parseFloat(formData.regularPrice) || 0,
-        extended_price: parseFloat(formData.extendedPrice) || 0,
-        sale_price: parseFloat(formData.salePrice) || null,
-        sale_start_date: formData.promoStartDate || null,
-        sale_end_date: formData.promoEndDate || null,
-        status: formData.status,
-        is_featured: formData.featured,
-        is_new: formData.newArrival,
-        is_on_sale: formData.onSale || formData.enablePromo,
-        is_trending: formData.trending,
-        features: formData.features,
-        tech_stack: formData.techStack,
-        version: formData.version,
-        compatibility: formData.compatibility,
-        file_size: formData.fileSize,
-        demo_url: formData.demoUrl || formData.livePreviewUrl,
-        preview_url: formData.previewUrl,
-        video_url: formData.videoUrl || formData.videoPreviewUrl,
-        documentation_url: formData.documentationUrl,
-        support_url: formData.supportUrl,
-        license_type: formData.licenseType,
-        license_terms: formData.regularLicenseTerms,
-        download_limit: formData.downloadLimit === 'unlimited' ? -1 : formData.downloadLimitCount,
-        download_expiry: formData.downloadExpiry === 'never' ? -1 : formData.downloadExpiryDays,
-        require_license: formData.requireLicense,
-        auto_update: formData.autoUpdate,
-        seo_title: formData.seoTitle || formData.name,
-        seo_description: formData.seoDescription || formData.shortDescription,
-        focus_keyword: formData.focusKeyword
+        extended_price: parseFloat(formData.extendedPrice) || null,
+        status: formData.status || 'draft',
+        visibility: formData.visibility || 'public',
+        is_featured: formData.featured || false,
+        is_digital: true
       };
+
+      // Optional fields - only add if they have values
+      if (formData.salePrice) productData.sale_price = parseFloat(formData.salePrice);
+      if (formData.promoStartDate) productData.sale_start_date = formData.promoStartDate;
+      if (formData.promoEndDate) productData.sale_end_date = formData.promoEndDate;
+      if (formData.version) productData.version = formData.version;
+      if (formData.fileSize) productData.file_size = formData.fileSize;
+      if (formData.livePreviewUrl) productData.demo_url = formData.livePreviewUrl;
+      if (formData.previewUrl) productData.preview_url = formData.previewUrl;
+      if (formData.videoPreviewUrl) productData.preview_url = formData.videoPreviewUrl;
+      if (formData.compatibility) productData.compatibility = Array.isArray(formData.compatibility) ? formData.compatibility.join(', ') : formData.compatibility;
+      if (formData.requirements) productData.requirements = formData.requirements;
+      if (formData.documentationUrl) productData.documentation_url = formData.documentationUrl;
+      if (formData.seoTitle) productData.seo_title = formData.seoTitle;
+      if (formData.seoDescription) productData.seo_description = formData.seoDescription;
+      if (formData.focusKeyword) productData.seo_keywords = formData.focusKeyword;
+
+      // JSONB fields
+      if (formData.features?.length) productData.features = formData.features;
+      if (formData.galleryImages?.length) productData.gallery_images = formData.galleryImages;
+      if (formData.featuredImage) productData.featured_image = formData.featuredImage;
+
+      console.log('📦 Submitting product data:', productData);
 
       if (isEditing) {
         // Update existing product
-        const { error } = await supabase
+        const { data, error } = await supabase
           .from('products')
           .update(productData)
-          .eq('id', id);
+          .eq('id', id)
+          .select();
 
-        if (error) throw error;
+        if (error) {
+          console.error('❌ Update error:', error);
+          throw error;
+        }
+        console.log('✅ Product updated:', data);
         toast.success('Product updated successfully!');
       } else {
         // Create new product
-        const { error } = await supabase
+        const { data, error } = await supabase
           .from('products')
-          .insert([productData]);
+          .insert([productData])
+          .select();
 
-        if (error) throw error;
+        if (error) {
+          console.error('❌ Insert error:', error);
+          throw error;
+        }
+        console.log('✅ Product created:', data);
         toast.success('Product created successfully!');
       }
       navigate('/admin/products');
     } catch (error) {
       console.error('Error saving product:', error);
-      toast.error(`Failed to save product: ${error.message}`);
+      // Show detailed error message
+      const errorMsg = error.details || error.message || 'Unknown error';
+      const errorHint = error.hint || '';
+      toast.error(`Failed to save product: ${errorMsg}${errorHint ? ` (${errorHint})` : ''}`);
     } finally {
       setLoading(false);
     }
