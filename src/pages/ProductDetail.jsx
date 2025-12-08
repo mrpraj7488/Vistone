@@ -376,21 +376,20 @@ export default function ProductDetail({ darkMode }) {
                 {/* Buy Now Button with Shine Effect */}
                 <div className="relative group">
                   <div className={`absolute -inset-0.5 rounded-xl blur opacity-30 group-hover:opacity-75 transition duration-1000 group-hover:duration-200 ${darkMode
-                    ? 'bg-gradient-to-r from-blue-600 to-cyan-600'
-                    : 'bg-gradient-to-r from-blue-600 to-cyan-600'
+                    ? 'bg-gradient-to-r from-blue-600 to-indigo-600'
+                    : 'bg-gradient-to-r from-blue-600 to-indigo-600'
                     }`}></div>
                   <Button
                     onClick={handleBuyNow}
                     className={`relative w-full h-12 sm:h-14 text-base sm:text-lg font-bold overflow-hidden transition-all duration-300 ${darkMode
-                      ? '!bg-slate-900 !text-white border border-slate-700 hover:!bg-slate-800'
-                      : '!bg-white !text-slate-900 border border-slate-200 hover:!bg-slate-50'
+                      ? 'bg-gradient-to-r from-blue-600 to-indigo-600 text-white shadow-lg shadow-blue-500/20 hover:shadow-blue-500/40'
+                      : 'bg-gradient-to-r from-blue-600 to-indigo-600 text-white shadow-lg shadow-blue-500/30 hover:shadow-blue-500/50'
                       }`}
                   >
                     <span className="relative z-10 flex items-center justify-center gap-2">
                       Buy Now <ArrowRight size={20} />
                     </span>
-                    <div className={`absolute inset-0 opacity-0 group-hover:opacity-10 transition-opacity duration-300 ${darkMode ? 'bg-blue-400' : 'bg-blue-600'
-                      }`} />
+                    <div className="absolute inset-0 -translate-x-full group-hover:animate-[shine_1.5s_infinite] bg-gradient-to-r from-transparent via-white/30 to-transparent z-10" />
                   </Button>
                 </div>
 
@@ -398,7 +397,10 @@ export default function ProductDetail({ darkMode }) {
                   <Button
                     onClick={handleAddToCart}
                     variant="outline"
-                    className={`flex-1 h-12 font-semibold text-sm sm:text-base ${darkMode ? 'border-slate-700 hover:bg-slate-800' : 'border-slate-200 hover:bg-slate-50'}`}
+                    className={`flex-1 h-12 font-bold text-sm sm:text-base transition-all ${darkMode
+                      ? 'border-slate-700 text-slate-300 hover:border-blue-500 hover:text-blue-400 hover:bg-slate-800'
+                      : 'border-slate-200 text-slate-600 hover:border-blue-500 hover:text-blue-600 hover:bg-blue-50'
+                      }`}
                   >
                     <ShoppingCart size={18} className="mr-2" />
                     Add to Cart
@@ -469,10 +471,15 @@ export default function ProductDetail({ darkMode }) {
           </div>
           <Button
             onClick={handleBuyNow}
-            className={`flex-1 h-12 text-base font-bold shadow-lg shadow-blue-500/20 ${darkMode ? 'bg-blue-600 hover:bg-blue-500' : 'bg-blue-600 hover:bg-blue-700'
+            className={`flex-1 h-12 text-base font-bold shadow-lg shadow-blue-500/20 overflow-hidden relative group ${darkMode
+              ? 'bg-gradient-to-r from-blue-600 to-indigo-600 text-white hover:shadow-blue-500/40'
+              : 'bg-gradient-to-r from-blue-600 to-indigo-600 text-white hover:shadow-blue-500/40'
               }`}
           >
-            Buy Now <ArrowRight size={18} className="ml-2" />
+            <span className="relative z-10 flex items-center justify-center gap-2">
+              Buy Now <ArrowRight size={18} />
+            </span>
+            <div className="absolute inset-0 -translate-x-full group-hover:animate-[shine_1.5s_infinite] bg-gradient-to-r from-transparent via-white/30 to-transparent z-10" />
           </Button>
         </div>
       </div>
