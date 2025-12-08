@@ -6,7 +6,7 @@ import Button from '../components/ui/Button';
 import { Container } from '../components/layout/Container';
 import {
   Filter, X, ChevronDown, Search, Grid, List, Heart,
-  ShoppingCart, Star, SlidersHorizontal, Check
+  ShoppingCart, Star, SlidersHorizontal, Check, Flame, Zap
 } from 'lucide-react';
 import { motion, AnimatePresence } from 'motion/react';
 
@@ -364,25 +364,27 @@ export default function Products({ darkMode }) {
                         >
                           <Heart size={16} fill={isInWishlist(product.id) ? "currentColor" : "none"} />
                         </button>
-                        <button
-                          onClick={(e) => handleAddToCart(product, e)}
-                          className="p-2 rounded-full bg-white/90 text-slate-700 hover:bg-blue-600 hover:text-white backdrop-blur-md transition-colors"
-                        >
-                          <ShoppingCart size={16} />
-                        </button>
                       </div>
 
-                      {/* Badges */}
-                      <div className="absolute top-3 left-3 flex flex-col gap-1.5">
-                        {product.is_featured && (
-                          <span className="px-2 py-1 rounded-md text-[10px] font-bold uppercase tracking-wider bg-amber-400 text-amber-950 shadow-sm">
-                            Featured
-                          </span>
-                        )}
+                      {/* Badges with Hype Animation */}
+                      <div className="absolute top-3 left-3 flex flex-col gap-1.5 z-10">
                         {product.trending && (
-                          <span className="px-2 py-1 rounded-md text-[10px] font-bold uppercase tracking-wider bg-rose-500 text-white shadow-sm">
-                            Hot
-                          </span>
+                          <motion.div
+                            animate={{ scale: [1, 1.05, 1] }}
+                            transition={{ repeat: Infinity, duration: 1.5, ease: "easeInOut" }}
+                            className="px-2 py-1 rounded-md text-[10px] font-bold uppercase tracking-wider bg-gradient-to-r from-orange-500 to-red-500 text-white shadow-lg shadow-orange-500/30 flex items-center gap-1"
+                          >
+                            <Flame size={10} fill="currentColor" /> HOT
+                          </motion.div>
+                        )}
+                        {product.is_featured && (
+                          <motion.div
+                            initial={{ opacity: 0, x: -10 }}
+                            animate={{ opacity: 1, x: 0 }}
+                            className="px-2 py-1 rounded-md text-[10px] font-bold uppercase tracking-wider bg-blue-500 text-white shadow-sm flex items-center gap-1"
+                          >
+                            <Zap size={10} fill="currentColor" /> Featured
+                          </motion.div>
                         )}
                       </div>
                     </div>
@@ -416,12 +418,27 @@ export default function Products({ darkMode }) {
                             ${product.regular_price}
                           </span>
                         </div>
-                        <button className={`text-xs font-bold px-3 py-1.5 rounded-lg transition-colors ${darkMode
-                            ? 'bg-slate-800 text-white hover:bg-blue-600'
-                            : 'bg-slate-100 text-slate-900 hover:bg-blue-600 hover:text-white'
-                          }`}>
-                          View Details
-                        </button>
+
+                        {/* Animated Buy Button */}
+                        <motion.button
+                          whileHover="hover"
+                          onClick={(e) => handleAddToCart(product, e)}
+                          className={`relative overflow-hidden text-xs sm:text-sm font-bold px-4 py-2 rounded-xl transition-all active:scale-95 ${darkMode
+                              ? 'bg-blue-600 text-white shadow-lg shadow-blue-500/25'
+                              : 'bg-blue-600 text-white shadow-lg shadow-blue-500/25'
+                            }`}
+                        >
+                          <span className="relative z-10 flex items-center gap-1.5">
+                            Buy Now <ShoppingCart size={14} />
+                          </span>
+                          <motion.div
+                            variants={{
+                              hover: { x: ['-100%', '200%'] }
+                            }}
+                            transition={{ duration: 1.5, repeat: Infinity, ease: "linear" }}
+                            className="absolute inset-0 bg-gradient-to-r from-transparent via-white/20 to-transparent -translate-x-full"
+                          />
+                        </motion.button>
                       </div>
                     </div>
                   </Link>
