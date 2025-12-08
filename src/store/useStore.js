@@ -1,6 +1,9 @@
 import { create } from 'zustand';
+import { persist } from 'zustand/middleware';
 
-export const useCartStore = create((set, get) => ({
+export const useCartStore = create(
+  persist(
+    (set, get) => ({
       items: [],
       addItem: (product, licenseType = 'single') => {
         const items = get().items;
@@ -52,9 +55,16 @@ export const useCartStore = create((set, get) => ({
       getItemCount: () => {
         return get().items.reduce((count, item) => count + item.quantity, 0);
       },
-}));
+    }),
+    {
+      name: 'cart-storage',
+    }
+  )
+);
 
-export const useWishlistStore = create((set, get) => ({
+export const useWishlistStore = create(
+  persist(
+    (set, get) => ({
       items: [],
       addItem: (product) => {
         const items = get().items;
@@ -69,16 +79,21 @@ export const useWishlistStore = create((set, get) => ({
         return get().items.some((item) => item.id === productId);
       },
       clearWishlist: () => set({ items: [] }),
-}));
+    }),
+    {
+      name: 'wishlist-storage',
+    }
+  )
+);
 
 export const useAuthStore = create((set) => ({
   user: null,
   session: null,
   loading: false,
-  
+
   setUser: (user) => set({ user }),
   setSession: (session) => set({ session }),
-  
+
   signIn: async (email, password) => {
     set({ loading: true });
     try {
@@ -87,9 +102,9 @@ export const useAuthStore = create((set) => ({
         email,
         password,
       });
-      
+
       if (error) throw error;
-      
+
       set({ user: data.user, session: data.session, loading: false });
       return { success: true };
     } catch (error) {
@@ -97,14 +112,14 @@ export const useAuthStore = create((set) => ({
       return { success: false, error: error.message };
     }
   },
-  
+
   signOut: async () => {
     set({ loading: true });
     try {
       const { supabase } = await import('../lib/supabase');
       const { error } = await supabase.auth.signOut();
       if (error) throw error;
-      
+
       set({ user: null, session: null, loading: false });
       return { success: true };
     } catch (error) {
@@ -112,18 +127,18 @@ export const useAuthStore = create((set) => ({
       return { success: false, error: error.message };
     }
   },
-  
+
   checkAuth: async () => {
     set({ loading: true });
     try {
       const { supabase } = await import('../lib/supabase');
       const { data: { session } } = await supabase.auth.getSession();
-      
+
       if (session) {
         set({ user: session.user, session, loading: false });
         return true;
       }
-      
+
       set({ user: null, session: null, loading: false });
       return false;
     } catch (error) {
@@ -131,7 +146,7 @@ export const useAuthStore = create((set) => ({
       return false;
     }
   },
-  
+
   logout: () => set({ user: null, session: null }),
 }));
 
@@ -144,15 +159,15 @@ export const useUIStore = create((set, get) => ({
     if (currentTimeout) {
       clearTimeout(currentTimeout);
     }
-    
+
     // Set new toast
     set({ toast: { message, type, id: Date.now() } });
-    
+
     // Set new timeout
     const newTimeout = setTimeout(() => {
       set({ toast: null, toastTimeout: null });
     }, 4000);
-    
+
     set({ toastTimeout: newTimeout });
   },
   hideToast: () => {

@@ -25,13 +25,6 @@ export default function Checkout({ darkMode }) {
     email: user?.email || '',
     firstName: '',
     lastName: '',
-    company: '',
-    country: 'United States',
-    address: '',
-    apartment: '',
-    city: '',
-    state: '',
-    zip: '',
     phone: '',
     orderNotes: '',
     paymentMethod: 'paypal',
@@ -73,10 +66,6 @@ export default function Checkout({ darkMode }) {
     if (!formData.email) newErrors.email = 'Email is required';
     if (!formData.firstName) newErrors.firstName = 'First name is required';
     if (!formData.lastName) newErrors.lastName = 'Last name is required';
-    if (!formData.address) newErrors.address = 'Address is required';
-    if (!formData.city) newErrors.city = 'City is required';
-    if (!formData.state) newErrors.state = 'State is required';
-    if (!formData.zip) newErrors.zip = 'ZIP code is required';
 
     setErrors(newErrors);
     return Object.keys(newErrors).length === 0;
@@ -336,68 +325,20 @@ export default function Checkout({ darkMode }) {
                     </div>
 
                     <div className="mt-6 space-y-2">
-                      <label className={`text-sm font-bold ${darkMode ? 'text-slate-300' : 'text-slate-700'}`}>Street Address</label>
+                      <label className={`text-sm font-bold ${darkMode ? 'text-slate-300' : 'text-slate-700'}`}>Mobile Number <span className="text-xs font-normal opacity-70">(Optional)</span></label>
                       <div className="relative">
-                        <MapPin className={`absolute left-4 top-1/2 -translate-y-1/2 w-5 h-5 ${darkMode ? 'text-slate-500' : 'text-slate-400'}`} />
+                        <Phone className={`absolute left-4 top-1/2 -translate-y-1/2 w-5 h-5 ${darkMode ? 'text-slate-500' : 'text-slate-400'}`} />
                         <input
-                          type="text"
-                          name="address"
-                          value={formData.address}
+                          type="tel"
+                          name="phone"
+                          value={formData.phone}
                           onChange={handleInputChange}
                           className={`w-full pl-12 pr-4 py-3 rounded-xl border outline-none transition-all ${darkMode
                             ? 'bg-slate-800/50 border-slate-700 focus:border-blue-500 text-white'
                             : 'bg-slate-50 border-slate-200 focus:border-blue-500 text-slate-900'
-                            } ${errors.address ? 'border-red-500' : ''}`}
-                          placeholder="123 Main St"
+                            }`}
+                          placeholder="+1 (555) 000-0000"
                         />
-                      </div>
-                      {errors.address && <p className="text-red-500 text-xs">{errors.address}</p>}
-                    </div>
-
-                    <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mt-6">
-                      <div className="space-y-2">
-                        <label className={`text-sm font-bold ${darkMode ? 'text-slate-300' : 'text-slate-700'}`}>City</label>
-                        <input
-                          type="text"
-                          name="city"
-                          value={formData.city}
-                          onChange={handleInputChange}
-                          className={`w-full px-4 py-3 rounded-xl border outline-none transition-all ${darkMode
-                            ? 'bg-slate-800/50 border-slate-700 focus:border-blue-500 text-white'
-                            : 'bg-slate-50 border-slate-200 focus:border-blue-500 text-slate-900'
-                            } ${errors.city ? 'border-red-500' : ''}`}
-                        />
-                        {errors.city && <p className="text-red-500 text-xs">{errors.city}</p>}
-                      </div>
-
-                      <div className="space-y-2">
-                        <label className={`text-sm font-bold ${darkMode ? 'text-slate-300' : 'text-slate-700'}`}>State</label>
-                        <input
-                          type="text"
-                          name="state"
-                          value={formData.state}
-                          onChange={handleInputChange}
-                          className={`w-full px-4 py-3 rounded-xl border outline-none transition-all ${darkMode
-                            ? 'bg-slate-800/50 border-slate-700 focus:border-blue-500 text-white'
-                            : 'bg-slate-50 border-slate-200 focus:border-blue-500 text-slate-900'
-                            } ${errors.state ? 'border-red-500' : ''}`}
-                        />
-                        {errors.state && <p className="text-red-500 text-xs">{errors.state}</p>}
-                      </div>
-
-                      <div className="space-y-2">
-                        <label className={`text-sm font-bold ${darkMode ? 'text-slate-300' : 'text-slate-700'}`}>ZIP Code</label>
-                        <input
-                          type="text"
-                          name="zip"
-                          value={formData.zip}
-                          onChange={handleInputChange}
-                          className={`w-full px-4 py-3 rounded-xl border outline-none transition-all ${darkMode
-                            ? 'bg-slate-800/50 border-slate-700 focus:border-blue-500 text-white'
-                            : 'bg-slate-50 border-slate-200 focus:border-blue-500 text-slate-900'
-                            } ${errors.zip ? 'border-red-500' : ''}`}
-                        />
-                        {errors.zip && <p className="text-red-500 text-xs">{errors.zip}</p>}
                       </div>
                     </div>
 
@@ -497,8 +438,8 @@ export default function Checkout({ darkMode }) {
                         variant="outline"
                         onClick={() => setStep(1)}
                         className={`flex-1 h-12 border ${darkMode
-                            ? 'border-slate-700 text-slate-300 hover:bg-slate-800 hover:text-white'
-                            : 'border-slate-200 text-slate-700 hover:bg-slate-50 hover:text-slate-900'
+                          ? 'border-slate-700 text-slate-300 hover:bg-slate-800 hover:text-white'
+                          : 'border-slate-200 text-slate-700 hover:bg-slate-50 hover:text-slate-900'
                           }`}
                       >
                         <ChevronLeft className="w-5 h-5 mr-2" /> Back

@@ -1,5 +1,5 @@
 import { useState, useEffect } from 'react';
-import { Link } from 'react-router-dom';
+import { Link, useNavigate } from 'react-router-dom';
 import { supabase } from '../lib/supabase';
 import { useCartStore, useWishlistStore, useUIStore } from '../store/useStore';
 import Button from '../components/ui/Button';
@@ -21,6 +21,7 @@ export default function Products({ darkMode }) {
     const [selectedRating, setSelectedRating] = useState(null);
     const [showMobileFilters, setShowMobileFilters] = useState(false);
     const [searchQuery, setSearchQuery] = useState('');
+    const navigate = useNavigate();
 
     const addToCart = useCartStore((state) => state.addItem);
     const { addItem: addToWishlist, isInWishlist } = useWishlistStore();
@@ -73,6 +74,13 @@ export default function Products({ darkMode }) {
         e.stopPropagation(); // Prevent navigation
         addToCart(product);
         showToast('Added to cart!', 'success');
+    };
+
+    const handleBuyNow = (product, e) => {
+        e.preventDefault();
+        e.stopPropagation();
+        addToCart(product);
+        navigate('/checkout');
     };
 
     const handleAddToWishlist = (product, e) => {
@@ -458,7 +466,7 @@ export default function Products({ darkMode }) {
                                                     <motion.button
                                                         whileHover={{ scale: 1.02 }}
                                                         whileTap={{ scale: 0.98 }}
-                                                        onClick={(e) => handleAddToCart(product, e)}
+                                                        onClick={(e) => handleBuyNow(product, e)}
                                                         className={`w-full relative overflow-hidden h-11 rounded-xl font-bold text-sm flex items-center justify-center gap-2 shadow-lg group/btn transition-all ${darkMode
                                                             ? 'bg-gradient-to-r from-blue-600 to-indigo-600 text-white shadow-blue-500/20 hover:shadow-blue-500/40'
                                                             : 'bg-gradient-to-r from-blue-600 to-indigo-600 text-white shadow-blue-500/30 hover:shadow-blue-500/50'
