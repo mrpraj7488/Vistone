@@ -3,6 +3,8 @@ import { Link, useNavigate } from 'react-router-dom';
 import { supabase } from '../lib/supabase';
 import { useAuthStore, useUIStore } from '../store/useStore';
 import Button from '../components/ui/Button';
+import { motion } from 'motion/react';
+import { Mail, Lock, ArrowRight, Github, Chrome, Facebook, LogIn } from 'lucide-react';
 
 export default function Login({ darkMode }) {
   const navigate = useNavigate();
@@ -65,134 +67,165 @@ export default function Login({ darkMode }) {
   };
 
   return (
-    <div className="min-h-screen pt-32 pb-20 px-4">
-      <div className="max-w-md mx-auto">
-        <div className={`rounded-2xl p-8 shadow-2xl ${darkMode ? 'glass-dark' : 'glass-light'}`}>
+    <div className={`min-h-screen pt-20 pb-20 flex items-center justify-center px-4 ${darkMode ? 'bg-slate-950' : 'bg-slate-50'}`}>
+      {/* Background Elements */}
+      <div className="absolute inset-0 overflow-hidden pointer-events-none">
+        <div className={`absolute top-0 left-1/2 -translate-x-1/2 w-full h-[500px] bg-gradient-to-b ${darkMode ? 'from-blue-900/20 to-transparent' : 'from-blue-100/50 to-transparent'}`} />
+        <div className={`absolute -top-24 -right-24 w-96 h-96 rounded-full blur-3xl opacity-20 ${darkMode ? 'bg-blue-500' : 'bg-blue-300'}`} />
+        <div className={`absolute -bottom-24 -left-24 w-96 h-96 rounded-full blur-3xl opacity-20 ${darkMode ? 'bg-purple-500' : 'bg-purple-300'}`} />
+      </div>
+
+      <motion.div
+        initial={{ opacity: 0, y: 20 }}
+        animate={{ opacity: 1, y: 0 }}
+        transition={{ duration: 0.5 }}
+        className="w-full max-w-md relative z-10"
+      >
+        <div className={`rounded-3xl p-8 md:p-10 shadow-2xl border ${darkMode ? 'bg-slate-900 border-slate-800' : 'bg-white border-slate-200'}`}>
           <div className="text-center mb-8">
-            <div className="w-16 h-16 mx-auto mb-4 rounded-full bg-gradient-to-br from-cyan-500 to-blue-600 flex items-center justify-center text-3xl">
-              🔐
+            <div className={`w-16 h-16 mx-auto mb-6 rounded-2xl flex items-center justify-center text-3xl shadow-lg ${darkMode ? 'bg-blue-600 text-white' : 'bg-blue-600 text-white'}`}>
+              <LogIn size={32} />
             </div>
-            <h1 className={`text-3xl font-black mb-2 ${darkMode ? 'text-white' : 'text-gray-900'}`}>
-              Welcome Back!
+            <h1 className={`text-3xl font-black mb-2 tracking-tight ${darkMode ? 'text-white' : 'text-slate-900'}`}>
+              Welcome Back
             </h1>
-            <p className={darkMode ? 'text-gray-300' : 'text-gray-600'}>
-              Sign in to your account
+            <p className={darkMode ? 'text-slate-400' : 'text-slate-600'}>
+              Sign in to access your dashboard
             </p>
           </div>
 
-          <form onSubmit={handleSubmit} className="space-y-6">
+          <form onSubmit={handleSubmit} className="space-y-5">
             <div>
-              <label className={`block mb-2 font-bold ${darkMode ? 'text-white' : 'text-gray-900'}`}>
+              <label className={`block text-sm font-bold mb-2 ${darkMode ? 'text-white' : 'text-slate-900'}`}>
                 Email Address
               </label>
-              <input
-                type="email"
-                name="email"
-                value={formData.email}
-                onChange={handleChange}
-                placeholder="your@email.com"
-                className={`w-full px-4 py-3 rounded-lg border-2 outline-none transition-all ${
-                  errors.email
-                    ? 'border-red-500'
-                    : darkMode
-                    ? 'glass-dark border-cyan-500/30 text-white'
-                    : 'glass-light border-gray-200 text-gray-900'
-                }`}
-              />
-              {errors.email && <p className="text-red-500 text-sm mt-1">{errors.email}</p>}
+              <div className="relative">
+                <Mail className={`absolute left-4 top-1/2 -translate-y-1/2 ${darkMode ? 'text-slate-500' : 'text-slate-400'}`} size={20} />
+                <input
+                  type="email"
+                  name="email"
+                  value={formData.email}
+                  onChange={handleChange}
+                  placeholder="name@company.com"
+                  className={`w-full pl-12 pr-4 py-3 rounded-xl border-2 outline-none transition-all ${errors.email
+                      ? 'border-red-500 focus:border-red-500'
+                      : darkMode
+                        ? 'bg-slate-950 border-slate-800 text-white focus:border-blue-500'
+                        : 'bg-slate-50 border-slate-200 text-slate-900 focus:border-blue-500'
+                    }`}
+                />
+              </div>
+              {errors.email && <p className="text-red-500 text-xs mt-1 font-medium">{errors.email}</p>}
             </div>
 
             <div>
-              <label className={`block mb-2 font-bold ${darkMode ? 'text-white' : 'text-gray-900'}`}>
-                Password
-              </label>
-              <input
-                type="password"
-                name="password"
-                value={formData.password}
-                onChange={handleChange}
-                placeholder="Enter your password"
-                className={`w-full px-4 py-3 rounded-lg border-2 outline-none transition-all ${
-                  errors.password
-                    ? 'border-red-500'
-                    : darkMode
-                    ? 'glass-dark border-cyan-500/30 text-white'
-                    : 'glass-light border-gray-200 text-gray-900'
-                }`}
-              />
-              {errors.password && <p className="text-red-500 text-sm mt-1">{errors.password}</p>}
+              <div className="flex items-center justify-between mb-2">
+                <label className={`text-sm font-bold ${darkMode ? 'text-white' : 'text-slate-900'}`}>
+                  Password
+                </label>
+                <Link
+                  to="/reset-password"
+                  className={`text-xs font-bold ${darkMode ? 'text-blue-400 hover:text-blue-300' : 'text-blue-600 hover:text-blue-700'}`}
+                >
+                  Forgot password?
+                </Link>
+              </div>
+              <div className="relative">
+                <Lock className={`absolute left-4 top-1/2 -translate-y-1/2 ${darkMode ? 'text-slate-500' : 'text-slate-400'}`} size={20} />
+                <input
+                  type="password"
+                  name="password"
+                  value={formData.password}
+                  onChange={handleChange}
+                  placeholder="••••••••"
+                  className={`w-full pl-12 pr-4 py-3 rounded-xl border-2 outline-none transition-all ${errors.password
+                      ? 'border-red-500 focus:border-red-500'
+                      : darkMode
+                        ? 'bg-slate-950 border-slate-800 text-white focus:border-blue-500'
+                        : 'bg-slate-50 border-slate-200 text-slate-900 focus:border-blue-500'
+                    }`}
+                />
+              </div>
+              {errors.password && <p className="text-red-500 text-xs mt-1 font-medium">{errors.password}</p>}
             </div>
 
-            <div className="flex items-center justify-between">
-              <label className="flex items-center gap-2 cursor-pointer">
+            <div className="flex items-center">
+              <label className="flex items-center gap-2 cursor-pointer group">
+                <div className={`w-5 h-5 rounded border flex items-center justify-center transition-colors ${formData.rememberMe
+                    ? 'bg-blue-600 border-blue-600'
+                    : darkMode ? 'border-slate-600 bg-slate-800' : 'border-slate-300 bg-white'
+                  }`}>
+                  {formData.rememberMe && <svg className="w-3 h-3 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="3" d="M5 13l4 4L19 7"></path></svg>}
+                </div>
                 <input
                   type="checkbox"
                   name="rememberMe"
                   checked={formData.rememberMe}
                   onChange={handleChange}
-                  className="w-4 h-4"
+                  className="hidden"
                 />
-                <span className={`text-sm ${darkMode ? 'text-gray-300' : 'text-gray-700'}`}>
-                  Remember me
+                <span className={`text-sm font-medium ${darkMode ? 'text-slate-400 group-hover:text-slate-300' : 'text-slate-600 group-hover:text-slate-800'}`}>
+                  Remember me for 30 days
                 </span>
               </label>
-              <Link
-                to="/reset-password"
-                className={`text-sm font-bold ${darkMode ? 'text-cyan-400' : 'text-cyan-600'} hover:underline`}
-              >
-                Forgot password?
-              </Link>
             </div>
 
-            <Button type="submit" loading={loading} className="w-full">
-              Sign In
+            <Button type="submit" loading={loading} className="w-full h-12 text-base shadow-lg shadow-blue-500/20">
+              Sign In <ArrowRight size={18} className="ml-2" />
             </Button>
           </form>
 
-          <div className={`relative my-8 text-center ${darkMode ? 'text-gray-400' : 'text-gray-600'}`}>
+          <div className="relative my-8">
             <div className="absolute inset-0 flex items-center">
-              <div className={`w-full border-t ${darkMode ? 'border-gray-700' : 'border-gray-300'}`}></div>
+              <div className={`w-full border-t ${darkMode ? 'border-slate-800' : 'border-slate-200'}`}></div>
             </div>
-            <span className={`relative px-4 text-sm ${darkMode ? 'bg-gray-900' : 'bg-white'}`}>
-              Or sign in with
-            </span>
+            <div className="relative flex justify-center">
+              <span className={`px-4 text-xs font-bold uppercase tracking-wider ${darkMode ? 'bg-slate-900 text-slate-500' : 'bg-white text-slate-400'}`}>
+                Or continue with
+              </span>
+            </div>
           </div>
 
-          <div className="grid grid-cols-3 gap-4">
+          <div className="grid grid-cols-3 gap-3">
             <button
               onClick={() => handleSocialLogin('google')}
-              className={`p-3 rounded-lg font-bold transition-all hover:scale-105 ${
-                darkMode ? 'bg-gray-800 text-white hover:bg-gray-700' : 'bg-gray-100 text-gray-900 hover:bg-gray-200'
-              }`}
+              className={`flex items-center justify-center p-3 rounded-xl border transition-all hover:-translate-y-1 ${darkMode
+                  ? 'bg-slate-800 border-slate-700 text-white hover:bg-slate-700'
+                  : 'bg-white border-slate-200 text-slate-700 hover:bg-slate-50 shadow-sm'
+                }`}
             >
-              G
+              <Chrome size={20} />
             </button>
             <button
               onClick={() => handleSocialLogin('facebook')}
-              className={`p-3 rounded-lg font-bold transition-all hover:scale-105 ${
-                darkMode ? 'bg-gray-800 text-white hover:bg-gray-700' : 'bg-gray-100 text-gray-900 hover:bg-gray-200'
-              }`}
+              className={`flex items-center justify-center p-3 rounded-xl border transition-all hover:-translate-y-1 ${darkMode
+                  ? 'bg-slate-800 border-slate-700 text-white hover:bg-slate-700'
+                  : 'bg-white border-slate-200 text-slate-700 hover:bg-slate-50 shadow-sm'
+                }`}
             >
-              f
+              <Facebook size={20} />
             </button>
             <button
               onClick={() => handleSocialLogin('github')}
-              className={`p-3 rounded-lg font-bold transition-all hover:scale-105 ${
-                darkMode ? 'bg-gray-800 text-white hover:bg-gray-700' : 'bg-gray-100 text-gray-900 hover:bg-gray-200'
-              }`}
+              className={`flex items-center justify-center p-3 rounded-xl border transition-all hover:-translate-y-1 ${darkMode
+                  ? 'bg-slate-800 border-slate-700 text-white hover:bg-slate-700'
+                  : 'bg-white border-slate-200 text-slate-700 hover:bg-slate-50 shadow-sm'
+                }`}
             >
-              GitHub
+              <Github size={20} />
             </button>
           </div>
 
-          <div className={`text-center mt-8 ${darkMode ? 'text-gray-300' : 'text-gray-600'}`}>
-            Don't have an account?{' '}
-            <Link to="/register" className={`font-bold ${darkMode ? 'text-cyan-400' : 'text-cyan-600'} hover:underline`}>
-              Sign Up
-            </Link>
+          <div className={`text-center mt-8 pt-6 border-t ${darkMode ? 'border-slate-800' : 'border-slate-100'}`}>
+            <p className={`text-sm ${darkMode ? 'text-slate-400' : 'text-slate-600'}`}>
+              Don't have an account?{' '}
+              <Link to="/register" className={`font-bold transition-colors ${darkMode ? 'text-blue-400 hover:text-blue-300' : 'text-blue-600 hover:text-blue-700'}`}>
+                Create free account
+              </Link>
+            </p>
           </div>
         </div>
-      </div>
+      </motion.div>
     </div>
   );
 }
