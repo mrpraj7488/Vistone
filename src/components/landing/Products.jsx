@@ -204,18 +204,27 @@ export default function Products({ darkMode }) {
         {/* View All Button */}
         <div className="flex justify-center mt-10 sm:mt-14 md:mt-16">
           <Link to="/products">
-            <Button
-              size="lg"
-              className={`group relative px-8 py-3 rounded-full font-semibold transition-all duration-300 w-full sm:w-auto ${darkMode
-                ? 'bg-slate-800 text-white border border-slate-700 hover:bg-slate-700 hover:border-slate-600 shadow-lg hover:shadow-indigo-500/20'
-                : 'bg-white text-slate-900 border border-slate-200 hover:bg-slate-50 hover:border-slate-300 shadow-lg hover:shadow-xl hover:shadow-blue-500/10'
-                }`}
-            >
-              <span className="flex items-center gap-2">
-                View All Products
-                <ArrowRight size={18} className="transition-transform duration-300 group-hover:translate-x-1" />
-              </span>
-            </Button>
+            <div className="relative group">
+              <div className={`absolute -inset-0.5 rounded-full blur opacity-30 group-hover:opacity-75 transition duration-1000 group-hover:duration-200 ${darkMode
+                  ? 'bg-gradient-to-r from-blue-600 to-cyan-600'
+                  : 'bg-gradient-to-r from-blue-600 to-cyan-600'
+                }`}></div>
+              <Button
+                size="lg"
+                className={`relative px-8 py-3 rounded-full font-bold transition-all duration-300 w-full sm:w-auto overflow-hidden ${darkMode
+                  ? '!bg-slate-900 !text-white border border-slate-700 hover:!bg-slate-800'
+                  : '!bg-white !text-slate-900 border border-slate-200 hover:!bg-slate-50'
+                  }`}
+              >
+                <span className="relative z-10 flex items-center gap-2">
+                  View All Products
+                  <ArrowRight size={18} className="transition-transform duration-300 group-hover:translate-x-1" />
+                </span>
+                {/* Gradient Overlay on Hover */}
+                <div className={`absolute inset-0 opacity-0 group-hover:opacity-10 transition-opacity duration-300 ${darkMode ? 'bg-blue-400' : 'bg-blue-600'
+                  }`} />
+              </Button>
+            </div>
           </Link>
         </div>
       </Container>
