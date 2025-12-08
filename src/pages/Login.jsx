@@ -108,10 +108,10 @@ export default function Login({ darkMode }) {
                   onChange={handleChange}
                   placeholder="name@company.com"
                   className={`w-full pl-12 pr-4 py-3 rounded-xl border-2 outline-none transition-all ${errors.email
-                      ? 'border-red-500 focus:border-red-500'
-                      : darkMode
-                        ? 'bg-slate-950 border-slate-800 text-white focus:border-blue-500'
-                        : 'bg-slate-50 border-slate-200 text-slate-900 focus:border-blue-500'
+                    ? 'border-red-500 focus:border-red-500'
+                    : darkMode
+                      ? 'bg-slate-950 border-slate-800 text-white focus:border-blue-500'
+                      : 'bg-slate-50 border-slate-200 text-slate-900 focus:border-blue-500'
                     }`}
                 />
               </div>
@@ -139,10 +139,10 @@ export default function Login({ darkMode }) {
                   onChange={handleChange}
                   placeholder="••••••••"
                   className={`w-full pl-12 pr-4 py-3 rounded-xl border-2 outline-none transition-all ${errors.password
-                      ? 'border-red-500 focus:border-red-500'
-                      : darkMode
-                        ? 'bg-slate-950 border-slate-800 text-white focus:border-blue-500'
-                        : 'bg-slate-50 border-slate-200 text-slate-900 focus:border-blue-500'
+                    ? 'border-red-500 focus:border-red-500'
+                    : darkMode
+                      ? 'bg-slate-950 border-slate-800 text-white focus:border-blue-500'
+                      : 'bg-slate-50 border-slate-200 text-slate-900 focus:border-blue-500'
                     }`}
                 />
               </div>
@@ -152,8 +152,8 @@ export default function Login({ darkMode }) {
             <div className="flex items-center">
               <label className="flex items-center gap-2 cursor-pointer group">
                 <div className={`w-5 h-5 rounded border flex items-center justify-center transition-colors ${formData.rememberMe
-                    ? 'bg-blue-600 border-blue-600'
-                    : darkMode ? 'border-slate-600 bg-slate-800' : 'border-slate-300 bg-white'
+                  ? 'bg-blue-600 border-blue-600'
+                  : darkMode ? 'border-slate-600 bg-slate-800' : 'border-slate-300 bg-white'
                   }`}>
                   {formData.rememberMe && <svg className="w-3 h-3 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="3" d="M5 13l4 4L19 7"></path></svg>}
                 </div>
@@ -170,9 +170,27 @@ export default function Login({ darkMode }) {
               </label>
             </div>
 
-            <Button type="submit" loading={loading} className="w-full h-12 text-base shadow-lg shadow-blue-500/20">
-              Sign In <ArrowRight size={18} className="ml-2" />
-            </Button>
+            <div className="relative group">
+              <div className={`absolute -inset-0.5 rounded-xl blur opacity-30 group-hover:opacity-75 transition duration-1000 group-hover:duration-200 ${darkMode
+                  ? 'bg-gradient-to-r from-blue-600 to-cyan-600'
+                  : 'bg-gradient-to-r from-blue-600 to-cyan-600'
+                }`}></div>
+              <Button
+                type="submit"
+                loading={loading}
+                className={`relative w-full h-12 text-base font-bold overflow-hidden transition-all duration-300 ${darkMode
+                    ? '!bg-slate-900 !text-white border border-slate-700 hover:!bg-slate-800'
+                    : '!bg-white !text-slate-900 border border-slate-200 hover:!bg-slate-50'
+                  }`}
+              >
+                <span className="relative z-10 flex items-center justify-center gap-2">
+                  Sign In <ArrowRight size={18} />
+                </span>
+                {/* Gradient Overlay on Hover */}
+                <div className={`absolute inset-0 opacity-0 group-hover:opacity-10 transition-opacity duration-300 ${darkMode ? 'bg-blue-400' : 'bg-blue-600'
+                  }`} />
+              </Button>
+            </div>
           </form>
 
           <div className="relative my-8">
@@ -190,8 +208,8 @@ export default function Login({ darkMode }) {
             <button
               onClick={() => handleSocialLogin('google')}
               className={`flex items-center justify-center p-3 rounded-xl border transition-all hover:-translate-y-1 ${darkMode
-                  ? 'bg-slate-800 border-slate-700 text-white hover:bg-slate-700'
-                  : 'bg-white border-slate-200 text-slate-700 hover:bg-slate-50 shadow-sm'
+                ? 'bg-slate-800 border-slate-700 text-white hover:bg-slate-700'
+                : 'bg-white border-slate-200 text-slate-700 hover:bg-slate-50 shadow-sm'
                 }`}
             >
               <Chrome size={20} />
@@ -199,8 +217,8 @@ export default function Login({ darkMode }) {
             <button
               onClick={() => handleSocialLogin('facebook')}
               className={`flex items-center justify-center p-3 rounded-xl border transition-all hover:-translate-y-1 ${darkMode
-                  ? 'bg-slate-800 border-slate-700 text-white hover:bg-slate-700'
-                  : 'bg-white border-slate-200 text-slate-700 hover:bg-slate-50 shadow-sm'
+                ? 'bg-slate-800 border-slate-700 text-white hover:bg-slate-700'
+                : 'bg-white border-slate-200 text-slate-700 hover:bg-slate-50 shadow-sm'
                 }`}
             >
               <Facebook size={20} />
@@ -208,8 +226,8 @@ export default function Login({ darkMode }) {
             <button
               onClick={() => handleSocialLogin('github')}
               className={`flex items-center justify-center p-3 rounded-xl border transition-all hover:-translate-y-1 ${darkMode
-                  ? 'bg-slate-800 border-slate-700 text-white hover:bg-slate-700'
-                  : 'bg-white border-slate-200 text-slate-700 hover:bg-slate-50 shadow-sm'
+                ? 'bg-slate-800 border-slate-700 text-white hover:bg-slate-700'
+                : 'bg-white border-slate-200 text-slate-700 hover:bg-slate-50 shadow-sm'
                 }`}
             >
               <Github size={20} />
