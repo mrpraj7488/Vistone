@@ -168,7 +168,13 @@ const ProductFormFixed = () => {
           documentationFile: null,
           demoFiles: [],
           featuredImage: product.featured_image || '',
-          galleryImages: product.gallery_images || []
+          galleryImages: product.gallery_images || [],
+
+          // Map download settings back to form state
+          downloadLimit: product.download_limit ? 'limited' : 'unlimited',
+          downloadLimitCount: product.download_limit || 5,
+          downloadExpiry: product.download_expiry ? 'days' : 'never',
+          downloadExpiryDays: product.download_expiry || 30,
         });
 
         // Set product statistics from the product table itself (no separate tables needed)
@@ -353,8 +359,13 @@ const ProductFormFixed = () => {
       productData.support_url = formData.supportUrl;
       productData.license_type = formData.licenseType;
       productData.license_terms = formData.licenseTerms;
-      productData.download_limit = formData.downloadLimit;
-      productData.download_expiry = formData.downloadExpiry;
+
+      // Handle download limit mapping
+      productData.download_limit = formData.downloadLimit === 'unlimited' ? null : parseInt(formData.downloadLimitCount);
+
+      // Handle download expiry mapping
+      productData.download_expiry = formData.downloadExpiry === 'never' ? null : parseInt(formData.downloadExpiryDays);
+
       productData.require_license = formData.requireLicense;
       productData.auto_update = formData.autoUpdate;
       productData.version = formData.version;
