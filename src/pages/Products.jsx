@@ -344,7 +344,7 @@ export default function Products({ darkMode }) {
                                         className={`group relative flex flex-col rounded-2xl overflow-hidden border transition-all duration-300 hover:-translate-y-1 hover:shadow-xl ${darkMode
                                             ? 'bg-slate-900/50 border-slate-800 hover:border-blue-500/30'
                                             : 'bg-white border-slate-200 hover:border-blue-500/30 hover:shadow-blue-500/10'
-                                            }`}
+                                            } ${product.trending ? 'ring-1 ring-rose-500/50 shadow-lg shadow-rose-500/10' : ''}`}
                                     >
                                         {/* Image Container - 4:3 Aspect Ratio */}
                                         <div className="relative aspect-[4/3] overflow-hidden bg-slate-100 dark:bg-slate-800">
@@ -371,20 +371,20 @@ export default function Products({ darkMode }) {
                                             {/* Badges */}
                                             <div className="absolute top-3 left-3 flex flex-col gap-1.5 z-20">
                                                 {product.is_featured && (
-                                                    <span className="px-2 py-1 rounded-md text-[10px] font-bold uppercase tracking-wider bg-amber-400 text-amber-950 shadow-sm flex items-center gap-1">
+                                                    <span className="px-2.5 py-1 rounded-lg text-[10px] font-bold uppercase tracking-wider bg-amber-400 text-amber-950 shadow-lg shadow-amber-900/20 flex items-center gap-1">
                                                         <Sparkles size={10} /> Featured
                                                     </span>
                                                 )}
                                                 {product.trending && (
-                                                    <span className="px-2 py-1 rounded-md text-[10px] font-bold uppercase tracking-wider bg-rose-500 text-white shadow-sm flex items-center gap-1 animate-pulse">
-                                                        <Flame size={10} /> Hot
+                                                    <span className="px-2.5 py-1 rounded-lg text-[10px] font-bold uppercase tracking-wider bg-gradient-to-r from-rose-500 to-orange-500 text-white shadow-lg shadow-rose-500/30 flex items-center gap-1 animate-pulse">
+                                                        <Flame size={10} className="fill-white" /> Hot Sale
                                                     </span>
                                                 )}
                                             </div>
 
                                             {/* Hype Banner for Trending/Sale */}
                                             {(product.trending || product.sale_price) && (
-                                                <div className="absolute bottom-0 left-0 right-0 bg-gradient-to-r from-blue-600/90 to-purple-600/90 backdrop-blur-sm text-white text-[10px] font-bold py-1.5 px-2 flex items-center justify-center gap-1.5 translate-y-full group-hover:translate-y-0 transition-transform duration-300 z-10">
+                                                <div className="absolute bottom-0 left-0 right-0 bg-gradient-to-r from-blue-600/95 to-purple-600/95 backdrop-blur-md text-white text-[10px] font-bold py-2 px-2 flex items-center justify-center gap-1.5 translate-y-full group-hover:translate-y-0 transition-transform duration-300 z-10">
                                                     <Timer size={12} className="animate-spin-slow" />
                                                     <span>Selling Fast! Limited Stock</span>
                                                 </div>
@@ -392,29 +392,33 @@ export default function Products({ darkMode }) {
                                         </div>
 
                                         {/* Content */}
-                                        <div className="flex-1 p-3 sm:p-5 flex flex-col">
-                                            <div className="mb-1">
+                                        <div className="flex-1 p-4 sm:p-5 flex flex-col">
+                                            <div className="mb-1.5">
                                                 <span className={`text-[10px] sm:text-xs font-bold uppercase tracking-wider ${darkMode ? 'text-blue-400' : 'text-blue-600'}`}>
                                                     {product.category}
                                                 </span>
                                             </div>
 
-                                            <h3 className={`font-bold text-sm sm:text-lg mb-1 sm:mb-2 line-clamp-1 group-hover:text-blue-500 transition-colors ${darkMode ? 'text-white' : 'text-slate-900'}`}>
+                                            <h3 className={`font-bold text-base sm:text-lg mb-2 line-clamp-1 group-hover:text-blue-500 transition-colors ${darkMode ? 'text-white' : 'text-slate-900'}`}>
                                                 {product.name}
                                             </h3>
 
-                                            <div className="flex items-center gap-1.5 mb-2 sm:mb-3">
-                                                <Star size={12} className="text-amber-400 fill-current" />
+                                            <div className="flex items-center gap-1.5 mb-4">
+                                                <div className="flex text-amber-400">
+                                                    {[...Array(5)].map((_, i) => (
+                                                        <Star key={i} size={12} fill={i < Math.floor(product.rating || 0) ? "currentColor" : "none"} className={i < Math.floor(product.rating || 0) ? "" : "text-slate-300 dark:text-slate-600"} />
+                                                    ))}
+                                                </div>
                                                 <span className={`text-xs font-medium ${darkMode ? 'text-slate-400' : 'text-slate-600'}`}>
                                                     {product.rating || 0}
                                                 </span>
-                                                <span className={`text-xs ${darkMode ? 'text-slate-600' : 'text-slate-400'}`}>
-                                                    ({product.rating_count || 0})
+                                                <span className={`text-xs ${darkMode ? 'text-slate-600' : 'text-slate-500'}`}>
+                                                    ({product.rating_count || 0} reviews)
                                                 </span>
                                             </div>
 
-                                            <div className="mt-auto pt-3 border-t border-dashed border-slate-200 dark:border-slate-800">
-                                                <div className="flex items-end justify-between gap-2">
+                                            <div className="mt-auto pt-4 border-t border-dashed border-slate-200 dark:border-slate-800">
+                                                <div className="flex items-center justify-between gap-3">
                                                     <div className="flex flex-col">
                                                         {product.sale_price ? (
                                                             <>
@@ -422,7 +426,7 @@ export default function Products({ darkMode }) {
                                                                     ${product.regular_price}
                                                                 </span>
                                                                 <div className="flex items-center gap-1">
-                                                                    <span className="text-base sm:text-lg font-black text-rose-500">
+                                                                    <span className="text-lg sm:text-xl font-black text-rose-500">
                                                                         ${product.sale_price}
                                                                     </span>
                                                                 </div>
@@ -430,7 +434,7 @@ export default function Products({ darkMode }) {
                                                         ) : (
                                                             <>
                                                                 <span className={`text-[10px] sm:text-xs ${darkMode ? 'text-slate-500' : 'text-slate-400'}`}>Price</span>
-                                                                <span className={`text-base sm:text-lg font-black ${darkMode ? 'text-white' : 'text-slate-900'}`}>
+                                                                <span className={`text-lg sm:text-xl font-black ${darkMode ? 'text-white' : 'text-slate-900'}`}>
                                                                     ${product.regular_price}
                                                                 </span>
                                                             </>
@@ -438,17 +442,17 @@ export default function Products({ darkMode }) {
                                                     </div>
 
                                                     <motion.button
-                                                        whileHover={{ scale: 1.05 }}
-                                                        whileTap={{ scale: 0.95 }}
+                                                        whileHover={{ scale: 1.02 }}
+                                                        whileTap={{ scale: 0.98 }}
                                                         onClick={(e) => handleAddToCart(product, e)}
-                                                        className={`relative overflow-hidden flex-1 max-w-[120px] h-9 rounded-lg font-bold text-xs sm:text-sm flex items-center justify-center gap-1.5 shadow-lg group/btn ${darkMode
-                                                            ? 'bg-gradient-to-r from-blue-600 to-indigo-600 text-white shadow-blue-500/20'
-                                                            : 'bg-gradient-to-r from-blue-600 to-indigo-600 text-white shadow-blue-500/30'
+                                                        className={`relative overflow-hidden flex-1 h-10 rounded-xl font-bold text-sm flex items-center justify-center gap-2 shadow-lg group/btn transition-all ${darkMode
+                                                            ? 'bg-gradient-to-r from-blue-600 to-indigo-600 text-white shadow-blue-500/20 hover:shadow-blue-500/40'
+                                                            : 'bg-gradient-to-r from-blue-600 to-indigo-600 text-white shadow-blue-500/30 hover:shadow-blue-500/50'
                                                             }`}
                                                     >
                                                         <div className="absolute inset-0 -translate-x-full group-hover/btn:animate-[shine_1.5s_infinite] bg-gradient-to-r from-transparent via-white/30 to-transparent z-10" />
                                                         <span>Buy Now</span>
-                                                        <ShoppingCart size={14} className="group-hover/btn:translate-x-1 transition-transform" />
+                                                        <ShoppingCart size={16} className="group-hover/btn:translate-x-1 transition-transform" />
                                                     </motion.button>
                                                 </div>
                                             </div>
