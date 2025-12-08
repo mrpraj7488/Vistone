@@ -1,5 +1,5 @@
 import { useState, useEffect } from 'react';
-import { Key, Globe, Shield, AlertCircle, CheckCircle, XCircle, Copy, RefreshCw, ChevronRight, Server, Calendar, Download } from 'lucide-react';
+import { Key, Globe, Shield, AlertCircle, CheckCircle, XCircle, Copy, RefreshCw, ChevronRight, Server, Calendar, Download, Clock } from 'lucide-react';
 import { useAuthStore, useUIStore } from '../../store/useStore';
 import Modal from '../ui/Modal';
 import Button from '../ui/Button';
@@ -168,8 +168,8 @@ export default function LicensesTab({ darkMode }) {
           animate={{ opacity: 1, y: 0 }}
           transition={{ delay: 0.1 }}
           className={`relative overflow-hidden rounded-3xl p-6 border transition-all hover:shadow-lg ${darkMode
-              ? 'bg-gradient-to-br from-slate-800 to-slate-900 border-slate-700'
-              : 'bg-white border-slate-200 shadow-sm'
+            ? 'bg-gradient-to-br from-slate-800 to-slate-900 border-slate-700'
+            : 'bg-white border-slate-200 shadow-sm'
             }`}
         >
           <div className="relative z-10 flex items-center justify-between">
@@ -193,8 +193,8 @@ export default function LicensesTab({ darkMode }) {
           animate={{ opacity: 1, y: 0 }}
           transition={{ delay: 0.2 }}
           className={`relative overflow-hidden rounded-3xl p-6 border transition-all hover:shadow-lg ${darkMode
-              ? 'bg-gradient-to-br from-slate-800 to-slate-900 border-slate-700'
-              : 'bg-white border-slate-200 shadow-sm'
+            ? 'bg-gradient-to-br from-slate-800 to-slate-900 border-slate-700'
+            : 'bg-white border-slate-200 shadow-sm'
             }`}
         >
           <div className="relative z-10 flex items-center justify-between">
@@ -218,8 +218,8 @@ export default function LicensesTab({ darkMode }) {
           animate={{ opacity: 1, y: 0 }}
           transition={{ delay: 0.3 }}
           className={`relative overflow-hidden rounded-3xl p-6 border transition-all hover:shadow-lg ${darkMode
-              ? 'bg-gradient-to-br from-slate-800 to-slate-900 border-slate-700'
-              : 'bg-white border-slate-200 shadow-sm'
+            ? 'bg-gradient-to-br from-slate-800 to-slate-900 border-slate-700'
+            : 'bg-white border-slate-200 shadow-sm'
             }`}
         >
           <div className="relative z-10 flex items-center justify-between">
@@ -249,8 +249,8 @@ export default function LicensesTab({ darkMode }) {
               animate={{ opacity: 1, y: 0 }}
               transition={{ delay: index * 0.1 }}
               className={`group rounded-2xl border overflow-hidden transition-all hover:shadow-md ${darkMode
-                  ? 'bg-slate-800/50 border-slate-700 hover:border-slate-600'
-                  : 'bg-white border-slate-200 hover:border-blue-300'
+                ? 'bg-slate-800/50 border-slate-700 hover:border-slate-600'
+                : 'bg-white border-slate-200 hover:border-blue-300'
                 }`}
             >
               <div className="p-6">
@@ -300,8 +300,8 @@ export default function LicensesTab({ darkMode }) {
                         <div className={`w-full h-2 rounded-full overflow-hidden ${darkMode ? 'bg-slate-800' : 'bg-slate-200'}`}>
                           <div
                             className={`h-full rounded-full ${license.activatedDomains.length >= license.maxDomains
-                                ? 'bg-rose-500'
-                                : 'bg-blue-500'
+                              ? 'bg-rose-500'
+                              : 'bg-blue-500'
                               }`}
                             style={{ width: `${(license.activatedDomains.length / license.maxDomains) * 100}%` }}
                           />
@@ -430,8 +430,8 @@ export default function LicensesTab({ darkMode }) {
                 onChange={(e) => setDomainInput(e.target.value)}
                 placeholder="example.com"
                 className={`w-full pl-12 pr-4 py-3 rounded-xl border-2 outline-none transition-all ${darkMode
-                    ? 'bg-slate-900 border-slate-700 text-white placeholder-slate-500 focus:border-blue-500'
-                    : 'bg-white border-slate-200 text-slate-900 placeholder-slate-400 focus:border-blue-500'
+                  ? 'bg-slate-900 border-slate-700 text-white placeholder-slate-500 focus:border-blue-500'
+                  : 'bg-white border-slate-200 text-slate-900 placeholder-slate-400 focus:border-blue-500'
                   }`}
               />
             </div>
