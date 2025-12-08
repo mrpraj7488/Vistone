@@ -20,7 +20,7 @@ export default function DashboardHeader({ darkMode, setDarkMode, user, setSideba
   useEffect(() => {
     const fetchNotifications = async () => {
       if (!user?.id) return;
-      
+
       try {
         const { data, error } = await supabase
           .from('notifications')
@@ -74,19 +74,17 @@ export default function DashboardHeader({ darkMode, setDarkMode, user, setSideba
 
   return (
     <header
-      className={`fixed top-0 left-0 right-0 z-50 h-[70px] border-b transition-all duration-300 ${
-        darkMode
-          ? 'bg-[#1A2C4A] border-white/10'
-          : 'bg-white border-[#E2E8F0] shadow-sm'
-      }`}
+      className={`fixed top-0 left-0 right-0 z-50 h-[70px] border-b transition-all duration-300 ${darkMode
+          ? 'bg-slate-900 border-slate-800'
+          : 'bg-white border-slate-200 shadow-sm'
+        }`}
     >
       <div className="h-full px-6 lg:px-8 flex items-center justify-between">
         <div className="flex items-center gap-4">
           <button
             onClick={() => setSidebarOpen(true)}
-            className={`lg:hidden p-2 rounded-lg transition-colors ${
-              darkMode ? 'hover:bg-white/10' : 'hover:bg-gray-100'
-            }`}
+            className={`lg:hidden p-2 rounded-lg transition-colors ${darkMode ? 'hover:bg-white/10' : 'hover:bg-gray-100'
+              }`}
           >
             <Menu className="w-6 h-6" />
           </button>
@@ -96,9 +94,8 @@ export default function DashboardHeader({ darkMode, setDarkMode, user, setSideba
               V
             </div>
             <span
-              className={`font-bold text-[22px] hidden sm:block ${
-                darkMode ? 'text-white' : 'text-gray-900'
-              }`}
+              className={`font-bold text-[22px] hidden sm:block ${darkMode ? 'text-white' : 'text-gray-900'
+                }`}
             >
               Vistone
             </span>
@@ -108,17 +105,15 @@ export default function DashboardHeader({ darkMode, setDarkMode, user, setSideba
         <div className="flex items-center gap-3">
           <button
             onClick={() => setDarkMode(!darkMode)}
-            className={`relative w-12 h-[26px] rounded-full transition-all duration-300 ${
-              darkMode
+            className={`relative w-12 h-[26px] rounded-full transition-all duration-300 ${darkMode
                 ? 'bg-gradient-to-r from-[#8B5CF6] to-[#3B82F6]'
                 : 'bg-gradient-to-r from-[#FF6B35] to-[#FFA500]'
-            }`}
+              }`}
             title={darkMode ? 'Switch to Light Mode' : 'Switch to Dark Mode'}
           >
             <div
-              className={`absolute top-[3px] w-5 h-5 rounded-full bg-white shadow-lg transition-all duration-300 flex items-center justify-center ${
-                darkMode ? 'left-[calc(100%-23px)]' : 'left-[3px]'
-              }`}
+              className={`absolute top-[3px] w-5 h-5 rounded-full bg-white shadow-lg transition-all duration-300 flex items-center justify-center ${darkMode ? 'left-[calc(100%-23px)]' : 'left-[3px]'
+                }`}
             >
               {darkMode ? (
                 <Moon className="w-3 h-3 text-[#8B5CF6]" />
@@ -131,9 +126,8 @@ export default function DashboardHeader({ darkMode, setDarkMode, user, setSideba
           <div className="relative" ref={notifRef}>
             <button
               onClick={() => setNotificationsOpen(!notificationsOpen)}
-              className={`relative p-2 rounded-lg transition-all duration-200 hover:scale-110 ${
-                darkMode ? 'hover:bg-white/10' : 'hover:bg-gray-100'
-              }`}
+              className={`relative p-2 rounded-lg transition-all duration-200 hover:scale-110 ${darkMode ? 'hover:bg-white/10' : 'hover:bg-gray-100'
+                }`}
             >
               <Bell className="w-6 h-6" />
               {unreadCount > 0 && (
@@ -143,11 +137,10 @@ export default function DashboardHeader({ darkMode, setDarkMode, user, setSideba
 
             {notificationsOpen && (
               <div
-                className={`absolute right-0 mt-2 w-80 rounded-2xl shadow-2xl border animate-slide-up ${
-                  darkMode
-                    ? 'bg-[#1A2C4A] border-white/10'
-                    : 'bg-white border-gray-200'
-                }`}
+                className={`absolute right-0 mt-2 w-80 rounded-2xl shadow-2xl border animate-slide-up ${darkMode
+                    ? 'bg-slate-800 border-slate-700'
+                    : 'bg-white border-slate-200'
+                  }`}
               >
                 <div className="p-4 border-b border-gray-200 dark:border-white/10">
                   <div className="flex items-center justify-between mb-2">
@@ -171,26 +164,23 @@ export default function DashboardHeader({ darkMode, setDarkMode, user, setSideba
                     notifications.map((notif) => (
                       <div
                         key={notif.id}
-                        className={`p-4 border-b cursor-pointer transition-colors ${
-                          darkMode
+                        className={`p-4 border-b cursor-pointer transition-colors ${darkMode
                             ? 'border-white/10 hover:bg-white/5'
                             : 'border-gray-100 hover:bg-gray-50'
-                        } ${!notif.read ? 'bg-cyan-500/5' : ''}`}
+                          } ${!notif.read ? 'bg-cyan-500/5' : ''}`}
                       >
                         <div className="flex items-start gap-3">
                           <span className="text-2xl">{notif.icon}</span>
                           <div className="flex-1">
                             <p
-                              className={`font-medium text-sm ${
-                                darkMode ? 'text-white' : 'text-gray-900'
-                              }`}
+                              className={`font-medium text-sm ${darkMode ? 'text-white' : 'text-gray-900'
+                                }`}
                             >
                               {notif.title}
                             </p>
                             <p
-                              className={`text-xs mt-1 ${
-                                darkMode ? 'text-gray-400' : 'text-gray-600'
-                              }`}
+                              className={`text-xs mt-1 ${darkMode ? 'text-gray-400' : 'text-gray-600'
+                                }`}
                             >
                               {notif.time}
                             </p>
@@ -226,11 +216,10 @@ export default function DashboardHeader({ darkMode, setDarkMode, user, setSideba
 
             {userMenuOpen && (
               <div
-                className={`absolute right-0 mt-2 w-60 rounded-2xl shadow-2xl border animate-slide-up ${
-                  darkMode
-                    ? 'bg-[#1A2C4A] border-white/10'
-                    : 'bg-white border-gray-200'
-                }`}
+                className={`absolute right-0 mt-2 w-60 rounded-2xl shadow-2xl border animate-slide-up ${darkMode
+                    ? 'bg-slate-800 border-slate-700'
+                    : 'bg-white border-slate-200'
+                  }`}
               >
                 <div className="p-4 border-b border-gray-200 dark:border-white/10">
                   <div className="flex items-center gap-3">
@@ -239,16 +228,14 @@ export default function DashboardHeader({ darkMode, setDarkMode, user, setSideba
                     </div>
                     <div className="flex-1 min-w-0">
                       <p
-                        className={`font-bold text-sm truncate ${
-                          darkMode ? 'text-white' : 'text-gray-900'
-                        }`}
+                        className={`font-bold text-sm truncate ${darkMode ? 'text-white' : 'text-gray-900'
+                          }`}
                       >
                         {user?.user_metadata?.full_name || 'User'}
                       </p>
                       <p
-                        className={`text-xs truncate ${
-                          darkMode ? 'text-gray-400' : 'text-gray-600'
-                        }`}
+                        className={`text-xs truncate ${darkMode ? 'text-gray-400' : 'text-gray-600'
+                          }`}
                       >
                         {user?.email}
                       </p>
@@ -259,11 +246,10 @@ export default function DashboardHeader({ darkMode, setDarkMode, user, setSideba
                 <div className="p-2">
                   <Link
                     to="/profile"
-                    className={`flex items-center gap-3 px-4 py-3 rounded-lg transition-colors ${
-                      darkMode
+                    className={`flex items-center gap-3 px-4 py-3 rounded-lg transition-colors ${darkMode
                         ? 'hover:bg-white/5 text-gray-300'
                         : 'hover:bg-gray-100 text-gray-700'
-                    }`}
+                      }`}
                   >
                     <User className="w-5 h-5" />
                     <span>My Profile</span>
@@ -271,11 +257,10 @@ export default function DashboardHeader({ darkMode, setDarkMode, user, setSideba
 
                   <Link
                     to="/dashboard?tab=settings"
-                    className={`flex items-center gap-3 px-4 py-3 rounded-lg transition-colors ${
-                      darkMode
+                    className={`flex items-center gap-3 px-4 py-3 rounded-lg transition-colors ${darkMode
                         ? 'hover:bg-white/5 text-gray-300'
                         : 'hover:bg-gray-100 text-gray-700'
-                    }`}
+                      }`}
                   >
                     <Settings className="w-5 h-5" />
                     <span>Settings</span>
@@ -283,11 +268,10 @@ export default function DashboardHeader({ darkMode, setDarkMode, user, setSideba
 
                   <Link
                     to="/dashboard?tab=downloads"
-                    className={`flex items-center gap-3 px-4 py-3 rounded-lg transition-colors ${
-                      darkMode
+                    className={`flex items-center gap-3 px-4 py-3 rounded-lg transition-colors ${darkMode
                         ? 'hover:bg-white/5 text-gray-300'
                         : 'hover:bg-gray-100 text-gray-700'
-                    }`}
+                      }`}
                   >
                     <Download className="w-5 h-5" />
                     <span>Downloads</span>
@@ -295,11 +279,10 @@ export default function DashboardHeader({ darkMode, setDarkMode, user, setSideba
 
                   <Link
                     to="/dashboard?tab=support"
-                    className={`flex items-center gap-3 px-4 py-3 rounded-lg transition-colors ${
-                      darkMode
+                    className={`flex items-center gap-3 px-4 py-3 rounded-lg transition-colors ${darkMode
                         ? 'hover:bg-white/5 text-gray-300'
                         : 'hover:bg-gray-100 text-gray-700'
-                    }`}
+                      }`}
                   >
                     <LifeBuoy className="w-5 h-5" />
                     <span>Support</span>

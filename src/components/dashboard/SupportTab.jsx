@@ -1,7 +1,9 @@
 import { useState, useEffect } from 'react';
-import { Send, Upload, X, MessageSquare, FileText, Phone, Mail, Clock, AlertCircle, CheckCircle } from 'lucide-react';
+import { Send, Upload, X, MessageSquare, FileText, Phone, Mail, Clock, AlertCircle, CheckCircle, Paperclip, HelpCircle, MessageCircle } from 'lucide-react';
 import { useAuthStore, useUIStore } from '../../store/useStore';
 import { supabase } from '../../lib/supabase';
+import { motion, AnimatePresence } from 'motion/react';
+import Button from '../ui/Button';
 
 export default function SupportTab({ darkMode }) {
   const [formData, setFormData] = useState({
@@ -22,7 +24,7 @@ export default function SupportTab({ darkMode }) {
   useEffect(() => {
     const fetchTickets = async () => {
       if (!user?.id) return;
-      
+
       try {
         const { data, error } = await supabase
           .from('support_tickets')
@@ -100,406 +102,391 @@ export default function SupportTab({ darkMode }) {
 
   const quickHelpCards = [
     {
-      icon: <FileText className="w-12 h-12" />,
-      title: 'Docs',
-      description: 'Browse our documentation',
+      icon: <FileText className="w-8 h-8" />,
+      title: 'Documentation',
+      description: 'Browse our detailed guides and API docs',
       action: 'View Docs',
       link: '/docs',
-      gradient: 'from-blue-500 to-blue-700',
+      color: 'blue',
     },
     {
-      icon: <MessageCircle className="w-12 h-12" />,
+      icon: <MessageCircle className="w-8 h-8" />,
       title: 'Live Chat',
-      description: 'Chat with our support team',
+      description: 'Chat with our support team in real-time',
       action: 'Start Chat',
-      gradient: 'from-purple-500 to-purple-700',
+      color: 'purple',
     },
     {
-      icon: <Mail className="w-12 h-12" />,
-      title: 'Email',
-      description: 'Send us an email',
+      icon: <Mail className="w-8 h-8" />,
+      title: 'Email Support',
+      description: 'Get help via email for complex issues',
       action: 'Email Us',
       link: 'mailto:support@vistone.com',
-      gradient: 'from-green-500 to-green-700',
+      color: 'emerald',
     },
   ];
 
-  const statusColors = {
-    open: 'bg-green-500',
-    progress: 'bg-yellow-500',
-    closed: 'bg-gray-500',
-  };
-
   return (
-    <div className="space-y-8">
-      <div>
-        <h1 className={`text-4xl font-black mb-2 ${darkMode ? 'text-white' : 'text-gray-900'}`}>
-          Support
-        </h1>
-        <p className={`text-lg ${darkMode ? 'text-gray-400' : 'text-gray-600'}`}>
-          Get help when you need it
-        </p>
+    <div className="space-y-8 pb-10">
+      <div className="flex flex-col md:flex-row md:items-end justify-between gap-4">
+        <div>
+          <h1 className={`text-3xl font-black mb-2 tracking-tight ${darkMode ? 'text-white' : 'text-slate-900'}`}>
+            Support Center
+          </h1>
+          <p className={`text-lg ${darkMode ? 'text-slate-400' : 'text-slate-600'}`}>
+            We're here to help you succeed
+          </p>
+        </div>
       </div>
 
+      {/* Quick Help Cards */}
       <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
         {quickHelpCards.map((card, index) => (
-          <a
+          <motion.a
             key={index}
             href={card.link || '#'}
-            className={`rounded-2xl p-8 border text-center transition-all duration-300 hover:-translate-y-2 hover:shadow-2xl ${
-              darkMode ? 'bg-[#1A2C4A] border-white/10' : 'bg-white border-gray-200'
-            }`}
+            initial={{ opacity: 0, y: 20 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ delay: index * 0.1 }}
+            className={`group relative overflow-hidden rounded-3xl p-6 border transition-all hover:shadow-lg ${darkMode
+                ? 'bg-gradient-to-br from-slate-800 to-slate-900 border-slate-700'
+                : 'bg-white border-slate-200 shadow-sm'
+              }`}
           >
-            <div className={`w-20 h-20 mx-auto mb-4 rounded-full bg-gradient-to-br ${card.gradient} flex items-center justify-center text-white shadow-lg`}>
+            <div className={`w-16 h-16 mb-6 rounded-2xl flex items-center justify-center transition-transform group-hover:scale-110 ${card.color === 'blue' ? (darkMode ? 'bg-blue-500/20 text-blue-400' : 'bg-blue-50 text-blue-600') :
+                card.color === 'purple' ? (darkMode ? 'bg-purple-500/20 text-purple-400' : 'bg-purple-50 text-purple-600') :
+                  (darkMode ? 'bg-emerald-500/20 text-emerald-400' : 'bg-emerald-50 text-emerald-600')
+              }`}>
               {card.icon}
             </div>
-            <h3 className={`text-xl font-bold mb-2 ${darkMode ? 'text-white' : 'text-gray-900'}`}>
+            <h3 className={`text-xl font-bold mb-2 ${darkMode ? 'text-white' : 'text-slate-900'}`}>
               {card.title}
             </h3>
-            <p className={`text-sm mb-4 ${darkMode ? 'text-gray-400' : 'text-gray-600'}`}>
+            <p className={`text-sm mb-6 ${darkMode ? 'text-slate-400' : 'text-slate-500'}`}>
               {card.description}
             </p>
-            <button
-              className={`px-6 py-2 rounded-xl font-bold transition-all ${
-                darkMode
-                  ? 'bg-white/10 text-white hover:bg-white/20'
-                  : 'bg-gray-100 text-gray-900 hover:bg-gray-200'
-              }`}
-            >
-              {card.action}
-            </button>
-          </a>
+            <span className={`inline-flex items-center text-sm font-bold ${card.color === 'blue' ? 'text-blue-500' :
+                card.color === 'purple' ? 'text-purple-500' :
+                  'text-emerald-500'
+              }`}>
+              {card.action} <span className="ml-1 transition-transform group-hover:translate-x-1">→</span>
+            </span>
+          </motion.a>
         ))}
       </div>
 
-      <div
-        className={`rounded-2xl p-8 border ${
-          darkMode ? 'bg-[#1A2C4A] border-white/10' : 'bg-white border-gray-200'
-        }`}
-      >
-        <h2 className={`text-2xl font-bold mb-6 ${darkMode ? 'text-white' : 'text-gray-900'}`}>
-          Submit a Support Request
-        </h2>
-
-        <form onSubmit={handleSubmit} className="space-y-6">
-          <div>
-            <label className={`block text-sm font-bold mb-2 ${darkMode ? 'text-white' : 'text-gray-900'}`}>
-              Subject *
-            </label>
-            <input
-              type="text"
-              name="subject"
-              value={formData.subject}
-              onChange={handleChange}
-              required
-              className={`w-full px-4 py-3 rounded-xl border-2 outline-none transition-all ${
-                darkMode
-                  ? 'bg-gray-800 border-white/10 text-white focus:border-cyan-500'
-                  : 'bg-white border-gray-200 text-gray-900 focus:border-cyan-500'
-              }`}
-              placeholder="Brief description of your issue"
-            />
+      <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
+        {/* Contact Form */}
+        <motion.div
+          initial={{ opacity: 0, y: 20 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ delay: 0.3 }}
+          className={`lg:col-span-2 rounded-3xl p-8 border ${darkMode ? 'bg-slate-800/50 border-slate-700' : 'bg-white border-slate-200 shadow-sm'
+            }`}
+        >
+          <div className="flex items-center gap-3 mb-8">
+            <div className={`p-2 rounded-xl ${darkMode ? 'bg-blue-500/20 text-blue-400' : 'bg-blue-50 text-blue-600'}`}>
+              <Send size={24} />
+            </div>
+            <h2 className={`text-xl font-bold ${darkMode ? 'text-white' : 'text-slate-900'}`}>
+              Submit a Request
+            </h2>
           </div>
 
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+          <form onSubmit={handleSubmit} className="space-y-6">
             <div>
-              <label className={`block text-sm font-bold mb-2 ${darkMode ? 'text-white' : 'text-gray-900'}`}>
-                Category *
+              <label className={`block text-sm font-bold mb-2 ${darkMode ? 'text-white' : 'text-slate-900'}`}>
+                Subject
               </label>
-              <select
-                name="category"
-                value={formData.category}
+              <input
+                type="text"
+                name="subject"
+                value={formData.subject}
                 onChange={handleChange}
                 required
-                className={`w-full px-4 py-3 rounded-xl border-2 outline-none transition-all ${
-                  darkMode
-                    ? 'bg-gray-800 border-white/10 text-white focus:border-cyan-500'
-                    : 'bg-white border-gray-200 text-gray-900 focus:border-cyan-500'
-                }`}
-              >
-                <option value="technical">Technical</option>
-                <option value="billing">Billing</option>
-                <option value="other">Other</option>
-              </select>
+                className={`w-full px-4 py-3 rounded-xl border-2 outline-none transition-all ${darkMode
+                    ? 'bg-slate-900 border-slate-700 text-white focus:border-blue-500'
+                    : 'bg-slate-50 border-slate-200 text-slate-900 focus:border-blue-500'
+                  }`}
+                placeholder="Brief description of your issue"
+              />
+            </div>
+
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+              <div>
+                <label className={`block text-sm font-bold mb-2 ${darkMode ? 'text-white' : 'text-slate-900'}`}>
+                  Category
+                </label>
+                <div className="relative">
+                  <select
+                    name="category"
+                    value={formData.category}
+                    onChange={handleChange}
+                    required
+                    className={`w-full px-4 py-3 rounded-xl border-2 outline-none appearance-none transition-all cursor-pointer ${darkMode
+                        ? 'bg-slate-900 border-slate-700 text-white focus:border-blue-500'
+                        : 'bg-slate-50 border-slate-200 text-slate-900 focus:border-blue-500'
+                      }`}
+                  >
+                    <option value="technical">Technical Issue</option>
+                    <option value="billing">Billing & Payments</option>
+                    <option value="account">Account Management</option>
+                    <option value="feature">Feature Request</option>
+                    <option value="other">Other</option>
+                  </select>
+                  <HelpCircle className={`absolute right-4 top-1/2 -translate-y-1/2 w-5 h-5 pointer-events-none ${darkMode ? 'text-slate-500' : 'text-slate-400'}`} />
+                </div>
+              </div>
+
+              <div>
+                <label className={`block text-sm font-bold mb-2 ${darkMode ? 'text-white' : 'text-slate-900'}`}>
+                  Priority
+                </label>
+                <div className={`flex p-1 rounded-xl border-2 ${darkMode ? 'bg-slate-900 border-slate-700' : 'bg-slate-50 border-slate-200'}`}>
+                  {['low', 'medium', 'high'].map((priority) => (
+                    <button
+                      key={priority}
+                      type="button"
+                      onClick={() => setFormData(prev => ({ ...prev, priority }))}
+                      className={`flex-1 py-2 rounded-lg text-sm font-bold capitalize transition-all ${formData.priority === priority
+                          ? priority === 'high'
+                            ? 'bg-rose-500 text-white shadow-lg shadow-rose-500/25'
+                            : priority === 'medium'
+                              ? 'bg-amber-500 text-white shadow-lg shadow-amber-500/25'
+                              : 'bg-blue-500 text-white shadow-lg shadow-blue-500/25'
+                          : darkMode
+                            ? 'text-slate-400 hover:text-white'
+                            : 'text-slate-500 hover:text-slate-900'
+                        }`}
+                    >
+                      {priority}
+                    </button>
+                  ))}
+                </div>
+              </div>
             </div>
 
             <div>
-              <label className={`block text-sm font-bold mb-2 ${darkMode ? 'text-white' : 'text-gray-900'}`}>
-                Priority
+              <label className={`block text-sm font-bold mb-2 ${darkMode ? 'text-white' : 'text-slate-900'}`}>
+                Description
               </label>
-              <div className="flex gap-6 items-center h-[50px]">
-                {['low', 'medium', 'high'].map((priority) => (
-                  <label key={priority} className="flex items-center gap-2 cursor-pointer group">
-                    <input
-                      type="radio"
-                      name="priority"
-                      value={priority}
-                      checked={formData.priority === priority}
-                      onChange={handleChange}
-                      className="hidden"
-                    />
-                    <div
-                      className={`w-5 h-5 rounded-full border-2 flex items-center justify-center transition-all ${
-                        formData.priority === priority
-                          ? 'border-cyan-500 bg-cyan-500'
-                          : darkMode
-                          ? 'border-gray-600 group-hover:border-cyan-500'
-                          : 'border-gray-300 group-hover:border-cyan-500'
-                      }`}
-                    >
-                      {formData.priority === priority && (
-                        <div className="w-2 h-2 rounded-full bg-white" />
-                      )}
-                    </div>
-                    <span
-                      className={`capitalize text-sm ${
-                        formData.priority === priority
-                          ? darkMode
-                            ? 'text-cyan-400 font-bold'
-                            : 'text-cyan-600 font-bold'
-                          : darkMode
-                          ? 'text-gray-400'
-                          : 'text-gray-600'
-                      }`}
-                    >
-                      {priority}
-                    </span>
-                  </label>
-                ))}
+              <div className="relative">
+                <textarea
+                  name="description"
+                  value={formData.description}
+                  onChange={handleChange}
+                  required
+                  minLength={20}
+                  maxLength={500}
+                  rows={6}
+                  className={`w-full px-4 py-3 rounded-xl border-2 outline-none resize-none transition-all ${darkMode
+                      ? 'bg-slate-900 border-slate-700 text-white focus:border-blue-500'
+                      : 'bg-slate-50 border-slate-200 text-slate-900 focus:border-blue-500'
+                    }`}
+                  placeholder="Please describe your issue in detail..."
+                />
+                <p className={`text-xs mt-1 text-right ${darkMode ? 'text-slate-500' : 'text-slate-400'}`}>
+                  {charCount}/500
+                </p>
               </div>
             </div>
-          </div>
 
-          <div>
-            <label className={`block text-sm font-bold mb-2 ${darkMode ? 'text-white' : 'text-gray-900'}`}>
-              Description * (min 20 characters)
-            </label>
-            <textarea
-              name="description"
-              value={formData.description}
-              onChange={handleChange}
-              required
-              minLength={20}
-              maxLength={500}
-              rows={6}
-              className={`w-full px-4 py-3 rounded-xl border-2 outline-none resize-none transition-all ${
-                darkMode
-                  ? 'bg-gray-800 border-white/10 text-white focus:border-cyan-500'
-                  : 'bg-white border-gray-200 text-gray-900 focus:border-cyan-500'
-              }`}
-              placeholder="Please describe your issue in detail..."
-            />
-            <p className={`text-sm mt-1 text-right ${darkMode ? 'text-gray-400' : 'text-gray-600'}`}>
-              {charCount}/500 characters {charCount < 20 && `(${20 - charCount} more required)`}
-            </p>
-          </div>
-
-          <div>
-            <label className={`block text-sm font-bold mb-2 ${darkMode ? 'text-white' : 'text-gray-900'}`}>
-              Attachments (Optional)
-            </label>
-            <div
-              className={`border-2 border-dashed rounded-xl p-8 text-center transition-all ${
-                darkMode
-                  ? 'border-white/10 hover:border-cyan-500 hover:bg-white/5'
-                  : 'border-gray-300 hover:border-cyan-500 hover:bg-cyan-50'
-              }`}
-            >
-              <input
-                type="file"
-                id="file-upload"
-                multiple
-                accept="image/*,.pdf,.doc,.docx"
-                onChange={handleFileChange}
-                className="hidden"
-                disabled={files.length >= 3}
-              />
-              <label
-                htmlFor="file-upload"
-                className="cursor-pointer"
+            <div>
+              <label className={`block text-sm font-bold mb-2 ${darkMode ? 'text-white' : 'text-slate-900'}`}>
+                Attachments
+              </label>
+              <div
+                className={`border-2 border-dashed rounded-xl p-8 text-center transition-all ${darkMode
+                    ? 'border-slate-700 hover:border-blue-500 hover:bg-slate-800/50'
+                    : 'border-slate-300 hover:border-blue-500 hover:bg-blue-50'
+                  }`}
               >
-                <Paperclip className={`w-12 h-12 mx-auto mb-3 ${darkMode ? 'text-gray-400' : 'text-gray-500'}`} />
-                <p className={`font-medium ${darkMode ? 'text-white' : 'text-gray-900'}`}>
-                  Choose files or drag & drop
-                </p>
-                <p className={`text-sm mt-1 ${darkMode ? 'text-gray-400' : 'text-gray-600'}`}>
-                  Max 3 files, 10MB each (Images, PDFs, Documents)
-                </p>
-              </label>
+                <input
+                  type="file"
+                  id="file-upload"
+                  multiple
+                  accept="image/*,.pdf,.doc,.docx"
+                  onChange={handleFileChange}
+                  className="hidden"
+                  disabled={files.length >= 3}
+                />
+                <label
+                  htmlFor="file-upload"
+                  className="cursor-pointer flex flex-col items-center"
+                >
+                  <div className={`w-12 h-12 mb-3 rounded-full flex items-center justify-center ${darkMode ? 'bg-slate-800 text-slate-400' : 'bg-slate-100 text-slate-500'}`}>
+                    <Upload size={24} />
+                  </div>
+                  <p className={`font-medium ${darkMode ? 'text-white' : 'text-slate-900'}`}>
+                    Click to upload or drag and drop
+                  </p>
+                  <p className={`text-sm mt-1 ${darkMode ? 'text-slate-400' : 'text-slate-500'}`}>
+                    Max 3 files (Images, PDF, Doc)
+                  </p>
+                </label>
+              </div>
+
+              {files.length > 0 && (
+                <div className="mt-4 space-y-2">
+                  {files.map((file, index) => (
+                    <div
+                      key={index}
+                      className={`flex items-center justify-between px-4 py-3 rounded-xl border ${darkMode ? 'bg-slate-900 border-slate-700' : 'bg-slate-50 border-slate-200'
+                        }`}
+                    >
+                      <div className="flex items-center gap-3">
+                        <Paperclip size={16} className="text-blue-500" />
+                        <span className={`text-sm font-medium ${darkMode ? 'text-white' : 'text-slate-900'}`}>
+                          {file.name}
+                        </span>
+                        <span className={`text-xs ${darkMode ? 'text-slate-500' : 'text-slate-400'}`}>
+                          ({(file.size / 1024).toFixed(1)} KB)
+                        </span>
+                      </div>
+                      <button
+                        type="button"
+                        onClick={() => removeFile(index)}
+                        className="p-1 rounded-lg hover:bg-rose-500/10 text-rose-500 transition-colors"
+                      >
+                        <X size={16} />
+                      </button>
+                    </div>
+                  ))}
+                </div>
+              )}
             </div>
 
-            {files.length > 0 && (
-              <div className="mt-4 space-y-2">
-                {files.map((file, index) => (
+            <Button
+              type="submit"
+              disabled={submitting || charCount < 20}
+              className="w-full justify-center h-12 text-base"
+            >
+              {submitting ? (
+                <>
+                  <div className="w-5 h-5 border-2 border-white/30 border-t-white rounded-full animate-spin mr-2" />
+                  Submitting...
+                </>
+              ) : (
+                <>
+                  <Send size={18} className="mr-2" />
+                  Submit Request
+                </>
+              )}
+            </Button>
+          </form>
+        </motion.div>
+
+        {/* Sidebar */}
+        <div className="space-y-6">
+          <motion.div
+            initial={{ opacity: 0, y: 20 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ delay: 0.4 }}
+            className={`rounded-3xl p-6 border ${darkMode ? 'bg-slate-800/50 border-slate-700' : 'bg-white border-slate-200 shadow-sm'
+              }`}
+          >
+            <h3 className={`font-bold mb-4 ${darkMode ? 'text-white' : 'text-slate-900'}`}>
+              Your Recent Tickets
+            </h3>
+            <div className="space-y-3">
+              {tickets.length > 0 ? (
+                tickets.map((ticket) => (
                   <div
-                    key={index}
-                    className={`flex items-center justify-between px-4 py-3 rounded-xl ${
-                      darkMode ? 'bg-gray-800' : 'bg-gray-100'
-                    }`}
+                    key={ticket.id}
+                    className={`p-4 rounded-xl border-l-4 transition-all hover:translate-x-1 cursor-pointer ${ticket.status === 'open'
+                        ? 'border-emerald-500'
+                        : ticket.status === 'progress'
+                          ? 'border-amber-500'
+                          : 'border-slate-500'
+                      } ${darkMode ? 'bg-slate-900/50' : 'bg-slate-50'}`}
                   >
-                    <div className="flex items-center gap-3">
-                      <Paperclip className="w-5 h-5 text-cyan-500" />
-                      <span className={`text-sm ${darkMode ? 'text-white' : 'text-gray-900'}`}>
-                        {file.name}
+                    <div className="flex items-center justify-between mb-2">
+                      <span className={`text-xs font-mono opacity-70 ${darkMode ? 'text-slate-400' : 'text-slate-500'}`}>
+                        #{ticket.id}
                       </span>
-                      <span className={`text-xs ${darkMode ? 'text-gray-400' : 'text-gray-600'}`}>
-                        ({(file.size / 1024).toFixed(1)} KB)
+                      <span className={`text-[10px] uppercase font-bold px-2 py-0.5 rounded-full ${ticket.status === 'open'
+                          ? 'bg-emerald-500/10 text-emerald-500'
+                          : ticket.status === 'progress'
+                            ? 'bg-amber-500/10 text-amber-500'
+                            : 'bg-slate-500/10 text-slate-500'
+                        }`}>
+                        {ticket.status}
                       </span>
                     </div>
-                    <button
-                      type="button"
-                      onClick={() => removeFile(index)}
-                      className="p-1 rounded-lg hover:bg-red-500/10 text-red-500 transition-colors"
-                    >
-                      <X className="w-5 h-5" />
-                    </button>
+                    <h4 className={`font-medium text-sm mb-2 line-clamp-1 ${darkMode ? 'text-white' : 'text-slate-900'}`}>
+                      {ticket.title}
+                    </h4>
+                    <div className={`text-xs ${darkMode ? 'text-slate-500' : 'text-slate-400'}`}>
+                      Updated {ticket.updated}
+                    </div>
                   </div>
-                ))}
-              </div>
+                ))
+              ) : (
+                <div className={`text-center py-8 ${darkMode ? 'text-slate-500' : 'text-slate-400'}`}>
+                  <MessageSquare size={32} className="mx-auto mb-2 opacity-50" />
+                  <p className="text-sm">No recent tickets</p>
+                </div>
+              )}
+            </div>
+            {tickets.length > 0 && (
+              <Button variant="outline" className="w-full mt-4 text-sm">
+                View All Tickets
+              </Button>
             )}
-          </div>
+          </motion.div>
 
-          <button
-            type="submit"
-            disabled={submitting || charCount < 20}
-            className="w-full px-6 py-4 rounded-xl font-bold bg-gradient-to-r from-cyan-500 to-blue-600 text-white hover:shadow-lg disabled:opacity-50 disabled:cursor-not-allowed transition-all flex items-center justify-center gap-2"
+          <motion.div
+            initial={{ opacity: 0, y: 20 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ delay: 0.5 }}
+            className={`rounded-3xl p-6 border text-center ${darkMode ? 'bg-slate-800/50 border-slate-700' : 'bg-white border-slate-200 shadow-sm'
+              }`}
           >
-            {submitting ? (
-              <>
-                <div className="w-5 h-5 border-2 border-white/30 border-t-white rounded-full animate-spin" />
-                Submitting...
-              </>
-            ) : (
-              <>
-                <Send className="w-5 h-5" />
-                Submit Request
-              </>
-            )}
-          </button>
-        </form>
-      </div>
+            <h3 className={`font-bold mb-2 ${darkMode ? 'text-white' : 'text-slate-900'}`}>
+              Contact Info
+            </h3>
+            <p className={`text-sm mb-6 ${darkMode ? 'text-slate-400' : 'text-slate-500'}`}>
+              Direct channels for urgent matters
+            </p>
 
-      <div
-        className={`rounded-2xl p-8 border ${
-          darkMode ? 'bg-[#1A2C4A] border-white/10' : 'bg-white border-gray-200'
-        }`}
-      >
-        <div className="flex items-center justify-between mb-6">
-          <h2 className={`text-2xl font-bold ${darkMode ? 'text-white' : 'text-gray-900'}`}>
-            Your Support Tickets
-          </h2>
-          <div className="flex gap-2">
-            <span className={`px-3 py-1 rounded-full text-sm font-bold ${darkMode ? 'bg-green-500/20 text-green-400' : 'bg-green-100 text-green-700'}`}>
-              Open: 2
-            </span>
-            <span className={`px-3 py-1 rounded-full text-sm font-bold ${darkMode ? 'bg-gray-500/20 text-gray-400' : 'bg-gray-100 text-gray-700'}`}>
-              Closed: 5
-            </span>
-          </div>
-        </div>
-
-        <div className="space-y-4">
-          {tickets.map((ticket) => (
-            <div
-              key={ticket.id}
-              className={`p-6 rounded-xl border-l-4 transition-all hover:-translate-y-1 hover:shadow-lg cursor-pointer ${
-                ticket.status === 'open'
-                  ? 'border-green-500'
-                  : ticket.status === 'progress'
-                  ? 'border-yellow-500'
-                  : 'border-gray-500'
-              } ${darkMode ? 'bg-gray-800/50' : 'bg-gray-50'}`}
-            >
-              <div className="flex items-start justify-between mb-3">
-                <div className="flex items-center gap-3">
-                  <div
-                    className={`w-2 h-2 rounded-full ${
-                      ticket.status === 'open'
-                        ? 'bg-green-500'
-                        : ticket.status === 'progress'
-                        ? 'bg-yellow-500'
-                        : 'bg-gray-500'
-                    }`}
-                  />
-                  <h3 className={`text-lg font-bold ${darkMode ? 'text-white' : 'text-gray-900'}`}>
-                    #{ticket.id} - {ticket.title}
-                  </h3>
+            <div className="space-y-4">
+              <div className={`p-3 rounded-xl flex items-center gap-3 ${darkMode ? 'bg-slate-900' : 'bg-slate-50'}`}>
+                <div className={`p-2 rounded-lg ${darkMode ? 'bg-slate-800 text-blue-400' : 'bg-white text-blue-600 shadow-sm'}`}>
+                  <Mail size={16} />
+                </div>
+                <div className="text-left">
+                  <p className={`text-xs font-bold uppercase ${darkMode ? 'text-slate-500' : 'text-slate-400'}`}>Email</p>
+                  <a href="mailto:support@vistone.com" className={`text-sm font-medium hover:underline ${darkMode ? 'text-white' : 'text-slate-900'}`}>
+                    support@vistone.com
+                  </a>
                 </div>
               </div>
-              <div className={`flex items-center gap-4 text-sm mb-3 ${darkMode ? 'text-gray-400' : 'text-gray-600'}`}>
-                <span>
-                  Status:{' '}
-                  <span className="capitalize font-medium">
-                    {ticket.status === 'progress' ? 'In Progress' : ticket.status}
-                  </span>
-                </span>
-                <span>|</span>
-                <span>
-                  Priority: <span className="capitalize font-medium">{ticket.priority}</span>
-                </span>
+
+              <div className={`p-3 rounded-xl flex items-center gap-3 ${darkMode ? 'bg-slate-900' : 'bg-slate-50'}`}>
+                <div className={`p-2 rounded-lg ${darkMode ? 'bg-slate-800 text-purple-400' : 'bg-white text-purple-600 shadow-sm'}`}>
+                  <Phone size={16} />
+                </div>
+                <div className="text-left">
+                  <p className={`text-xs font-bold uppercase ${darkMode ? 'text-slate-500' : 'text-slate-400'}`}>Phone</p>
+                  <a href="tel:+15551234567" className={`text-sm font-medium hover:underline ${darkMode ? 'text-white' : 'text-slate-900'}`}>
+                    +1 (555) 123-4567
+                  </a>
+                </div>
               </div>
-              <div className={`flex items-center justify-between ${darkMode ? 'text-gray-400' : 'text-gray-600'}`}>
-                <span className="text-sm">Last updated: {ticket.updated}</span>
-                <button className="text-cyan-500 hover:text-cyan-600 font-bold text-sm flex items-center gap-1 group">
-                  View Details
-                  <span className="group-hover:translate-x-1 transition-transform">→</span>
-                </button>
+
+              <div className={`p-3 rounded-xl flex items-center gap-3 ${darkMode ? 'bg-slate-900' : 'bg-slate-50'}`}>
+                <div className={`p-2 rounded-lg ${darkMode ? 'bg-slate-800 text-emerald-400' : 'bg-white text-emerald-600 shadow-sm'}`}>
+                  <Clock size={16} />
+                </div>
+                <div className="text-left">
+                  <p className={`text-xs font-bold uppercase ${darkMode ? 'text-slate-500' : 'text-slate-400'}`}>Hours</p>
+                  <p className={`text-sm font-medium ${darkMode ? 'text-white' : 'text-slate-900'}`}>
+                    24/7 Support
+                  </p>
+                </div>
               </div>
             </div>
-          ))}
-        </div>
-
-        <button
-          className={`w-full mt-6 px-6 py-3 rounded-xl font-bold border-2 transition-all hover:scale-105 ${
-            darkMode
-              ? 'border-white/10 text-gray-300 hover:bg-white/5'
-              : 'border-gray-200 text-gray-700 hover:bg-gray-50'
-          }`}
-        >
-          Load More
-        </button>
-      </div>
-
-      <div
-        className={`rounded-2xl p-8 border text-center ${
-          darkMode ? 'bg-[#1A2C4A] border-white/10' : 'bg-white border-gray-200'
-        }`}
-      >
-        <h2 className={`text-2xl font-bold mb-4 ${darkMode ? 'text-white' : 'text-gray-900'}`}>
-          Need More Help?
-        </h2>
-        <p className={`mb-6 ${darkMode ? 'text-gray-400' : 'text-gray-600'}`}>
-          Our support team is available 24/7 to assist you
-        </p>
-        <div className="flex flex-wrap justify-center gap-4">
-          <div
-            className={`px-6 py-4 rounded-xl ${
-              darkMode ? 'bg-gray-800' : 'bg-gray-100'
-            }`}
-          >
-            <div className="text-sm font-bold mb-1">Email</div>
-            <a href="mailto:support@vistone.com" className="text-cyan-500 hover:underline">
-              support@vistone.com
-            </a>
-          </div>
-          <div
-            className={`px-6 py-4 rounded-xl ${
-              darkMode ? 'bg-gray-800' : 'bg-gray-100'
-            }`}
-          >
-            <div className="text-sm font-bold mb-1">Phone</div>
-            <a href="tel:+15551234567" className="text-cyan-500 hover:underline">
-              +1 (555) 123-4567
-            </a>
-          </div>
-          <div
-            className={`px-6 py-4 rounded-xl ${
-              darkMode ? 'bg-gray-800' : 'bg-gray-100'
-            }`}
-          >
-            <div className="text-sm font-bold mb-1">Hours</div>
-            <span className={darkMode ? 'text-gray-300' : 'text-gray-700'}>24/7 Support</span>
-          </div>
+          </motion.div>
         </div>
       </div>
     </div>

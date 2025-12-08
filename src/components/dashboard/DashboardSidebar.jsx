@@ -41,15 +41,14 @@ export default function DashboardSidebar({
           setActiveTab(item.id);
           setSidebarOpen(false);
         }}
-        className={`w-full h-12 rounded-xl px-4 flex items-center gap-3 transition-all duration-300 group ${
-          isActive
+        className={`w-full h-12 rounded-xl px-4 flex items-center gap-3 transition-all duration-300 group ${isActive
             ? darkMode
               ? 'bg-gradient-to-r from-[#3B82F6]/10 to-[#8B5CF6]/10 border-l-3 border-[#3B82F6] text-[#60A5FA]'
               : 'bg-gradient-to-r from-[#3B82F6]/10 to-[#8B5CF6]/10 border-l-3 border-[#3B82F6] text-[#3B82F6]'
             : darkMode
-            ? 'text-[#94A3B8] hover:bg-[#1E3A5F] hover:text-white'
-            : 'text-[#64748B] hover:bg-[#F1F5F9] hover:text-[#0F172A]'
-        } ${isActive ? 'font-semibold' : ''} hover:translate-x-1`}
+              ? 'text-[#94A3B8] hover:bg-[#1E3A5F] hover:text-white'
+              : 'text-[#64748B] hover:bg-[#F1F5F9] hover:text-[#0F172A]'
+          } ${isActive ? 'font-semibold' : ''} hover:translate-x-1`}
       >
         <Icon className="w-5 h-5" />
         <span>{item.label}</span>
@@ -60,18 +59,16 @@ export default function DashboardSidebar({
   return (
     <>
       <aside
-        className={`fixed left-0 top-[70px] h-[calc(100vh-70px)] w-[260px] border-r transition-all duration-300 z-40 ${
-          darkMode
-            ? 'bg-[#1A2C4A] border-white/10'
-            : 'bg-white border-[#E2E8F0]'
-        } ${sidebarOpen ? 'translate-x-0' : '-translate-x-full lg:translate-x-0'}`}
+        className={`fixed left-0 top-[70px] h-[calc(100vh-70px)] w-[260px] border-r transition-all duration-300 z-40 ${darkMode
+            ? 'bg-slate-900 border-slate-800'
+            : 'bg-white border-slate-200'
+          } ${sidebarOpen ? 'translate-x-0' : '-translate-x-full lg:translate-x-0'}`}
       >
         <div className="h-full flex flex-col p-4">
           <button
             onClick={() => setSidebarOpen(false)}
-            className={`lg:hidden self-end mb-4 p-2 rounded-lg transition-colors ${
-              darkMode ? 'hover:bg-white/10' : 'hover:bg-gray-100'
-            }`}
+            className={`lg:hidden self-end mb-4 p-2 rounded-lg transition-colors ${darkMode ? 'hover:bg-white/10' : 'hover:bg-gray-100'
+              }`}
           >
             <X className="w-5 h-5" />
           </button>
@@ -84,11 +81,10 @@ export default function DashboardSidebar({
 
           <button
             onClick={() => setLogoutModalOpen(true)}
-            className={`w-full h-12 rounded-xl px-4 flex items-center gap-3 transition-all duration-300 hover:translate-x-1 ${
-              darkMode
+            className={`w-full h-12 rounded-xl px-4 flex items-center gap-3 transition-all duration-300 hover:translate-x-1 ${darkMode
                 ? 'text-red-400 hover:bg-red-500/10'
                 : 'text-red-600 hover:bg-red-50'
-            }`}
+              }`}
           >
             <LogOut className="w-5 h-5" />
             <span>Logout</span>
@@ -118,11 +114,10 @@ export default function DashboardSidebar({
           <div className="flex gap-4">
             <button
               onClick={() => setLogoutModalOpen(false)}
-              className={`flex-1 px-6 py-3 rounded-xl font-bold transition-all ${
-                darkMode
+              className={`flex-1 px-6 py-3 rounded-xl font-bold transition-all ${darkMode
                   ? 'border-2 border-white/10 text-gray-300 hover:bg-white/5'
                   : 'border-2 border-gray-300 text-gray-700 hover:bg-gray-100'
-              }`}
+                }`}
             >
               Cancel
             </button>

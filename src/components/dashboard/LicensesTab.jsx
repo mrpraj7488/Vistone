@@ -1,8 +1,9 @@
 import { useState, useEffect } from 'react';
-import { Key, Globe, Shield, AlertCircle, CheckCircle, XCircle, Copy, RefreshCw } from 'lucide-react';
+import { Key, Globe, Shield, AlertCircle, CheckCircle, XCircle, Copy, RefreshCw, ChevronRight, Server, Calendar, Download } from 'lucide-react';
 import { useAuthStore, useUIStore } from '../../store/useStore';
 import Modal from '../ui/Modal';
 import Button from '../ui/Button';
+import { motion, AnimatePresence } from 'motion/react';
 
 export default function LicensesTab({ darkMode }) {
   const [licenses, setLicenses] = useState([]);
@@ -79,8 +80,8 @@ export default function LicensesTab({ darkMode }) {
 
     // Simulate API call
     setTimeout(() => {
-      const updatedLicenses = licenses.map(l => 
-        l.id === license.id 
+      const updatedLicenses = licenses.map(l =>
+        l.id === license.id
           ? { ...l, activatedDomains: [...l.activatedDomains, domainInput.trim()] }
           : l
       );
@@ -92,8 +93,8 @@ export default function LicensesTab({ darkMode }) {
   };
 
   const handleDeactivateDomain = (license, domain) => {
-    const updatedLicenses = licenses.map(l => 
-      l.id === license.id 
+    const updatedLicenses = licenses.map(l =>
+      l.id === license.id
         ? { ...l, activatedDomains: l.activatedDomains.filter(d => d !== domain) }
         : l
     );
@@ -109,245 +110,296 @@ export default function LicensesTab({ darkMode }) {
   const getStatusColor = (status) => {
     switch (status) {
       case 'active':
-        return 'bg-green-100 text-green-800 dark:bg-green-900/20 dark:text-green-400';
+        return 'bg-emerald-500/10 text-emerald-600 dark:text-emerald-400 border-emerald-500/20';
       case 'suspended':
-        return 'bg-red-100 text-red-800 dark:bg-red-900/20 dark:text-red-400';
+        return 'bg-rose-500/10 text-rose-600 dark:text-rose-400 border-rose-500/20';
       case 'expired':
-        return 'bg-gray-100 text-gray-800 dark:bg-gray-900/20 dark:text-gray-400';
+        return 'bg-slate-500/10 text-slate-600 dark:text-slate-400 border-slate-500/20';
       default:
-        return 'bg-gray-100 text-gray-800 dark:bg-gray-900/20 dark:text-gray-400';
+        return 'bg-slate-500/10 text-slate-600 dark:text-slate-400 border-slate-500/20';
     }
   };
 
   const getStatusIcon = (status) => {
     switch (status) {
       case 'active':
-        return <CheckCircle className="w-5 h-5 text-green-500" />;
+        return <CheckCircle size={16} className="mr-1.5" />;
       case 'suspended':
-        return <XCircle className="w-5 h-5 text-red-500" />;
+        return <XCircle size={16} className="mr-1.5" />;
       case 'expired':
-        return <AlertCircle className="w-5 h-5 text-gray-500" />;
+        return <AlertCircle size={16} className="mr-1.5" />;
       default:
-        return <AlertCircle className="w-5 h-5 text-gray-500" />;
+        return <AlertCircle size={16} className="mr-1.5" />;
     }
   };
 
   if (loading) {
     return (
-      <div className="space-y-8">
-        <div className="animate-pulse">
-          <div className={`h-8 rounded-lg mb-4 ${darkMode ? 'bg-gray-700' : 'bg-gray-200'}`}></div>
-          <div className={`h-4 rounded-lg mb-8 w-1/2 ${darkMode ? 'bg-gray-700' : 'bg-gray-200'}`}></div>
+      <div className="space-y-6">
+        <div className="animate-pulse flex gap-4">
+          <div className={`h-32 flex-1 rounded-2xl ${darkMode ? 'bg-slate-800' : 'bg-slate-100'}`}></div>
+          <div className={`h-32 flex-1 rounded-2xl ${darkMode ? 'bg-slate-800' : 'bg-slate-100'}`}></div>
+          <div className={`h-32 flex-1 rounded-2xl ${darkMode ? 'bg-slate-800' : 'bg-slate-100'}`}></div>
         </div>
         {[1, 2, 3].map(i => (
-          <div key={i} className={`rounded-2xl p-6 animate-pulse ${darkMode ? 'bg-gray-800' : 'bg-gray-100'}`}>
-            <div className={`h-6 rounded mb-4 ${darkMode ? 'bg-gray-700' : 'bg-gray-200'}`}></div>
-            <div className={`h-4 rounded mb-2 w-3/4 ${darkMode ? 'bg-gray-700' : 'bg-gray-200'}`}></div>
-          </div>
+          <div key={i} className={`h-40 rounded-2xl animate-pulse ${darkMode ? 'bg-slate-800' : 'bg-slate-100'}`}></div>
         ))}
       </div>
     );
   }
 
   return (
-    <div className="space-y-8">
-      <div>
-        <h1 className={`text-4xl font-black mb-2 ${darkMode ? 'text-white' : 'text-gray-900'}`}>
-          License Management
-        </h1>
-        <p className={`text-lg ${darkMode ? 'text-gray-400' : 'text-gray-600'}`}>
-          Manage your product licenses and domain activations
-        </p>
+    <div className="space-y-8 pb-10">
+      <div className="flex flex-col md:flex-row md:items-end justify-between gap-4">
+        <div>
+          <h1 className={`text-3xl font-black mb-2 tracking-tight ${darkMode ? 'text-white' : 'text-slate-900'}`}>
+            License Management
+          </h1>
+          <p className={`text-lg ${darkMode ? 'text-slate-400' : 'text-slate-600'}`}>
+            Manage your product licenses and domain activations
+          </p>
+        </div>
       </div>
 
       {/* Stats */}
       <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-        <div className={`rounded-2xl p-6 border ${darkMode ? 'bg-[#1A2C4A] border-white/10' : 'bg-white border-gray-200'}`}>
-          <div className="flex items-center gap-4">
-            <div className="w-12 h-12 rounded-xl bg-gradient-to-br from-green-500 to-green-600 flex items-center justify-center">
-              <Key className="w-6 h-6 text-white" />
-            </div>
+        <motion.div
+          initial={{ opacity: 0, y: 20 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ delay: 0.1 }}
+          className={`relative overflow-hidden rounded-3xl p-6 border transition-all hover:shadow-lg ${darkMode
+              ? 'bg-gradient-to-br from-slate-800 to-slate-900 border-slate-700'
+              : 'bg-white border-slate-200 shadow-sm'
+            }`}
+        >
+          <div className="relative z-10 flex items-center justify-between">
             <div>
-              <p className={`text-2xl font-bold ${darkMode ? 'text-white' : 'text-gray-900'}`}>
-                {licenses.length}
-              </p>
-              <p className={`text-sm ${darkMode ? 'text-gray-400' : 'text-gray-600'}`}>
+              <p className={`text-sm font-medium mb-1 ${darkMode ? 'text-slate-400' : 'text-slate-500'}`}>
                 Total Licenses
               </p>
+              <p className={`text-4xl font-black ${darkMode ? 'text-white' : 'text-slate-900'}`}>
+                {licenses.length}
+              </p>
+            </div>
+            <div className={`w-14 h-14 rounded-2xl flex items-center justify-center ${darkMode ? 'bg-emerald-500/20 text-emerald-400' : 'bg-emerald-50 text-emerald-600'
+              }`}>
+              <Key size={28} />
             </div>
           </div>
-        </div>
+        </motion.div>
 
-        <div className={`rounded-2xl p-6 border ${darkMode ? 'bg-[#1A2C4A] border-white/10' : 'bg-white border-gray-200'}`}>
-          <div className="flex items-center gap-4">
-            <div className="w-12 h-12 rounded-xl bg-gradient-to-br from-blue-500 to-blue-600 flex items-center justify-center">
-              <CheckCircle className="w-6 h-6 text-white" />
-            </div>
+        <motion.div
+          initial={{ opacity: 0, y: 20 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ delay: 0.2 }}
+          className={`relative overflow-hidden rounded-3xl p-6 border transition-all hover:shadow-lg ${darkMode
+              ? 'bg-gradient-to-br from-slate-800 to-slate-900 border-slate-700'
+              : 'bg-white border-slate-200 shadow-sm'
+            }`}
+        >
+          <div className="relative z-10 flex items-center justify-between">
             <div>
-              <p className={`text-2xl font-bold ${darkMode ? 'text-white' : 'text-gray-900'}`}>
-                {licenses.filter(l => l.status === 'active').length}
-              </p>
-              <p className={`text-sm ${darkMode ? 'text-gray-400' : 'text-gray-600'}`}>
+              <p className={`text-sm font-medium mb-1 ${darkMode ? 'text-slate-400' : 'text-slate-500'}`}>
                 Active Licenses
               </p>
+              <p className={`text-4xl font-black ${darkMode ? 'text-white' : 'text-slate-900'}`}>
+                {licenses.filter(l => l.status === 'active').length}
+              </p>
+            </div>
+            <div className={`w-14 h-14 rounded-2xl flex items-center justify-center ${darkMode ? 'bg-blue-500/20 text-blue-400' : 'bg-blue-50 text-blue-600'
+              }`}>
+              <CheckCircle size={28} />
             </div>
           </div>
-        </div>
+        </motion.div>
 
-        <div className={`rounded-2xl p-6 border ${darkMode ? 'bg-[#1A2C4A] border-white/10' : 'bg-white border-gray-200'}`}>
-          <div className="flex items-center gap-4">
-            <div className="w-12 h-12 rounded-xl bg-gradient-to-br from-purple-500 to-purple-600 flex items-center justify-center">
-              <Globe className="w-6 h-6 text-white" />
-            </div>
+        <motion.div
+          initial={{ opacity: 0, y: 20 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ delay: 0.3 }}
+          className={`relative overflow-hidden rounded-3xl p-6 border transition-all hover:shadow-lg ${darkMode
+              ? 'bg-gradient-to-br from-slate-800 to-slate-900 border-slate-700'
+              : 'bg-white border-slate-200 shadow-sm'
+            }`}
+        >
+          <div className="relative z-10 flex items-center justify-between">
             <div>
-              <p className={`text-2xl font-bold ${darkMode ? 'text-white' : 'text-gray-900'}`}>
-                {licenses.reduce((sum, l) => sum + l.activatedDomains.length, 0)}
-              </p>
-              <p className={`text-sm ${darkMode ? 'text-gray-400' : 'text-gray-600'}`}>
+              <p className={`text-sm font-medium mb-1 ${darkMode ? 'text-slate-400' : 'text-slate-500'}`}>
                 Active Domains
               </p>
+              <p className={`text-4xl font-black ${darkMode ? 'text-white' : 'text-slate-900'}`}>
+                {licenses.reduce((sum, l) => sum + l.activatedDomains.length, 0)}
+              </p>
+            </div>
+            <div className={`w-14 h-14 rounded-2xl flex items-center justify-center ${darkMode ? 'bg-purple-500/20 text-purple-400' : 'bg-purple-50 text-purple-600'
+              }`}>
+              <Globe size={28} />
             </div>
           </div>
-        </div>
+        </motion.div>
       </div>
 
       {/* Licenses List */}
       <div className="space-y-6">
-        {licenses.map((license) => (
-          <div
-            key={license.id}
-            className={`rounded-2xl p-6 border transition-all ${
-              darkMode ? 'bg-[#1A2C4A] border-white/10' : 'bg-white border-gray-200'
-            }`}
-          >
-            <div className="flex flex-col lg:flex-row lg:items-start justify-between gap-6">
-              <div className="flex-1">
-                <div className="flex items-center gap-3 mb-4">
-                  {getStatusIcon(license.status)}
-                  <h3 className={`text-xl font-bold ${darkMode ? 'text-white' : 'text-gray-900'}`}>
-                    {license.productName}
-                  </h3>
-                  <span className={`px-3 py-1 rounded-full text-xs font-bold ${getStatusColor(license.status)}`}>
-                    {license.status.charAt(0).toUpperCase() + license.status.slice(1)}
-                  </span>
-                  <span className={`px-3 py-1 rounded-full text-xs font-bold bg-blue-100 text-blue-800 dark:bg-blue-900/20 dark:text-blue-400`}>
-                    {license.licenseType}
-                  </span>
-                </div>
-
-                <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mb-4">
-                  <div>
-                    <p className={`text-sm font-medium mb-1 ${darkMode ? 'text-gray-400' : 'text-gray-600'}`}>
-                      License Key
-                    </p>
-                    <div className="flex items-center gap-2">
-                      <code className={`text-sm font-mono px-3 py-1 rounded-lg ${darkMode ? 'bg-gray-800 text-gray-300' : 'bg-gray-100 text-gray-700'}`}>
-                        {license.licenseKey}
-                      </code>
-                      <button
-                        onClick={() => copyLicenseKey(license.licenseKey)}
-                        className="p-1 rounded hover:bg-gray-200 dark:hover:bg-gray-700"
-                        title="Copy license key"
-                      >
-                        <Copy className="w-4 h-4" />
-                      </button>
+        <AnimatePresence mode="popLayout">
+          {licenses.map((license, index) => (
+            <motion.div
+              key={license.id}
+              initial={{ opacity: 0, y: 20 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ delay: index * 0.1 }}
+              className={`group rounded-2xl border overflow-hidden transition-all hover:shadow-md ${darkMode
+                  ? 'bg-slate-800/50 border-slate-700 hover:border-slate-600'
+                  : 'bg-white border-slate-200 hover:border-blue-300'
+                }`}
+            >
+              <div className="p-6">
+                <div className="flex flex-col lg:flex-row lg:items-start justify-between gap-6">
+                  <div className="flex-1">
+                    <div className="flex flex-wrap items-center gap-3 mb-4">
+                      <h3 className={`text-xl font-bold ${darkMode ? 'text-white' : 'text-slate-900'}`}>
+                        {license.productName}
+                      </h3>
+                      <span className={`flex items-center px-2.5 py-1 rounded-full text-xs font-bold border ${getStatusColor(license.status)}`}>
+                        {getStatusIcon(license.status)}
+                        {license.status.charAt(0).toUpperCase() + license.status.slice(1)}
+                      </span>
+                      <span className={`px-2.5 py-1 rounded-full text-xs font-bold border ${darkMode ? 'bg-blue-500/10 text-blue-400 border-blue-500/20' : 'bg-blue-50 text-blue-600 border-blue-100'}`}>
+                        {license.licenseType}
+                      </span>
                     </div>
-                  </div>
 
-                  <div>
-                    <p className={`text-sm font-medium mb-1 ${darkMode ? 'text-gray-400' : 'text-gray-600'}`}>
-                      Domain Usage
-                    </p>
-                    <p className={`text-sm ${darkMode ? 'text-white' : 'text-gray-900'}`}>
-                      {license.activatedDomains.length} / {license.maxDomains} domains used
-                    </p>
-                  </div>
-                </div>
-
-                {license.activatedDomains.length > 0 && (
-                  <div className="mb-4">
-                    <p className={`text-sm font-medium mb-2 ${darkMode ? 'text-gray-400' : 'text-gray-600'}`}>
-                      Activated Domains
-                    </p>
-                    <div className="flex flex-wrap gap-2">
-                      {license.activatedDomains.map((domain) => (
-                        <div
-                          key={domain}
-                          className={`flex items-center gap-2 px-3 py-1 rounded-lg ${darkMode ? 'bg-gray-800' : 'bg-gray-100'}`}
-                        >
-                          <Globe className="w-4 h-4" />
-                          <span className={`text-sm ${darkMode ? 'text-white' : 'text-gray-900'}`}>
-                            {domain}
-                          </span>
+                    <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mb-6">
+                      <div className={`p-4 rounded-xl ${darkMode ? 'bg-slate-900/50' : 'bg-slate-50'}`}>
+                        <p className={`text-xs font-medium uppercase tracking-wider mb-2 ${darkMode ? 'text-slate-500' : 'text-slate-400'}`}>
+                          License Key
+                        </p>
+                        <div className="flex items-center gap-2">
+                          <code className={`flex-1 text-sm font-mono break-all ${darkMode ? 'text-slate-300' : 'text-slate-700'}`}>
+                            {license.licenseKey}
+                          </code>
                           <button
-                            onClick={() => handleDeactivateDomain(license, domain)}
-                            className="text-red-500 hover:text-red-600"
-                            title="Deactivate domain"
+                            onClick={() => copyLicenseKey(license.licenseKey)}
+                            className={`p-2 rounded-lg transition-colors ${darkMode ? 'hover:bg-slate-800 text-slate-400 hover:text-white' : 'hover:bg-slate-200 text-slate-500 hover:text-slate-900'}`}
+                            title="Copy license key"
                           >
-                            <XCircle className="w-4 h-4" />
+                            <Copy size={16} />
                           </button>
                         </div>
-                      ))}
+                      </div>
+
+                      <div className={`p-4 rounded-xl ${darkMode ? 'bg-slate-900/50' : 'bg-slate-50'}`}>
+                        <div className="flex justify-between items-center mb-2">
+                          <p className={`text-xs font-medium uppercase tracking-wider ${darkMode ? 'text-slate-500' : 'text-slate-400'}`}>
+                            Domain Usage
+                          </p>
+                          <span className={`text-xs font-bold ${darkMode ? 'text-white' : 'text-slate-900'}`}>
+                            {license.activatedDomains.length} / {license.maxDomains}
+                          </span>
+                        </div>
+                        <div className={`w-full h-2 rounded-full overflow-hidden ${darkMode ? 'bg-slate-800' : 'bg-slate-200'}`}>
+                          <div
+                            className={`h-full rounded-full ${license.activatedDomains.length >= license.maxDomains
+                                ? 'bg-rose-500'
+                                : 'bg-blue-500'
+                              }`}
+                            style={{ width: `${(license.activatedDomains.length / license.maxDomains) * 100}%` }}
+                          />
+                        </div>
+                      </div>
+                    </div>
+
+                    {license.activatedDomains.length > 0 && (
+                      <div className="mb-6">
+                        <p className={`text-sm font-medium mb-3 ${darkMode ? 'text-slate-400' : 'text-slate-500'}`}>
+                          Activated Domains
+                        </p>
+                        <div className="flex flex-wrap gap-2">
+                          {license.activatedDomains.map((domain) => (
+                            <div
+                              key={domain}
+                              className={`flex items-center gap-2 px-3 py-1.5 rounded-lg border ${darkMode ? 'bg-slate-800/50 border-slate-700' : 'bg-white border-slate-200'}`}
+                            >
+                              <Globe size={14} className={darkMode ? 'text-blue-400' : 'text-blue-500'} />
+                              <span className={`text-sm font-medium ${darkMode ? 'text-slate-300' : 'text-slate-700'}`}>
+                                {domain}
+                              </span>
+                              <button
+                                onClick={() => handleDeactivateDomain(license, domain)}
+                                className="ml-1 text-slate-400 hover:text-rose-500 transition-colors"
+                                title="Deactivate domain"
+                              >
+                                <XCircle size={14} />
+                              </button>
+                            </div>
+                          ))}
+                        </div>
+                      </div>
+                    )}
+
+                    <div className={`grid grid-cols-2 sm:grid-cols-4 gap-4 pt-4 border-t ${darkMode ? 'border-slate-700' : 'border-slate-100'}`}>
+                      <div>
+                        <p className={`text-xs mb-1 ${darkMode ? 'text-slate-500' : 'text-slate-400'}`}>Purchase Date</p>
+                        <div className={`flex items-center gap-1.5 text-sm font-medium ${darkMode ? 'text-slate-300' : 'text-slate-700'}`}>
+                          <Calendar size={14} />
+                          {new Date(license.purchaseDate).toLocaleDateString()}
+                        </div>
+                      </div>
+                      <div>
+                        <p className={`text-xs mb-1 ${darkMode ? 'text-slate-500' : 'text-slate-400'}`}>Expiry</p>
+                        <div className={`flex items-center gap-1.5 text-sm font-medium ${darkMode ? 'text-slate-300' : 'text-slate-700'}`}>
+                          <Clock size={14} />
+                          {license.expiryDate ? new Date(license.expiryDate).toLocaleDateString() : 'Lifetime'}
+                        </div>
+                      </div>
+                      <div>
+                        <p className={`text-xs mb-1 ${darkMode ? 'text-slate-500' : 'text-slate-400'}`}>Downloads</p>
+                        <div className={`flex items-center gap-1.5 text-sm font-medium ${darkMode ? 'text-slate-300' : 'text-slate-700'}`}>
+                          <Download size={14} />
+                          {license.downloadLimit === 'Unlimited'
+                            ? `${license.downloadsUsed} / ∞`
+                            : `${license.downloadsUsed} / ${license.downloadLimit}`
+                          }
+                        </div>
+                      </div>
+                      <div>
+                        <p className={`text-xs mb-1 ${darkMode ? 'text-slate-500' : 'text-slate-400'}`}>Last Used</p>
+                        <div className={`flex items-center gap-1.5 text-sm font-medium ${darkMode ? 'text-slate-300' : 'text-slate-700'}`}>
+                          <Server size={14} />
+                          {license.lastUsed ? new Date(license.lastUsed).toLocaleDateString() : 'Never'}
+                        </div>
+                      </div>
                     </div>
                   </div>
-                )}
 
-                <div className="grid grid-cols-2 md:grid-cols-4 gap-4 text-sm">
-                  <div>
-                    <p className={darkMode ? 'text-gray-400' : 'text-gray-600'}>Purchase Date</p>
-                    <p className={darkMode ? 'text-white' : 'text-gray-900'}>
-                      {new Date(license.purchaseDate).toLocaleDateString()}
-                    </p>
-                  </div>
-                  <div>
-                    <p className={darkMode ? 'text-gray-400' : 'text-gray-600'}>Expiry</p>
-                    <p className={darkMode ? 'text-white' : 'text-gray-900'}>
-                      {license.expiryDate ? new Date(license.expiryDate).toLocaleDateString() : 'Lifetime'}
-                    </p>
-                  </div>
-                  <div>
-                    <p className={darkMode ? 'text-gray-400' : 'text-gray-600'}>Downloads</p>
-                    <p className={darkMode ? 'text-white' : 'text-gray-900'}>
-                      {license.downloadLimit === 'Unlimited' 
-                        ? `${license.downloadsUsed} / Unlimited`
-                        : `${license.downloadsUsed} / ${license.downloadLimit}`
-                      }
-                    </p>
-                  </div>
-                  <div>
-                    <p className={darkMode ? 'text-gray-400' : 'text-gray-600'}>Last Used</p>
-                    <p className={darkMode ? 'text-white' : 'text-gray-900'}>
-                      {license.lastUsed ? new Date(license.lastUsed).toLocaleDateString() : 'Never'}
-                    </p>
+                  <div className={`flex flex-col sm:flex-row lg:flex-col gap-3 lg:w-48 lg:border-l lg:pl-6 ${darkMode ? 'border-slate-700' : 'border-slate-100'}`}>
+                    {license.status === 'active' && license.activatedDomains.length < license.maxDomains && (
+                      <Button
+                        onClick={() => {
+                          setSelectedLicense(license);
+                          setActivationModalOpen(true);
+                        }}
+                        className="w-full justify-center"
+                      >
+                        <Globe size={16} className="mr-2" />
+                        Activate Domain
+                      </Button>
+                    )}
+
+                    <Button
+                      variant="outline"
+                      onClick={() => copyLicenseKey(license.licenseKey)}
+                      className="w-full justify-center"
+                    >
+                      <Copy size={16} className="mr-2" />
+                      Copy Key
+                    </Button>
                   </div>
                 </div>
               </div>
-
-              <div className="flex flex-col gap-2">
-                {license.status === 'active' && license.activatedDomains.length < license.maxDomains && (
-                  <Button
-                    onClick={() => {
-                      setSelectedLicense(license);
-                      setActivationModalOpen(true);
-                    }}
-                    className="whitespace-nowrap"
-                  >
-                    <Globe className="w-4 h-4 mr-2" />
-                    Activate Domain
-                  </Button>
-                )}
-                
-                <Button
-                  variant="outline"
-                  onClick={() => copyLicenseKey(license.licenseKey)}
-                >
-                  <Copy className="w-4 h-4 mr-2" />
-                  Copy Key
-                </Button>
-              </div>
-            </div>
-          </div>
-        ))}
+            </motion.div>
+          ))}
+        </AnimatePresence>
       </div>
 
       {/* Domain Activation Modal */}
@@ -359,46 +411,50 @@ export default function LicensesTab({ darkMode }) {
         }}
         title="Activate Domain"
       >
-        <div className="space-y-4">
-          <p className={`${darkMode ? 'text-gray-300' : 'text-gray-700'}`}>
-            Enter the domain name you want to activate for <strong>{selectedLicense?.productName}</strong>
-          </p>
-          
+        <div className="space-y-6">
+          <div className={`p-4 rounded-xl border ${darkMode ? 'bg-blue-500/10 border-blue-500/20' : 'bg-blue-50 border-blue-100'}`}>
+            <p className={`text-sm ${darkMode ? 'text-blue-200' : 'text-blue-800'}`}>
+              Enter the domain name you want to activate for <strong className="font-bold">{selectedLicense?.productName}</strong>
+            </p>
+          </div>
+
           <div>
-            <label className={`block text-sm font-medium mb-2 ${darkMode ? 'text-white' : 'text-gray-900'}`}>
+            <label className={`block text-sm font-bold mb-2 ${darkMode ? 'text-white' : 'text-slate-900'}`}>
               Domain Name
             </label>
-            <input
-              type="text"
-              value={domainInput}
-              onChange={(e) => setDomainInput(e.target.value)}
-              placeholder="example.com"
-              className={`w-full px-4 py-3 rounded-xl border-2 outline-none transition-all ${
-                darkMode 
-                  ? 'bg-[#1A2C4A] border-white/10 text-white placeholder-gray-400 focus:border-cyan-500' 
-                  : 'bg-white border-gray-200 text-gray-900 placeholder-gray-500 focus:border-cyan-500'
-              }`}
-            />
-            <p className={`text-xs mt-1 ${darkMode ? 'text-gray-400' : 'text-gray-600'}`}>
+            <div className="relative">
+              <Globe className={`absolute left-4 top-1/2 -translate-y-1/2 w-5 h-5 ${darkMode ? 'text-slate-400' : 'text-slate-500'}`} />
+              <input
+                type="text"
+                value={domainInput}
+                onChange={(e) => setDomainInput(e.target.value)}
+                placeholder="example.com"
+                className={`w-full pl-12 pr-4 py-3 rounded-xl border-2 outline-none transition-all ${darkMode
+                    ? 'bg-slate-900 border-slate-700 text-white placeholder-slate-500 focus:border-blue-500'
+                    : 'bg-white border-slate-200 text-slate-900 placeholder-slate-400 focus:border-blue-500'
+                  }`}
+              />
+            </div>
+            <p className={`text-xs mt-2 ${darkMode ? 'text-slate-400' : 'text-slate-500'}`}>
               Enter domain without http:// or https://
             </p>
           </div>
 
-          <div className={`p-4 rounded-xl ${darkMode ? 'bg-blue-900/20' : 'bg-blue-50'}`}>
+          <div className={`p-4 rounded-xl ${darkMode ? 'bg-slate-800' : 'bg-slate-50'}`}>
             <div className="flex items-start gap-3">
-              <Shield className="w-5 h-5 text-blue-500 mt-0.5" />
+              <Shield className="w-5 h-5 text-emerald-500 mt-0.5" />
               <div>
-                <p className={`text-sm font-medium ${darkMode ? 'text-blue-400' : 'text-blue-800'}`}>
+                <p className={`text-sm font-medium ${darkMode ? 'text-white' : 'text-slate-900'}`}>
                   Domain Usage: {selectedLicense?.activatedDomains.length || 0} / {selectedLicense?.maxDomains || 0}
                 </p>
-                <p className={`text-xs mt-1 ${darkMode ? 'text-blue-300' : 'text-blue-700'}`}>
+                <p className={`text-xs mt-1 ${darkMode ? 'text-slate-400' : 'text-slate-500'}`}>
                   You can activate {(selectedLicense?.maxDomains || 0) - (selectedLicense?.activatedDomains.length || 0)} more domains
                 </p>
               </div>
             </div>
           </div>
 
-          <div className="flex gap-3">
+          <div className="flex gap-3 pt-2">
             <Button
               variant="outline"
               onClick={() => {

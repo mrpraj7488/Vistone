@@ -30,7 +30,7 @@ export default function Dashboard({ darkMode, setDarkMode }) {
   }
 
   return (
-    <div className={`min-h-screen ${darkMode ? 'bg-[#0A1628]' : 'bg-[#F8FAFC]'}`}>
+    <div className={`min-h-screen ${darkMode ? 'bg-slate-950' : 'bg-slate-50'}`}>
       <DashboardHeader
         darkMode={darkMode}
         setDarkMode={setDarkMode}
