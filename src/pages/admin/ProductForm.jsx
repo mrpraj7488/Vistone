@@ -137,12 +137,18 @@ const ProductFormFixed = () => {
           name: product.name || '',
           slug: product.slug || '',
           shortDescription: product.short_description || '',
-          fullDescription: product.full_description || '',
+          fullDescription: product.description || '',
           category: product.category || '',
           categories: product.categories || [],
           tags: product.tags || [],
           regularPrice: product.regular_price || '',
           extendedPrice: product.extended_price || '',
+          enablePromo: !!product.sale_price,
+          salePrice: product.sale_price || '',
+          promoStartDate: product.sale_start_date ? product.sale_start_date.split('T')[0] : '',
+          promoEndDate: product.sale_end_date ? product.sale_end_date.split('T')[0] : '',
+          status: product.status || 'draft',
+          visibility: product.visibility || 'public',
           features: product.features || [],
           techStack: product.tech_stack || [],
           compatibility: product.compatibility || [],
@@ -370,11 +376,18 @@ const ProductFormFixed = () => {
       productData.auto_update = formData.autoUpdate;
       productData.version = formData.version;
       productData.file_size = formData.fileSize;
-      productData.last_update = formData.lastUpdate;
+
+      // Handle date fields - convert empty strings to null
+      productData.last_update = formData.lastUpdate || null;
+      productData.sale_start_date = formData.promoStartDate || null;
+      productData.sale_end_date = formData.promoEndDate || null;
+      productData.sale_price = formData.salePrice ? parseFloat(formData.salePrice) : null;
+
       productData.seo_title = formData.seoTitle;
       productData.seo_description = formData.seoDescription;
       productData.seo_keywords = formData.focusKeyword;
       productData.tags = formData.tags;
+      productData.visibility = formData.visibility;
 
       console.log('📦 Submitting product data:', JSON.stringify(productData, null, 2));
 
