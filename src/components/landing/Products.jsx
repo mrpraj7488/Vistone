@@ -206,8 +206,8 @@ export default function Products({ darkMode }) {
           <Link to="/products">
             <div className="relative group">
               <div className={`absolute -inset-0.5 rounded-full blur opacity-30 group-hover:opacity-75 transition duration-1000 group-hover:duration-200 ${darkMode
-                  ? 'bg-gradient-to-r from-blue-600 to-cyan-600'
-                  : 'bg-gradient-to-r from-blue-600 to-cyan-600'
+                ? 'bg-gradient-to-r from-blue-600 to-cyan-600'
+                : 'bg-gradient-to-r from-blue-600 to-cyan-600'
                 }`}></div>
               <Button
                 size="lg"
@@ -387,7 +387,7 @@ function ProductCard({ product, index, darkMode }) {
                 whileHover={{ scale: 1.02 }}
                 whileTap={{ scale: 0.98 }}
                 onClick={handleBuyNow}
-                className={`w-full relative overflow-hidden h-11 rounded-xl font-bold text-sm flex items-center justify-center gap-2 shadow-lg group/btn transition-all ${darkMode
+                className={`w-full relative overflow-hidden h-12 font-bold text-sm sm:text-base flex items-center justify-center gap-2 shadow-lg group/btn transition-all ${darkMode
                   ? 'bg-gradient-to-r from-blue-600 to-indigo-600 text-white shadow-blue-500/20 hover:shadow-blue-500/40'
                   : 'bg-gradient-to-r from-blue-600 to-indigo-600 text-white shadow-blue-500/30 hover:shadow-blue-500/50'
                   }`}

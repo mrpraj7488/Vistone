@@ -207,8 +207,8 @@ export default function ProductDetail({ darkMode }) {
                     key={idx}
                     onClick={() => setSelectedImage(idx)}
                     className={`relative aspect-square rounded-xl overflow-hidden transition-all duration-300 ${selectedImage === idx
-                        ? 'ring-2 ring-blue-500 ring-offset-2 ring-offset-slate-50 dark:ring-offset-slate-950 scale-95 opacity-100'
-                        : 'opacity-60 hover:opacity-100 hover:scale-105'
+                      ? 'ring-2 ring-blue-500 ring-offset-2 ring-offset-slate-50 dark:ring-offset-slate-950 scale-95 opacity-100'
+                      : 'opacity-60 hover:opacity-100 hover:scale-105'
                       }`}
                   >
                     <img src={img || '/api/placeholder/100/100'} alt="" className="w-full h-full object-cover" />
@@ -311,60 +311,60 @@ export default function ProductDetail({ darkMode }) {
               {/* Header Info */}
               <div className="mb-6">
                 <div className="flex items-center gap-2 mb-3">
-                  <span className={`px-3 py-1 rounded-full text-xs font-bold uppercase tracking-wider ${darkMode ? 'bg-blue-500/10 text-blue-400' : 'bg-blue-50 text-blue-600'}`}>
+                  <span className={`px-3 py-1 rounded-full text-[10px] sm:text-xs font-bold uppercase tracking-wider ${darkMode ? 'bg-blue-500/10 text-blue-400' : 'bg-blue-50 text-blue-600'}`}>
                     {product.category || 'Software'}
                   </span>
                   {product.status === 'active' && (
-                    <span className="flex items-center gap-1.5 text-xs font-bold text-emerald-500 bg-emerald-500/10 px-2 py-1 rounded-full">
+                    <span className="flex items-center gap-1.5 text-[10px] sm:text-xs font-bold text-emerald-500 bg-emerald-500/10 px-2 py-1 rounded-full">
                       <span className="w-1.5 h-1.5 rounded-full bg-emerald-500 animate-pulse" />
                       Active
                     </span>
                   )}
                 </div>
-                <h1 className={`text-3xl sm:text-4xl font-black mb-2 leading-tight ${darkMode ? 'text-white' : 'text-slate-900'}`}>
+                <h1 className={`text-2xl sm:text-3xl md:text-4xl font-black mb-2 leading-tight ${darkMode ? 'text-white' : 'text-slate-900'}`}>
                   {product.name}
                 </h1>
-                <p className={`text-sm ${darkMode ? 'text-slate-400' : 'text-slate-500'}`}>
+                <p className={`text-xs sm:text-sm ${darkMode ? 'text-slate-400' : 'text-slate-500'}`}>
                   Version {product.version || '1.0.0'} • Last updated {product.last_update || new Date().toLocaleDateString()}
                 </p>
               </div>
 
               {/* Price Display */}
-              <div className="mb-8 p-4 rounded-2xl bg-gradient-to-br from-blue-500/5 to-purple-500/5 border border-blue-500/10">
+              <div className="mb-6 sm:mb-8 p-4 rounded-2xl bg-gradient-to-br from-blue-500/5 to-purple-500/5 border border-blue-500/10">
                 <div className="flex items-baseline gap-2 mb-1">
-                  <span className={`text-5xl font-black tracking-tight ${darkMode ? 'text-white' : 'text-slate-900'}`}>
+                  <span className={`text-4xl sm:text-5xl font-black tracking-tight ${darkMode ? 'text-white' : 'text-slate-900'}`}>
                     ${price}
                   </span>
-                  <span className={`text-lg font-medium ${darkMode ? 'text-slate-400' : 'text-slate-500'}`}>USD</span>
+                  <span className={`text-base sm:text-lg font-medium ${darkMode ? 'text-slate-400' : 'text-slate-500'}`}>USD</span>
                 </div>
-                <p className={`text-sm font-medium ${darkMode ? 'text-slate-400' : 'text-slate-500'}`}>
+                <p className={`text-xs sm:text-sm font-medium ${darkMode ? 'text-slate-400' : 'text-slate-500'}`}>
                   One-time payment. Lifetime access.
                 </p>
               </div>
 
               {/* License Selector */}
-              <div className="space-y-3 mb-8">
+              <div className="space-y-3 mb-6 sm:mb-8">
                 <label className={`text-sm font-bold ${darkMode ? 'text-slate-300' : 'text-slate-700'}`}>Select License</label>
-                <div className="grid grid-cols-2 gap-3">
+                <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
                   <button
                     onClick={() => setLicenseType('single')}
-                    className={`relative p-4 rounded-xl border-2 text-left transition-all duration-300 ${licenseType === 'single'
+                    className={`relative p-3 sm:p-4 rounded-xl border-2 text-left transition-all duration-300 ${licenseType === 'single'
                       ? 'border-blue-500 bg-blue-500/5 shadow-lg shadow-blue-500/10'
                       : darkMode ? 'border-slate-800 bg-slate-800/50 hover:border-slate-600' : 'border-slate-100 bg-slate-50 hover:border-slate-300'
                       }`}
                   >
-                    <div className={`font-bold mb-1 ${darkMode ? 'text-white' : 'text-slate-900'}`}>Regular</div>
+                    <div className={`font-bold mb-1 text-sm sm:text-base ${darkMode ? 'text-white' : 'text-slate-900'}`}>Regular</div>
                     <div className={`text-xs ${darkMode ? 'text-slate-400' : 'text-slate-500'}`}>Personal projects</div>
                     {licenseType === 'single' && <div className="absolute top-3 right-3 w-2 h-2 rounded-full bg-blue-500" />}
                   </button>
                   <button
                     onClick={() => setLicenseType('extended')}
-                    className={`relative p-4 rounded-xl border-2 text-left transition-all duration-300 ${licenseType === 'extended'
+                    className={`relative p-3 sm:p-4 rounded-xl border-2 text-left transition-all duration-300 ${licenseType === 'extended'
                       ? 'border-blue-500 bg-blue-500/5 shadow-lg shadow-blue-500/10'
                       : darkMode ? 'border-slate-800 bg-slate-800/50 hover:border-slate-600' : 'border-slate-100 bg-slate-50 hover:border-slate-300'
                       }`}
                   >
-                    <div className={`font-bold mb-1 ${darkMode ? 'text-white' : 'text-slate-900'}`}>Extended</div>
+                    <div className={`font-bold mb-1 text-sm sm:text-base ${darkMode ? 'text-white' : 'text-slate-900'}`}>Extended</div>
                     <div className={`text-xs ${darkMode ? 'text-slate-400' : 'text-slate-500'}`}>Commercial use</div>
                     {licenseType === 'extended' && <div className="absolute top-3 right-3 w-2 h-2 rounded-full bg-blue-500" />}
                   </button>
@@ -372,18 +372,18 @@ export default function ProductDetail({ darkMode }) {
               </div>
 
               {/* Action Buttons */}
-              <div className="space-y-3 mb-8">
+              <div className="space-y-3 mb-6 sm:mb-8">
                 {/* Buy Now Button with Shine Effect */}
                 <div className="relative group">
                   <div className={`absolute -inset-0.5 rounded-xl blur opacity-30 group-hover:opacity-75 transition duration-1000 group-hover:duration-200 ${darkMode
-                      ? 'bg-gradient-to-r from-blue-600 to-cyan-600'
-                      : 'bg-gradient-to-r from-blue-600 to-cyan-600'
+                    ? 'bg-gradient-to-r from-blue-600 to-cyan-600'
+                    : 'bg-gradient-to-r from-blue-600 to-cyan-600'
                     }`}></div>
                   <Button
                     onClick={handleBuyNow}
-                    className={`relative w-full h-14 text-lg font-bold overflow-hidden transition-all duration-300 ${darkMode
-                        ? '!bg-slate-900 !text-white border border-slate-700 hover:!bg-slate-800'
-                        : '!bg-white !text-slate-900 border border-slate-200 hover:!bg-slate-50'
+                    className={`relative w-full h-12 sm:h-14 text-base sm:text-lg font-bold overflow-hidden transition-all duration-300 ${darkMode
+                      ? '!bg-slate-900 !text-white border border-slate-700 hover:!bg-slate-800'
+                      : '!bg-white !text-slate-900 border border-slate-200 hover:!bg-slate-50'
                       }`}
                   >
                     <span className="relative z-10 flex items-center justify-center gap-2">
@@ -398,7 +398,7 @@ export default function ProductDetail({ darkMode }) {
                   <Button
                     onClick={handleAddToCart}
                     variant="outline"
-                    className={`flex-1 h-12 font-semibold ${darkMode ? 'border-slate-700 hover:bg-slate-800' : 'border-slate-200 hover:bg-slate-50'}`}
+                    className={`flex-1 h-12 font-semibold text-sm sm:text-base ${darkMode ? 'border-slate-700 hover:bg-slate-800' : 'border-slate-200 hover:bg-slate-50'}`}
                   >
                     <ShoppingCart size={18} className="mr-2" />
                     Add to Cart
@@ -419,19 +419,19 @@ export default function ProductDetail({ darkMode }) {
 
               {/* Trust Signals */}
               <div className="space-y-4 pt-6 border-t border-slate-200 dark:border-slate-800">
-                <div className="flex items-center gap-3 text-sm font-medium">
+                <div className="flex items-center gap-3 text-xs sm:text-sm font-medium">
                   <div className="w-8 h-8 rounded-full bg-green-500/10 flex items-center justify-center">
                     <Shield size={16} className="text-green-500" />
                   </div>
                   <span className={darkMode ? 'text-slate-300' : 'text-slate-600'}>Secure checkout with Stripe</span>
                 </div>
-                <div className="flex items-center gap-3 text-sm font-medium">
+                <div className="flex items-center gap-3 text-xs sm:text-sm font-medium">
                   <div className="w-8 h-8 rounded-full bg-yellow-500/10 flex items-center justify-center">
                     <Zap size={16} className="text-yellow-500" />
                   </div>
                   <span className={darkMode ? 'text-slate-300' : 'text-slate-600'}>Instant download after purchase</span>
                 </div>
-                <div className="flex items-center gap-3 text-sm font-medium">
+                <div className="flex items-center gap-3 text-xs sm:text-sm font-medium">
                   <div className="w-8 h-8 rounded-full bg-blue-500/10 flex items-center justify-center">
                     <Clock size={16} className="text-blue-500" />
                   </div>

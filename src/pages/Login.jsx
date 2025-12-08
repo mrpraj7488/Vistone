@@ -172,19 +172,19 @@ export default function Login({ darkMode }) {
 
             <div className="relative group">
               <div className={`absolute -inset-0.5 rounded-xl blur opacity-30 group-hover:opacity-75 transition duration-1000 group-hover:duration-200 ${darkMode
-                  ? 'bg-gradient-to-r from-blue-600 to-cyan-600'
-                  : 'bg-gradient-to-r from-blue-600 to-cyan-600'
+                ? 'bg-gradient-to-r from-blue-600 to-cyan-600'
+                : 'bg-gradient-to-r from-blue-600 to-cyan-600'
                 }`}></div>
               <Button
                 type="submit"
                 loading={loading}
-                className={`relative w-full h-12 text-base font-bold overflow-hidden transition-all duration-300 ${darkMode
-                    ? '!bg-slate-900 !text-white border border-slate-700 hover:!bg-slate-800'
-                    : '!bg-white !text-slate-900 border border-slate-200 hover:!bg-slate-50'
+                className={`relative w-full h-12 sm:h-14 text-base sm:text-lg font-bold overflow-hidden transition-all duration-300 ${darkMode
+                  ? '!bg-slate-900 !text-white border border-slate-700 hover:!bg-slate-800'
+                  : '!bg-white !text-slate-900 border border-slate-200 hover:!bg-slate-50'
                   }`}
               >
                 <span className="relative z-10 flex items-center justify-center gap-2">
-                  Sign In <ArrowRight size={18} />
+                  Sign In <ArrowRight size={20} />
                 </span>
                 {/* Gradient Overlay on Hover */}
                 <div className={`absolute inset-0 opacity-0 group-hover:opacity-10 transition-opacity duration-300 ${darkMode ? 'bg-blue-400' : 'bg-blue-600'
