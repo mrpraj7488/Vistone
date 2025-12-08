@@ -1,13 +1,13 @@
 import { useEffect, useState } from 'react';
-import { Store, ShoppingBag, Utensils, CreditCard, ShoppingCart, Barcode, ShoppingCartIcon, Star, Heart, Package, ArrowRight, Flame } from 'lucide-react';
+import { Store, ShoppingBag, Utensils, CreditCard, ShoppingCart, Barcode, ShoppingCartIcon, Star, Heart, Package, ArrowRight, Flame, Sparkles, Timer, Zap, Search } from 'lucide-react';
 import { Container } from '../layout/Container';
-import { Card, CardHeader, CardContent, CardFooter } from '../ui/Card';
 import { Button } from '../ui/Button';
 import { Badge } from '../ui/Badge';
 import { useScrollAnimation } from '../../hooks/useScrollAnimation';
 import { useCartStore, useUIStore, useWishlistStore } from '../../store/useStore';
 import { Link, useNavigate } from 'react-router-dom';
 import { supabase } from '../../lib/supabase';
+import { motion } from 'motion/react';
 
 const fallbackProducts = [
   {
@@ -17,14 +17,14 @@ const fallbackProducts = [
     name: 'StoreKing',
     description: 'Complete e-commerce solution for your online store with advanced features and seamless integration.',
     color: 'from-green-500 to-emerald-500',
-    price: 49,
-    originalPrice: 79,
+    regular_price: 79,
+    sale_price: 49,
     rating: 4.8,
-    reviews: 1250,
-    sales: 8500,
-    isFeatured: true,
-    isBestSeller: true,
-    badge: 'Best Seller',
+    rating_count: 1250,
+    sales_count: 8500,
+    is_featured: true,
+    trending: true,
+    category: 'E-commerce',
     features: ['Multi-vendor', 'Payment Gateway', 'Inventory Management'],
   },
   {
@@ -34,14 +34,14 @@ const fallbackProducts = [
     name: 'Shopperzz',
     description: 'Modern shopping platform with advanced features for the next generation of e-commerce.',
     color: 'from-blue-500 to-cyan-500',
-    price: 59,
-    originalPrice: 99,
+    regular_price: 99,
+    sale_price: 59,
     rating: 4.9,
-    reviews: 980,
-    sales: 6200,
-    isFeatured: true,
-    isNew: true,
-    badge: 'New',
+    rating_count: 980,
+    sales_count: 6200,
+    is_featured: true,
+    trending: true,
+    category: 'Retail',
     features: ['Mobile App', 'AI Search', 'Live Chat'],
   },
   {
@@ -51,12 +51,13 @@ const fallbackProducts = [
     name: 'FoodAppi',
     description: 'Food delivery and restaurant management system for modern food businesses.',
     color: 'from-orange-500 to-red-500',
-    price: 69,
-    originalPrice: 109,
+    regular_price: 109,
+    sale_price: 69,
     rating: 4.7,
-    reviews: 750,
-    sales: 4800,
-    isFeatured: false,
+    rating_count: 750,
+    sales_count: 4800,
+    is_featured: false,
+    category: 'Food & Beverage',
     features: ['Delivery Tracking', 'Menu Management', 'Order Processing'],
   },
   {
@@ -66,12 +67,13 @@ const fallbackProducts = [
     name: 'PosKing',
     description: 'Point of sale system for retail businesses with comprehensive features.',
     color: 'from-purple-500 to-pink-500',
-    price: 79,
-    originalPrice: 129,
+    regular_price: 129,
+    sale_price: 79,
     rating: 4.6,
-    reviews: 650,
-    sales: 3900,
-    isFeatured: false,
+    rating_count: 650,
+    sales_count: 3900,
+    is_featured: false,
+    category: 'POS Systems',
     features: ['Barcode Scanner', 'Receipt Printing', 'Sales Reports'],
   },
   {
@@ -81,14 +83,14 @@ const fallbackProducts = [
     name: 'ShopKing',
     description: 'Multi-vendor marketplace platform for comprehensive e-commerce solutions.',
     color: 'from-indigo-500 to-blue-500',
-    price: 89,
-    originalPrice: 149,
+    regular_price: 149,
+    sale_price: 89,
     rating: 4.8,
-    reviews: 1100,
-    sales: 7200,
-    isFeatured: true,
-    isPopular: true,
-    badge: 'Popular',
+    rating_count: 1100,
+    sales_count: 7200,
+    is_featured: true,
+    trending: true,
+    category: 'Marketplace',
     features: ['Multi-vendor', 'Commission System', 'Seller Dashboard'],
   },
   {
@@ -98,12 +100,13 @@ const fallbackProducts = [
     name: 'FoodScan',
     description: 'Inventory and stock management solution for food businesses.',
     color: 'from-teal-500 to-green-500',
-    price: 59,
-    originalPrice: 99,
+    regular_price: 99,
+    sale_price: 59,
     rating: 4.5,
-    reviews: 420,
-    sales: 2800,
-    isFeatured: false,
+    rating_count: 420,
+    sales_count: 2800,
+    is_featured: false,
+    category: 'Inventory',
     features: ['Stock Tracking', 'Expiry Alerts', 'Supplier Management'],
   },
 ];
@@ -222,65 +225,31 @@ export default function Products({ darkMode }) {
 
 function ProductCard({ product, index, darkMode }) {
   const { ref, isVisible } = useScrollAnimation({ threshold: 0.1 });
-  const [isAdding, setIsAdding] = useState(false);
   const addToCart = useCartStore((state) => state.addItem);
   const showToast = useUIStore((state) => state.showToast);
-  const addWishlist = useWishlistStore((state) => state.addItem);
-  const removeWishlist = useWishlistStore((state) => state.removeItem);
-  const isInWishlist = useWishlistStore((state) => state.isInWishlist(product.id));
+  const { addItem: addToWishlist, isInWishlist } = useWishlistStore();
   const navigate = useNavigate();
-
-  // Calculate discount percentage
-  const discount = product.regular_price && (product.current_price || product.price)
-    ? Math.max(0, Math.round(((product.regular_price - (product.current_price || product.price)) / product.regular_price) * 100))
-    : (product.originalPrice
-      ? Math.max(0, Math.round(((product.originalPrice - product.price) / product.originalPrice) * 100))
-      : 0);
-
-  const imageSrc = product.featured_image || product.image || `https://via.placeholder.com/640x480?text=${encodeURIComponent(product.name)}`;
-
-  const handleAddToCart = async (e) => {
-    e.preventDefault();
-    e.stopPropagation();
-    setIsAdding(true);
-    try {
-      const priced = {
-        ...product,
-        price_monthly: product.current_price || product.price || product.regular_price,
-        price_yearly: product.current_price || product.price || product.regular_price,
-      };
-      addToCart(priced, 'regular');
-      showToast(`${product.name} added to cart!`, 'success');
-    } catch (error) {
-      showToast('Failed to add to cart', 'error');
-    } finally {
-      setTimeout(() => setIsAdding(false), 1000);
-    }
-  };
 
   const handleBuyNow = (e) => {
     e.preventDefault();
     e.stopPropagation();
     const priced = {
       ...product,
-      price_monthly: product.current_price || product.price || product.regular_price,
-      price_yearly: product.current_price || product.price || product.regular_price,
+      price_monthly: product.sale_price || product.regular_price,
+      price_yearly: product.sale_price || product.regular_price,
     };
     addToCart(priced, 'regular');
     navigate('/checkout');
   };
 
-  const toggleWishlist = (e) => {
+  const handleAddToWishlist = (e) => {
     e.preventDefault();
     e.stopPropagation();
-    if (isInWishlist) {
-      removeWishlist(product.id);
-      showToast(`${product.name} removed from wishlist`, 'info');
-    } else {
-      addWishlist(product);
-      showToast(`${product.name} added to wishlist`, 'success');
-    }
+    addToWishlist(product);
+    showToast('Added to wishlist!', 'success');
   };
+
+  const imageSrc = product.featured_image || product.image || `https://via.placeholder.com/640x480?text=${encodeURIComponent(product.name)}`;
 
   return (
     <div
@@ -289,188 +258,138 @@ function ProductCard({ product, index, darkMode }) {
         }`}
       style={{ transitionDelay: `${index * 100}ms` }}
     >
-      <Link to={`/products/${product.slug}`} className="block h-full">
-        <Card
-          className={`h-full flex flex-col relative overflow-hidden rounded-xl transition-all duration-500 hover:-translate-y-2 ${darkMode
-            ? '!bg-slate-900 !border-slate-800 hover:!border-indigo-500/50 hover:shadow-2xl hover:shadow-indigo-500/20'
-            : '!bg-white !border-slate-200 shadow-md hover:!border-blue-300 hover:shadow-xl hover:shadow-blue-500/10'
-            }`}
-        >
-          {/* Image Section - More compact on mobile for SaaS-style cards */}
-          <div className={`relative aspect-[4/5] sm:aspect-[16/10] overflow-hidden ${darkMode ? 'bg-slate-800' : 'bg-slate-100'
-            }`}>
-            <img
-              src={imageSrc}
-              alt={product.name}
-              className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-105"
-            />
+      <Link
+        to={`/products/${product.slug}`}
+        className={`group relative flex flex-col h-full rounded-2xl overflow-hidden border transition-all duration-300 hover:-translate-y-1 hover:shadow-xl ${darkMode
+          ? 'bg-slate-900/50 border-slate-800 hover:border-blue-500/30'
+          : 'bg-white border-slate-200 hover:border-blue-500/30 hover:shadow-blue-500/10'
+          } ${product.trending ? 'ring-1 ring-rose-500/50 shadow-lg shadow-rose-500/10' : ''}`}
+      >
+        {/* Image Container - 4:3 Aspect Ratio */}
+        <div className="relative aspect-[4/3] overflow-hidden bg-slate-100 dark:bg-slate-800">
+          <img
+            src={imageSrc}
+            alt={product.name}
+            className="w-full h-full object-cover transition-transform duration-500 group-hover:scale-110"
+          />
+          <div className="absolute inset-0 bg-gradient-to-t from-black/60 via-transparent to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300" />
 
-            {/* Gradient Overlay */}
-            <div className={`absolute inset-0 transition-opacity duration-300 ${darkMode
-              ? 'bg-gradient-to-t from-slate-900/90 via-slate-900/20 to-transparent'
-              : 'bg-gradient-to-t from-white/10 via-transparent to-transparent'
-              }`} />
-
-            {/* Badges - Clean SaaS pills */}
-            <div className="absolute top-1.5 sm:top-2 left-1.5 sm:left-2 flex flex-col sm:flex-row gap-0.5 sm:gap-1">
-              {product.badge && (
-                <span
-                  className={`inline-flex items-center px-1.5 sm:px-2 py-0.5 rounded-full font-semibold shadow-sm ${darkMode
-                    ? 'bg-indigo-500/90 text-white'
-                    : 'bg-blue-600 text-white'
-                    }`}
-                  style={{
-                    fontSize: 'clamp(0.65rem, 1.2vw + 0.2rem, 0.75rem)', // ~10px - 12px
-                  }}
-                >
-                  {product.badge}
-                </span>
-              )}
-              {discount > 0 && (
-                <span
-                  className="inline-flex items-center px-1.5 sm:px-2 py-0.5 rounded-full font-semibold bg-rose-500 text-white shadow-sm"
-                  style={{
-                    fontSize: 'clamp(0.65rem, 1.2vw + 0.2rem, 0.75rem)',
-                  }}
-                >
-                  -{discount}%
-                </span>
-              )}
-            </div>
-
-            {/* Wishlist Button - Very small on mobile */}
+          {/* Floating Actions */}
+          <div className="absolute top-3 right-3 flex flex-col gap-2 opacity-0 group-hover:opacity-100 transition-all duration-300 translate-x-4 group-hover:translate-x-0 z-20">
             <button
-              onClick={toggleWishlist}
-              className={`absolute top-1 sm:top-2 right-1 sm:right-2 p-1 sm:p-1.5 rounded-full transition-all duration-300 shadow-sm ${isInWishlist
-                ? 'bg-red-500 text-white scale-110'
-                : darkMode
-                  ? 'bg-slate-800/80 text-slate-300 hover:bg-red-500 hover:text-white backdrop-blur-sm'
-                  : 'bg-white/90 text-slate-600 hover:bg-red-500 hover:text-white backdrop-blur-sm'
+              onClick={handleAddToWishlist}
+              className={`p-2 rounded-full backdrop-blur-md transition-colors ${isInWishlist(product.id)
+                ? 'bg-red-500 text-white'
+                : 'bg-white/90 text-slate-700 hover:bg-white hover:text-red-500'
                 }`}
             >
-              <Heart size={12} className={`sm:w-3.5 sm:h-3.5 ${isInWishlist ? 'fill-current' : ''}`} />
+              <Heart size={16} fill={isInWishlist(product.id) ? "currentColor" : "none"} />
             </button>
           </div>
 
-          <CardContent className="flex-1 p-2 sm:p-3 md:p-4 flex flex-col">
-            {/* Title & Rating - Responsive */}
-            <div className="flex items-start justify-between gap-1.5 mb-1 sm:mb-1.5">
-              <h3
-                className={`font-bold leading-tight flex-1 transition-colors ${darkMode
-                  ? 'text-white group-hover:text-indigo-400'
-                  : 'text-slate-900 group-hover:text-blue-600'
-                  }`}
-                style={{
-                  fontSize: 'clamp(0.8rem, 1.6vw + 0.3rem, 1rem)', // ~13px - 16px
-                }}
-              >
-                {product.name}
-              </h3>
-              <div className="flex items-center gap-0.5 shrink-0">
-                <Star size={10} className="sm:w-3 sm:h-3 text-yellow-500 fill-yellow-500" />
-                <span
-                  className={`font-semibold ${darkMode ? 'text-slate-300' : 'text-slate-900'
-                    }`}
-                  style={{
-                    fontSize: 'clamp(0.7rem, 1.3vw + 0.25rem, 0.8rem)', // ~11px - 13px
-                  }}
-                >
-                  {product.rating_average || product.rating || 4.8}
-                </span>
-              </div>
+          {/* Badges */}
+          <div className="absolute top-3 left-3 flex flex-col gap-1.5 z-20">
+            {product.is_featured && (
+              <span className="px-2.5 py-1 rounded-lg text-[10px] font-bold uppercase tracking-wider bg-amber-400 text-amber-950 shadow-lg shadow-amber-900/20 flex items-center gap-1">
+                <Sparkles size={10} /> Featured
+              </span>
+            )}
+            {product.trending && (
+              <span className="px-2.5 py-1 rounded-lg text-[10px] font-bold uppercase tracking-wider bg-gradient-to-r from-rose-500 to-orange-500 text-white shadow-lg shadow-rose-500/30 flex items-center gap-1 animate-pulse">
+                <Flame size={10} className="fill-white" /> Hot Sale
+              </span>
+            )}
+          </div>
+
+          {/* Hype Banner for Trending/Sale */}
+          {(product.trending || product.sale_price) && (
+            <div className="absolute bottom-0 left-0 right-0 bg-gradient-to-r from-blue-600/95 to-purple-600/95 backdrop-blur-md text-white text-[10px] font-bold py-2 px-2 flex items-center justify-center gap-1.5 translate-y-full group-hover:translate-y-0 transition-transform duration-300 z-10">
+              <Timer size={12} className="animate-spin-slow" />
+              <span>Selling Fast! Limited Stock</span>
             </div>
+          )}
+        </div>
 
-            {/* Description - Hidden on very small screens, readable on sm+ */}
-            <p
-              className={`hidden sm:block mb-2 sm:mb-3 line-clamp-2 leading-relaxed ${darkMode ? 'text-slate-400' : 'text-slate-600'
-                }`}
-              style={{
-                fontSize: 'clamp(0.8rem, 1.4vw + 0.25rem, 0.9rem)', // ~13px - 14px
-              }}
-            >
-              {product.short_description || product.description}
-            </p>
+        {/* Content */}
+        <div className="flex-1 p-4 sm:p-5 flex flex-col">
+          <div className="mb-1.5">
+            <span className={`text-[10px] sm:text-xs font-bold uppercase tracking-wider ${darkMode ? 'text-blue-400' : 'text-blue-600'}`}>
+              {product.category || 'Software'}
+            </span>
+          </div>
 
-            <div className="mt-auto space-y-1.5 sm:space-y-2.5 md:space-y-3">
-              {/* Price & Sales - Clean SaaS style */}
-              <div>
-                <div className="flex items-baseline gap-0.5 sm:gap-1 mb-0.5 sm:mb-1">
-                  <span
-                    className={`font-black ${darkMode ? 'text-white' : 'text-slate-900'
-                      }`}
-                    style={{
-                      fontSize: 'clamp(0.95rem, 2vw + 0.4rem, 1.4rem)', // ~15px - 22px
-                    }}
-                  >
-                    ${product.current_price || product.price || product.regular_price}
-                  </span>
-                  {(product.on_sale || product.originalPrice) && (
-                    <span
-                      className={`line-through font-medium ${darkMode ? 'text-slate-600' : 'text-slate-400'
-                        }`}
-                      style={{
-                        fontSize: 'clamp(0.7rem, 1.3vw + 0.2rem, 0.85rem)', // ~11px - 14px
-                      }}
-                    >
-                      ${product.regular_price || product.originalPrice}
-                    </span>
+          <h3 className={`font-bold text-base sm:text-lg mb-2 line-clamp-1 group-hover:text-blue-500 transition-colors ${darkMode ? 'text-white' : 'text-slate-900'}`}>
+            {product.name}
+          </h3>
+
+          <div className="flex items-center gap-1.5 mb-4">
+            <div className="flex text-amber-400">
+              {[...Array(5)].map((_, i) => (
+                <Star key={i} size={12} fill={i < Math.floor(product.rating || 0) ? "currentColor" : "none"} className={i < Math.floor(product.rating || 0) ? "" : "text-slate-300 dark:text-slate-600"} />
+              ))}
+            </div>
+            <span className={`text-xs font-medium ${darkMode ? 'text-slate-400' : 'text-slate-600'}`}>
+              {product.rating || 0}
+            </span>
+            <span className={`text-xs ${darkMode ? 'text-slate-600' : 'text-slate-500'}`}>
+              ({product.rating_count || 0} reviews)
+            </span>
+          </div>
+
+          <div className="mt-auto pt-4 border-t border-dashed border-slate-200 dark:border-slate-800">
+            <div className="flex flex-col gap-4">
+              <div className="flex items-end justify-between w-full">
+                <div className="flex flex-col">
+                  {product.sale_price ? (
+                    <>
+                      <span className={`text-[10px] line-through ${darkMode ? 'text-slate-500' : 'text-slate-400'}`}>
+                        ${product.regular_price}
+                      </span>
+                      <div className="flex items-center gap-2">
+                        <span className="text-xl sm:text-2xl font-black text-rose-500">
+                          ${product.sale_price}
+                        </span>
+                        <span className="flex items-center gap-1 px-2 py-0.5 rounded-full text-[10px] font-bold bg-rose-500/10 text-rose-500 animate-pulse border border-rose-500/20">
+                          <Flame size={10} fill="currentColor" />
+                          Hot Sale
+                        </span>
+                      </div>
+                    </>
+                  ) : (
+                    <div className="flex flex-col">
+                      <span className={`text-[10px] sm:text-xs ${darkMode ? 'text-slate-500' : 'text-slate-400'}`}>Price</span>
+                      <div className="flex items-center gap-2">
+                        <span className={`text-xl sm:text-2xl font-black ${darkMode ? 'text-white' : 'text-slate-900'}`}>
+                          ${product.regular_price}
+                        </span>
+                        {product.trending && (
+                          <span className="flex items-center gap-1 px-2 py-0.5 rounded-full text-[10px] font-bold bg-amber-500/10 text-amber-500 animate-pulse border border-amber-500/20">
+                            <Zap size={10} fill="currentColor" />
+                            Selling Fast
+                          </span>
+                        )}
+                      </div>
+                    </div>
                   )}
                 </div>
-                <p
-                  className={`${darkMode ? 'text-slate-500' : 'text-slate-500'
-                    }`}
-                  style={{
-                    fontSize: 'clamp(0.7rem, 1.3vw + 0.2rem, 0.8rem)', // ~11px - 13px
-                  }}
-                >
-                  {(product.sales_count || product.sales || 0).toLocaleString()}+ sales
-                </p>
               </div>
 
-              {/* Action Buttons - Responsive & touch friendly */}
-              <div className="flex gap-1.5">
-                <Button
-                  variant="outline"
-                  className={`flex-1 rounded font-semibold transition-all px-2 ${darkMode
-                    ? 'border-slate-700 text-slate-300 hover:bg-slate-800 hover:text-white hover:border-slate-600'
-                    : 'border-slate-200 text-slate-700 hover:border-blue-300 hover:text-blue-600 hover:bg-blue-50'
-                    }`}
-                  onClick={handleBuyNow}
-                  style={{
-                    height: 'clamp(2.1rem, 3.8vw, 2.4rem)', // ~34px - 38px
-                    fontSize: 'clamp(0.75rem, 1.4vw + 0.2rem, 0.85rem)', // ~12px - 14px
-                  }}
-                >
-                  Buy
-                </Button>
-                <Button
-                  variant="primary"
-                  className={`flex-1 rounded font-semibold transition-all px-2 ${darkMode
-                    ? 'bg-indigo-600 hover:bg-indigo-500 text-white'
-                    : 'bg-blue-600 hover:bg-blue-700 text-white shadow-md hover:shadow-lg'
-                    }`}
-                  onClick={handleAddToCart}
-                  disabled={isAdding}
-                  style={{
-                    height: 'clamp(2.1rem, 3.8vw, 2.4rem)',
-                    fontSize: 'clamp(0.75rem, 1.4vw + 0.2rem, 0.85rem)',
-                  }}
-                >
-                  {isAdding ? (
-                    <div className="flex items-center justify-center">
-                      <div className="w-2.5 h-2.5 sm:w-3 sm:h-3 border-2 border-white/30 border-t-white rounded-full animate-spin" />
-                    </div>
-                  ) : (
-                    <span className="flex items-center gap-0.5 sm:gap-1">
-                      <ShoppingCartIcon size={11} className="sm:w-3 sm:h-3" />
-                      Add
-                    </span>
-                  )}
-                </Button>
-              </div>
+              <motion.button
+                whileHover={{ scale: 1.02 }}
+                whileTap={{ scale: 0.98 }}
+                onClick={handleBuyNow}
+                className={`w-full relative overflow-hidden h-11 rounded-xl font-bold text-sm flex items-center justify-center gap-2 shadow-lg group/btn transition-all ${darkMode
+                  ? 'bg-gradient-to-r from-blue-600 to-indigo-600 text-white shadow-blue-500/20 hover:shadow-blue-500/40'
+                  : 'bg-gradient-to-r from-blue-600 to-indigo-600 text-white shadow-blue-500/30 hover:shadow-blue-500/50'
+                  }`}
+              >
+                <div className="absolute inset-0 -translate-x-full group-hover/btn:animate-[shine_1.5s_infinite] bg-gradient-to-r from-transparent via-white/30 to-transparent z-10" />
+                <span>Buy Now</span>
+                <ShoppingCart size={18} className="group-hover/btn:translate-x-1 transition-transform" />
+              </motion.button>
             </div>
-          </CardContent>
-        </Card>
+          </div>
+        </div>
       </Link>
     </div>
   );
