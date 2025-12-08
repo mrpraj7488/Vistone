@@ -246,8 +246,8 @@ export default function Checkout({ darkMode }) {
             <div className="flex items-center gap-12 sm:gap-24 bg-transparent relative z-10">
               <div className="flex flex-col items-center gap-2">
                 <div className={`w-10 h-10 rounded-full flex items-center justify-center font-bold text-sm transition-colors ${step >= 1
-                    ? 'bg-blue-600 text-white shadow-lg shadow-blue-500/30'
-                    : darkMode ? 'bg-slate-800 text-slate-500' : 'bg-slate-200 text-slate-400'
+                  ? 'bg-blue-600 text-white shadow-lg shadow-blue-500/30'
+                  : darkMode ? 'bg-slate-800 text-slate-500' : 'bg-slate-200 text-slate-400'
                   }`}>
                   1
                 </div>
@@ -255,8 +255,8 @@ export default function Checkout({ darkMode }) {
               </div>
               <div className="flex flex-col items-center gap-2">
                 <div className={`w-10 h-10 rounded-full flex items-center justify-center font-bold text-sm transition-colors ${step >= 2
-                    ? 'bg-blue-600 text-white shadow-lg shadow-blue-500/30'
-                    : darkMode ? 'bg-slate-800 text-slate-500' : 'bg-slate-200 text-slate-400'
+                  ? 'bg-blue-600 text-white shadow-lg shadow-blue-500/30'
+                  : darkMode ? 'bg-slate-800 text-slate-500' : 'bg-slate-200 text-slate-400'
                   }`}>
                   2
                 </div>
@@ -291,8 +291,8 @@ export default function Checkout({ darkMode }) {
                           value={formData.firstName}
                           onChange={handleInputChange}
                           className={`w-full px-4 py-3 rounded-xl border outline-none transition-all ${darkMode
-                              ? 'bg-slate-800/50 border-slate-700 focus:border-blue-500 text-white'
-                              : 'bg-slate-50 border-slate-200 focus:border-blue-500 text-slate-900'
+                            ? 'bg-slate-800/50 border-slate-700 focus:border-blue-500 text-white'
+                            : 'bg-slate-50 border-slate-200 focus:border-blue-500 text-slate-900'
                             } ${errors.firstName ? 'border-red-500' : ''}`}
                           placeholder="John"
                         />
@@ -307,8 +307,8 @@ export default function Checkout({ darkMode }) {
                           value={formData.lastName}
                           onChange={handleInputChange}
                           className={`w-full px-4 py-3 rounded-xl border outline-none transition-all ${darkMode
-                              ? 'bg-slate-800/50 border-slate-700 focus:border-blue-500 text-white'
-                              : 'bg-slate-50 border-slate-200 focus:border-blue-500 text-slate-900'
+                            ? 'bg-slate-800/50 border-slate-700 focus:border-blue-500 text-white'
+                            : 'bg-slate-50 border-slate-200 focus:border-blue-500 text-slate-900'
                             } ${errors.lastName ? 'border-red-500' : ''}`}
                           placeholder="Doe"
                         />
@@ -326,8 +326,8 @@ export default function Checkout({ darkMode }) {
                           value={formData.email}
                           onChange={handleInputChange}
                           className={`w-full pl-12 pr-4 py-3 rounded-xl border outline-none transition-all ${darkMode
-                              ? 'bg-slate-800/50 border-slate-700 focus:border-blue-500 text-white'
-                              : 'bg-slate-50 border-slate-200 focus:border-blue-500 text-slate-900'
+                            ? 'bg-slate-800/50 border-slate-700 focus:border-blue-500 text-white'
+                            : 'bg-slate-50 border-slate-200 focus:border-blue-500 text-slate-900'
                             } ${errors.email ? 'border-red-500' : ''}`}
                           placeholder="john@example.com"
                         />
@@ -345,8 +345,8 @@ export default function Checkout({ darkMode }) {
                           value={formData.address}
                           onChange={handleInputChange}
                           className={`w-full pl-12 pr-4 py-3 rounded-xl border outline-none transition-all ${darkMode
-                              ? 'bg-slate-800/50 border-slate-700 focus:border-blue-500 text-white'
-                              : 'bg-slate-50 border-slate-200 focus:border-blue-500 text-slate-900'
+                            ? 'bg-slate-800/50 border-slate-700 focus:border-blue-500 text-white'
+                            : 'bg-slate-50 border-slate-200 focus:border-blue-500 text-slate-900'
                             } ${errors.address ? 'border-red-500' : ''}`}
                           placeholder="123 Main St"
                         />
@@ -363,8 +363,8 @@ export default function Checkout({ darkMode }) {
                           value={formData.city}
                           onChange={handleInputChange}
                           className={`w-full px-4 py-3 rounded-xl border outline-none transition-all ${darkMode
-                              ? 'bg-slate-800/50 border-slate-700 focus:border-blue-500 text-white'
-                              : 'bg-slate-50 border-slate-200 focus:border-blue-500 text-slate-900'
+                            ? 'bg-slate-800/50 border-slate-700 focus:border-blue-500 text-white'
+                            : 'bg-slate-50 border-slate-200 focus:border-blue-500 text-slate-900'
                             } ${errors.city ? 'border-red-500' : ''}`}
                         />
                         {errors.city && <p className="text-red-500 text-xs">{errors.city}</p>}
@@ -378,8 +378,8 @@ export default function Checkout({ darkMode }) {
                           value={formData.state}
                           onChange={handleInputChange}
                           className={`w-full px-4 py-3 rounded-xl border outline-none transition-all ${darkMode
-                              ? 'bg-slate-800/50 border-slate-700 focus:border-blue-500 text-white'
-                              : 'bg-slate-50 border-slate-200 focus:border-blue-500 text-slate-900'
+                            ? 'bg-slate-800/50 border-slate-700 focus:border-blue-500 text-white'
+                            : 'bg-slate-50 border-slate-200 focus:border-blue-500 text-slate-900'
                             } ${errors.state ? 'border-red-500' : ''}`}
                         />
                         {errors.state && <p className="text-red-500 text-xs">{errors.state}</p>}
@@ -393,8 +393,8 @@ export default function Checkout({ darkMode }) {
                           value={formData.zip}
                           onChange={handleInputChange}
                           className={`w-full px-4 py-3 rounded-xl border outline-none transition-all ${darkMode
-                              ? 'bg-slate-800/50 border-slate-700 focus:border-blue-500 text-white'
-                              : 'bg-slate-50 border-slate-200 focus:border-blue-500 text-slate-900'
+                            ? 'bg-slate-800/50 border-slate-700 focus:border-blue-500 text-white'
+                            : 'bg-slate-50 border-slate-200 focus:border-blue-500 text-slate-900'
                             } ${errors.zip ? 'border-red-500' : ''}`}
                         />
                         {errors.zip && <p className="text-red-500 text-xs">{errors.zip}</p>}
@@ -402,8 +402,14 @@ export default function Checkout({ darkMode }) {
                     </div>
 
                     <div className="mt-8">
-                      <Button type="submit" className="w-full h-12 text-base shadow-lg shadow-blue-500/25 group">
-                        <span className="flex items-center gap-2">
+                      <Button
+                        type="submit"
+                        className={`w-full h-12 text-base shadow-lg group border-0 ${darkMode
+                          ? 'bg-gradient-to-r from-blue-600 to-indigo-600 text-white shadow-blue-500/25 hover:shadow-blue-500/40'
+                          : 'bg-gradient-to-r from-blue-600 to-indigo-600 text-white shadow-blue-500/30 hover:shadow-blue-500/50'
+                          }`}
+                      >
+                        <span className="flex items-center justify-center gap-2">
                           Continue to Payment <ArrowRight className="w-5 h-5 group-hover:translate-x-1 transition-transform" />
                         </span>
                       </Button>
@@ -423,8 +429,8 @@ export default function Checkout({ darkMode }) {
 
                     <div className="space-y-4 mb-8">
                       <label className={`group relative flex items-center gap-4 p-5 rounded-2xl border-2 cursor-pointer transition-all ${formData.paymentMethod === 'paypal'
-                          ? 'border-blue-500 bg-blue-500/5'
-                          : darkMode ? 'border-slate-700 hover:border-slate-600' : 'border-slate-200 hover:border-slate-300'
+                        ? 'border-blue-500 bg-blue-500/5'
+                        : darkMode ? 'border-slate-700 hover:border-slate-600' : 'border-slate-200 hover:border-slate-300'
                         }`}>
                         <input
                           type="radio"
@@ -446,8 +452,8 @@ export default function Checkout({ darkMode }) {
                       </label>
 
                       <label className={`group relative flex items-center gap-4 p-5 rounded-2xl border-2 cursor-pointer transition-all ${formData.paymentMethod === 'razorpay'
-                          ? 'border-blue-500 bg-blue-500/5'
-                          : darkMode ? 'border-slate-700 hover:border-slate-600' : 'border-slate-200 hover:border-slate-300'
+                        ? 'border-blue-500 bg-blue-500/5'
+                        : darkMode ? 'border-slate-700 hover:border-slate-600' : 'border-slate-200 hover:border-slate-300'
                         }`}>
                         <input
                           type="radio"
@@ -490,7 +496,10 @@ export default function Checkout({ darkMode }) {
                         type="button"
                         variant="outline"
                         onClick={() => setStep(1)}
-                        className="flex-1 h-12"
+                        className={`flex-1 h-12 border ${darkMode
+                            ? 'border-slate-700 text-slate-300 hover:bg-slate-800 hover:text-white'
+                            : 'border-slate-200 text-slate-700 hover:bg-slate-50 hover:text-slate-900'
+                          }`}
                       >
                         <ChevronLeft className="w-5 h-5 mr-2" /> Back
                       </Button>
@@ -498,10 +507,15 @@ export default function Checkout({ darkMode }) {
                         type="submit"
                         loading={loading}
                         disabled={!formData.agreeTerms}
-                        className={`flex-1 h-12 text-base shadow-lg shadow-blue-500/25 ${!formData.agreeTerms ? 'opacity-50 cursor-not-allowed' : ''
+                        className={`flex-1 h-12 text-base shadow-lg group border-0 ${!formData.agreeTerms ? 'opacity-50 cursor-not-allowed' : ''
+                          } ${darkMode
+                            ? 'bg-gradient-to-r from-blue-600 to-indigo-600 text-white shadow-blue-500/25 hover:shadow-blue-500/40'
+                            : 'bg-gradient-to-r from-blue-600 to-indigo-600 text-white shadow-blue-500/30 hover:shadow-blue-500/50'
                           }`}
                       >
-                        <Lock className="w-4 h-4 mr-2" /> Pay ${total.toFixed(2)}
+                        <span className="flex items-center justify-center gap-2">
+                          <Lock className="w-4 h-4" /> Pay ${total.toFixed(2)}
+                        </span>
                       </Button>
                     </div>
                   </motion.div>
