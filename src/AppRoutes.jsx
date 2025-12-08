@@ -58,6 +58,7 @@ const AdminProfile = lazy(() => import('./pages/admin/Profile'));
 function LayoutWrapper({ children }) {
   const location = useLocation();
   const isAdminRoute = location.pathname.startsWith('/admin');
+  const isDashboardRoute = location.pathname.startsWith('/dashboard');
   const { theme, toggleTheme } = useTheme();
   const darkMode = theme === 'dark';
 
@@ -71,9 +72,9 @@ function LayoutWrapper({ children }) {
 
   return (
     <div className="min-h-screen w-full overflow-x-hidden">
-      {!isAdminRoute && <HeaderNav darkMode={darkMode} setDarkMode={toggleTheme} />}
+      {!isAdminRoute && !isDashboardRoute && <HeaderNav darkMode={darkMode} setDarkMode={toggleTheme} />}
       {children}
-      {!isAdminRoute && <Footer darkMode={darkMode} />}
+      {!isAdminRoute && !isDashboardRoute && <Footer darkMode={darkMode} />}
       <Toast />
     </div>
   );
