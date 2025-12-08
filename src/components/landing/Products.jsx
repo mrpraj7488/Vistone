@@ -7,7 +7,7 @@ import { Badge } from '../ui/Badge';
 import { useScrollAnimation } from '../../hooks/useScrollAnimation';
 import { useCartStore, useUIStore, useWishlistStore } from '../../store/useStore';
 import { Link, useNavigate } from 'react-router-dom';
-import { api } from '../../lib/api';
+import { supabase } from '../../lib/supabase';
 
 const fallbackProducts = [
   {
@@ -116,15 +116,22 @@ export default function Products({ darkMode }) {
     let isMounted = true;
     const fetchProducts = async () => {
       try {
-        const res = await api.getProducts({ featured: true, limit: 6, sort: 'created_at', order: 'desc' });
-        const list = res?.products || [];
-        if (isMounted && list.length > 0) {
-          setProducts(list);
+        const { data, error } = await supabase
+          .from('products')
+          .select('*')
+          .eq('status', 'active')
+          .order('created_at', { ascending: false })
+          .limit(6);
+
+        if (error) throw error;
+
+        if (isMounted && data && data.length > 0) {
+          setProducts(data);
         } else if (isMounted) {
           setProducts(fallbackProducts);
         }
       } catch (e) {
-        console.warn('Failed to fetch products from API, using fallback.', e);
+        console.warn('Failed to fetch products from Supabase, using fallback.', e);
         if (isMounted) setProducts(fallbackProducts);
       } finally {
         if (isMounted) setLoading(false);

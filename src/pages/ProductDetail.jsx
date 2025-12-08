@@ -27,19 +27,17 @@ export default function ProductDetail({ darkMode }) {
 
   const fetchProduct = async () => {
     try {
+      // Fetch product with all fields
       const { data: productData, error } = await supabase
         .from('products')
-        .select(`
-          *,
-          category:categories(name),
-          technologies:product_technologies(technology:technologies(name, color))
-        `)
+        .select('*')
         .eq('slug', slug)
         .maybeSingle();
 
       if (productData) {
         setProduct(productData);
 
+        // Fetch reviews if the table exists
         const { data: reviewsData } = await supabase
           .from('reviews')
           .select('*')
@@ -48,12 +46,8 @@ export default function ProductDetail({ darkMode }) {
 
         setReviews(reviewsData || []);
 
-        const { data: featuresData } = await supabase
-          .from('product_features')
-          .select('*')
-          .eq('product_id', productData.id);
-
-        setFeatures(featuresData || []);
+        // Features are now stored in the features column as an array
+        // We don't need to fetch from product_features table
       }
     } catch (err) {
       console.error('Error fetching product:', err);
@@ -72,16 +66,16 @@ export default function ProductDetail({ darkMode }) {
     showToast('Added to wishlist!', 'success');
   };
 
-  const price = licenseType === 'yearly' ? product?.price_yearly : product?.price_monthly;
+  // Map license types to prices
+  const price = licenseType === 'extended' ? product?.extended_price : product?.regular_price;
 
   const getImages = () => {
     if (!product) return [];
-    try {
-      const imgArray = typeof product.images === 'string' ? JSON.parse(product.images) : product.images;
-      return Array.isArray(imgArray) && imgArray.length > 0 ? imgArray : [product.featured_image];
-    } catch {
-      return [product.featured_image];
+    // Use gallery_images if available, otherwise fall back to featured_image
+    if (product.gallery_images && Array.isArray(product.gallery_images) && product.gallery_images.length > 0) {
+      return [product.featured_image, ...product.gallery_images].filter(Boolean);
     }
+    return [product.featured_image].filter(Boolean);
   };
 
   const images = getImages();
@@ -120,7 +114,7 @@ export default function ProductDetail({ darkMode }) {
           <div>
             <div className="mb-4 rounded-2xl overflow-hidden">
               <img
-                src={images[selectedImage]}
+                src={images[selectedImage] || '/api/placeholder/800/600'}
                 alt={product.name}
                 className="w-full h-[500px] object-cover"
               />
@@ -130,13 +124,12 @@ export default function ProductDetail({ darkMode }) {
                 <button
                   key={idx}
                   onClick={() => setSelectedImage(idx)}
-                  className={`rounded-lg overflow-hidden border-4 transition-all ${
-                    selectedImage === idx
-                      ? 'border-cyan-500'
-                      : 'border-transparent hover:border-gray-300'
-                  }`}
+                  className={`rounded-lg overflow-hidden border-4 transition-all ${selectedImage === idx
+                    ? 'border-cyan-500'
+                    : 'border-transparent hover:border-gray-300'
+                    }`}
                 >
-                  <img src={img} alt={`${product.name} ${idx + 1}`} className="w-full h-20 object-cover" />
+                  <img src={img || '/api/placeholder/100/100'} alt={`${product.name} ${idx + 1}`} className="w-full h-20 object-cover" />
                 </button>
               ))}
             </div>
@@ -145,7 +138,7 @@ export default function ProductDetail({ darkMode }) {
           <div>
             {product.category && (
               <span className={`text-sm font-bold ${darkMode ? 'text-cyan-400' : 'text-cyan-600'}`}>
-                {product.category.name}
+                {product.category}
               </span>
             )}
 
@@ -154,23 +147,23 @@ export default function ProductDetail({ darkMode }) {
             </h1>
 
             <p className={`text-xl mb-6 ${darkMode ? 'text-gray-300' : 'text-gray-600'}`}>
-              {product.tagline}
+              {product.short_description}
             </p>
 
             <div className="flex items-center gap-3 mb-6">
               <div className="flex">
                 {[...Array(5)].map((_, i) => (
-                  <span key={i} className={i < Math.floor(product.rating_average) ? 'text-yellow-400' : 'text-gray-300'}>
+                  <span key={i} className={i < Math.floor(product.rating || 0) ? 'text-yellow-400' : 'text-gray-300'}>
                     ⭐
                   </span>
                 ))}
               </div>
               <span className={darkMode ? 'text-gray-300' : 'text-gray-600'}>
-                {product.rating_average} ({product.rating_count} reviews)
+                {product.rating || 0} ({product.rating_count || 0} reviews)
               </span>
               <span className="text-gray-400">|</span>
               <span className={darkMode ? 'text-gray-300' : 'text-gray-600'}>
-                {product.sales_count} sales
+                {product.sales_count || 0} sales
               </span>
             </div>
 
@@ -178,14 +171,9 @@ export default function ProductDetail({ darkMode }) {
               <div className="text-4xl font-black text-gradient mb-2">
                 ${price}
                 <span className={`text-lg font-normal ${darkMode ? 'text-gray-400' : 'text-gray-600'}`}>
-                  /{licenseType === 'yearly' ? 'year' : 'month'}
+                  /{licenseType === 'extended' ? 'extended' : 'regular'}
                 </span>
               </div>
-              {licenseType === 'yearly' && product.price_monthly && (
-                <p className="text-green-500 font-bold">
-                  Save ${(product.price_monthly * 12 - product.price_yearly).toFixed(2)} per year
-                </p>
-              )}
             </div>
 
             <div className={`mb-6 p-4 rounded-xl ${darkMode ? 'bg-gray-800' : 'bg-gray-100'}`}>
@@ -211,28 +199,26 @@ export default function ProductDetail({ darkMode }) {
               </label>
               <div className="flex gap-4">
                 <button
-                  onClick={() => setLicenseType('single')}
-                  className={`flex-1 px-6 py-3 rounded-xl font-bold transition-all ${
-                    licenseType === 'single'
-                      ? 'bg-cyan-500 text-white shadow-lg'
-                      : darkMode
+                  onClick={() => setLicenseType('regular')}
+                  className={`flex-1 px-6 py-3 rounded-xl font-bold transition-all ${licenseType === 'regular'
+                    ? 'bg-cyan-500 text-white shadow-lg'
+                    : darkMode
                       ? 'bg-gray-800 text-gray-300 hover:bg-gray-700'
                       : 'bg-gray-200 text-gray-700 hover:bg-gray-300'
-                  }`}
+                    }`}
                 >
-                  Single Site
+                  Regular License
                 </button>
                 <button
-                  onClick={() => setLicenseType('yearly')}
-                  className={`flex-1 px-6 py-3 rounded-xl font-bold transition-all ${
-                    licenseType === 'yearly'
-                      ? 'bg-cyan-500 text-white shadow-lg'
-                      : darkMode
+                  onClick={() => setLicenseType('extended')}
+                  className={`flex-1 px-6 py-3 rounded-xl font-bold transition-all ${licenseType === 'extended'
+                    ? 'bg-cyan-500 text-white shadow-lg'
+                    : darkMode
                       ? 'bg-gray-800 text-gray-300 hover:bg-gray-700'
                       : 'bg-gray-200 text-gray-700 hover:bg-gray-300'
-                  }`}
+                    }`}
                 >
-                  Multi Site
+                  Extended License
                 </button>
               </div>
             </div>
@@ -244,9 +230,8 @@ export default function ProductDetail({ darkMode }) {
               <div className="flex items-center gap-4">
                 <button
                   onClick={() => setQuantity(Math.max(1, quantity - 1))}
-                  className={`w-12 h-12 rounded-lg font-bold text-xl ${
-                    darkMode ? 'bg-gray-800 text-white' : 'bg-gray-200 text-gray-900'
-                  }`}
+                  className={`w-12 h-12 rounded-lg font-bold text-xl ${darkMode ? 'bg-gray-800 text-white' : 'bg-gray-200 text-gray-900'
+                    }`}
                 >
                   -
                 </button>
@@ -255,9 +240,8 @@ export default function ProductDetail({ darkMode }) {
                 </span>
                 <button
                   onClick={() => setQuantity(quantity + 1)}
-                  className={`w-12 h-12 rounded-lg font-bold text-xl ${
-                    darkMode ? 'bg-gray-800 text-white' : 'bg-gray-200 text-gray-900'
-                  }`}
+                  className={`w-12 h-12 rounded-lg font-bold text-xl ${darkMode ? 'bg-gray-800 text-white' : 'bg-gray-200 text-gray-900'
+                    }`}
                 >
                   +
                 </button>
@@ -281,6 +265,45 @@ export default function ProductDetail({ darkMode }) {
               <div>📦 Instant Delivery</div>
               <div>💳 All Cards Accepted</div>
             </div>
+
+            {/* Product Details Sidebar */}
+            <div className={`mt-8 p-6 rounded-xl ${darkMode ? 'bg-gray-800' : 'bg-gray-100'}`}>
+              <h3 className={`font-bold mb-4 ${darkMode ? 'text-white' : 'text-gray-900'}`}>Product Information</h3>
+              <div className="space-y-3 text-sm">
+                <div className="flex justify-between">
+                  <span className={darkMode ? 'text-gray-400' : 'text-gray-600'}>Version</span>
+                  <span className={`font-medium ${darkMode ? 'text-gray-200' : 'text-gray-900'}`}>{product.version || '1.0.0'}</span>
+                </div>
+                <div className="flex justify-between">
+                  <span className={darkMode ? 'text-gray-400' : 'text-gray-600'}>Last Updated</span>
+                  <span className={`font-medium ${darkMode ? 'text-gray-200' : 'text-gray-900'}`}>{product.last_update || new Date(product.created_at).toLocaleDateString()}</span>
+                </div>
+                {product.compatibility && product.compatibility.length > 0 && (
+                  <div>
+                    <span className={`block mb-1 ${darkMode ? 'text-gray-400' : 'text-gray-600'}`}>Compatible With</span>
+                    <div className="flex flex-wrap gap-1">
+                      {product.compatibility.map(item => (
+                        <span key={item} className={`px-2 py-0.5 rounded text-xs ${darkMode ? 'bg-gray-700 text-gray-300' : 'bg-gray-200 text-gray-700'}`}>
+                          {item}
+                        </span>
+                      ))}
+                    </div>
+                  </div>
+                )}
+                {product.tags && product.tags.length > 0 && (
+                  <div>
+                    <span className={`block mb-1 ${darkMode ? 'text-gray-400' : 'text-gray-600'}`}>Tags</span>
+                    <div className="flex flex-wrap gap-1">
+                      {product.tags.map(tag => (
+                        <span key={tag} className={`px-2 py-0.5 rounded text-xs ${darkMode ? 'bg-blue-900/30 text-blue-300' : 'bg-blue-100 text-blue-700'}`}>
+                          {tag}
+                        </span>
+                      ))}
+                    </div>
+                  </div>
+                )}
+              </div>
+            </div>
           </div>
         </div>
 
@@ -290,13 +313,12 @@ export default function ProductDetail({ darkMode }) {
               <button
                 key={tab}
                 onClick={() => setActiveTab(tab)}
-                className={`px-6 py-4 font-bold capitalize whitespace-nowrap transition-all ${
-                  activeTab === tab
-                    ? 'text-cyan-500 border-b-4 border-cyan-500'
-                    : darkMode
+                className={`px-6 py-4 font-bold capitalize whitespace-nowrap transition-all ${activeTab === tab
+                  ? 'text-cyan-500 border-b-4 border-cyan-500'
+                  : darkMode
                     ? 'text-gray-400 hover:text-gray-200'
                     : 'text-gray-600 hover:text-gray-900'
-                }`}
+                  }`}
               >
                 {tab}
               </button>
@@ -313,20 +335,23 @@ export default function ProductDetail({ darkMode }) {
 
           {activeTab === 'features' && (
             <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-              {features.map((feature) => (
+              {product.features && Array.isArray(product.features) && product.features.map((feature, idx) => (
                 <div
-                  key={feature.id}
+                  key={idx}
                   className={`p-6 rounded-xl ${darkMode ? 'bg-gray-800' : 'bg-gray-100'}`}
                 >
-                  <div className="text-4xl mb-4">{feature.icon}</div>
+                  <div className="text-4xl mb-4">✨</div>
                   <h3 className={`text-xl font-bold mb-2 ${darkMode ? 'text-white' : 'text-gray-900'}`}>
-                    {feature.title}
+                    Feature {idx + 1}
                   </h3>
                   <p className={darkMode ? 'text-gray-300' : 'text-gray-600'}>
-                    {feature.description}
+                    {feature}
                   </p>
                 </div>
               ))}
+              {(!product.features || product.features.length === 0) && (
+                <p className={darkMode ? 'text-gray-400' : 'text-gray-600'}>No specific features listed.</p>
+              )}
             </div>
           )}
 

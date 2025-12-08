@@ -54,6 +54,7 @@ const ProductFormFixed = () => {
   const [loading, setLoading] = useState(false);
   const [characterCount, setCharacterCount] = useState(0);
   const [productStats, setProductStats] = useState(null);
+  const [isSlugManuallyEdited, setIsSlugManuallyEdited] = useState(false);
 
   const [formData, setFormData] = useState({
     name: '',
@@ -195,8 +196,12 @@ const ProductFormFixed = () => {
   const handleInputChange = (field, value) => {
     setFormData(prev => ({ ...prev, [field]: value }));
 
-    if (field === 'name' && !formData.slug) {
+    if (field === 'name' && !isSlugManuallyEdited) {
       setFormData(prev => ({ ...prev, slug: generateSlug(value) }));
+    }
+
+    if (field === 'slug') {
+      setIsSlugManuallyEdited(true);
     }
 
     if (field === 'shortDescription') {
@@ -282,14 +287,28 @@ const ProductFormFixed = () => {
 
     try {
       // Generate a unique slug
-      const baseSlug = formData.slug || formData.name.toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/^-|-$/g, '');
-      const uniqueSlug = `${baseSlug}-${Date.now()}`;
+      let uniqueSlug = formData.slug;
+      if (!uniqueSlug) {
+        uniqueSlug = generateSlug(formData.name);
+      }
+
+      // Only append timestamp if it's a new product and no slug was provided, 
+      // or if we really want to ensure uniqueness. 
+      // But for SEO, clean slugs are better. We'll trust the user or handle uniqueness error if needed.
+      // If you strictly want unique slugs for new products without error:
+      if (!isEditing && !formData.slug) {
+        // Check if slug exists? For now, let's keep it clean.
+        // If collision, Supabase might throw error (if unique constraint exists).
+      }
 
       // Start with only the REQUIRED columns from your schema
       const productData = {
         name: formData.name,
         slug: uniqueSlug,
-        regular_price: parseFloat(formData.regularPrice) || 0
+        regular_price: parseFloat(formData.regularPrice) || 0,
+        category: formData.category, // Added category
+        features: formData.features, // Added features
+        tech_stack: formData.techStack, // Added tech_stack
       };
 
       // Add optional text fields one by one
@@ -324,6 +343,27 @@ const ProductFormFixed = () => {
       if (formData.galleryImages?.length > 0) {
         productData.gallery_images = formData.galleryImages;
       }
+
+      // Add all other missing fields
+      productData.compatibility = formData.compatibility;
+      productData.demo_url = formData.demoUrl;
+      productData.preview_url = formData.previewUrl;
+      productData.video_url = formData.videoUrl;
+      productData.documentation_url = formData.documentationUrl;
+      productData.support_url = formData.supportUrl;
+      productData.license_type = formData.licenseType;
+      productData.license_terms = formData.licenseTerms;
+      productData.download_limit = formData.downloadLimit;
+      productData.download_expiry = formData.downloadExpiry;
+      productData.require_license = formData.requireLicense;
+      productData.auto_update = formData.autoUpdate;
+      productData.version = formData.version;
+      productData.file_size = formData.fileSize;
+      productData.last_update = formData.lastUpdate;
+      productData.seo_title = formData.seoTitle;
+      productData.seo_description = formData.seoDescription;
+      productData.seo_keywords = formData.focusKeyword;
+      productData.tags = formData.tags;
 
       console.log('📦 Submitting product data:', JSON.stringify(productData, null, 2));
 
