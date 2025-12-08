@@ -1,5 +1,5 @@
 import { useState, useEffect } from 'react';
-import { useParams, Link } from 'react-router-dom';
+import { useParams, Link, useNavigate } from 'react-router-dom';
 import { supabase } from '../lib/supabase';
 import { useCartStore, useWishlistStore, useUIStore } from '../store/useStore';
 import Button from '../components/ui/Button';
@@ -8,15 +8,52 @@ import { Container } from '../components/layout/Container';
 import {
   ShoppingCart, Heart, Star, Check, Shield, Zap, Globe,
   Smartphone, Monitor, Download, Clock, Share2, ChevronRight,
-  Layers, Box, FileText, MessageSquare, AlertCircle
+  Layers, Box, FileText, MessageSquare, AlertCircle, ChevronDown, ArrowRight, Sparkles
 } from 'lucide-react';
+import { motion, AnimatePresence } from 'motion/react';
+
+const AccordionItem = ({ title, isOpen, onClick, children, darkMode, icon: Icon }) => {
+  return (
+    <div className={`border-b ${darkMode ? 'border-slate-800' : 'border-slate-200'}`}>
+      <button
+        onClick={onClick}
+        className={`w-full flex items-center justify-between py-5 text-left transition-colors ${darkMode ? 'hover:text-blue-400' : 'hover:text-blue-600'
+          }`}
+      >
+        <div className="flex items-center gap-3">
+          {Icon && <Icon size={20} className={darkMode ? 'text-blue-400' : 'text-blue-600'} />}
+          <span className={`font-bold text-lg ${darkMode ? 'text-white' : 'text-slate-900'}`}>{title}</span>
+        </div>
+        <ChevronDown
+          size={20}
+          className={`transition-transform duration-300 ${isOpen ? 'rotate-180 text-blue-500' : darkMode ? 'text-slate-500' : 'text-slate-400'}`}
+        />
+      </button>
+      <AnimatePresence>
+        {isOpen && (
+          <motion.div
+            initial={{ height: 0, opacity: 0 }}
+            animate={{ height: 'auto', opacity: 1 }}
+            exit={{ height: 0, opacity: 0 }}
+            transition={{ duration: 0.3, ease: 'easeInOut' }}
+            className="overflow-hidden"
+          >
+            <div className="pb-6 text-base leading-relaxed">
+              {children}
+            </div>
+          </motion.div>
+        )}
+      </AnimatePresence>
+    </div>
+  );
+};
 
 export default function ProductDetail({ darkMode }) {
   const { slug } = useParams();
+  const navigate = useNavigate();
   const [product, setProduct] = useState(null);
   const [reviews, setReviews] = useState([]);
-  const [activeTab, setActiveTab] = useState('description');
-  const [quantity, setQuantity] = useState(1);
+  const [openSection, setOpenSection] = useState('description');
   const [licenseType, setLicenseType] = useState('single');
   const [selectedImage, setSelectedImage] = useState(0);
   const [reviewModalOpen, setReviewModalOpen] = useState(false);
@@ -59,8 +96,23 @@ export default function ProductDetail({ darkMode }) {
   };
 
   const handleAddToCart = () => {
-    addToCart(product, licenseType);
+    const priced = {
+      ...product,
+      price_monthly: licenseType === 'extended' ? product.extended_price : product.regular_price,
+      price_yearly: licenseType === 'extended' ? product.extended_price : product.regular_price,
+    };
+    addToCart(priced, licenseType);
     showToast('Added to cart!', 'success');
+  };
+
+  const handleBuyNow = () => {
+    const priced = {
+      ...product,
+      price_monthly: licenseType === 'extended' ? product.extended_price : product.regular_price,
+      price_yearly: licenseType === 'extended' ? product.extended_price : product.regular_price,
+    };
+    addToCart(priced, licenseType);
+    navigate('/checkout');
   };
 
   const handleAddToWishlist = () => {
@@ -70,6 +122,10 @@ export default function ProductDetail({ darkMode }) {
       addToWishlist(product);
       showToast('Added to wishlist!', 'success');
     }
+  };
+
+  const toggleSection = (section) => {
+    setOpenSection(openSection === section ? null : section);
   };
 
   const price = licenseType === 'extended' ? product?.extended_price : product?.regular_price;
@@ -86,7 +142,7 @@ export default function ProductDetail({ darkMode }) {
 
   if (loading) {
     return (
-      <div className={`min-h-screen flex items-center justify-center ${darkMode ? 'bg-slate-900' : 'bg-slate-50'}`}>
+      <div className={`min-h-screen flex items-center justify-center ${darkMode ? 'bg-slate-950' : 'bg-slate-50'}`}>
         <div className="animate-spin rounded-full h-12 w-12 border-t-2 border-b-2 border-blue-500"></div>
       </div>
     );
@@ -94,7 +150,7 @@ export default function ProductDetail({ darkMode }) {
 
   if (!product) {
     return (
-      <div className={`min-h-screen flex items-center justify-center ${darkMode ? 'bg-slate-900' : 'bg-slate-50'}`}>
+      <div className={`min-h-screen flex items-center justify-center ${darkMode ? 'bg-slate-950' : 'bg-slate-50'}`}>
         <div className="text-center space-y-4">
           <div className="bg-red-100 dark:bg-red-900/20 p-4 rounded-full w-16 h-16 mx-auto flex items-center justify-center">
             <AlertCircle size={32} className="text-red-500" />
@@ -109,16 +165,17 @@ export default function ProductDetail({ darkMode }) {
   }
 
   return (
-    <div className={`min-h-screen pb-20 ${darkMode ? 'bg-slate-900' : 'bg-slate-50'}`}>
+    <div className={`min-h-screen pb-20 ${darkMode ? 'bg-slate-950' : 'bg-slate-50'}`}>
       {/* Background Elements */}
       <div className="absolute inset-0 overflow-hidden pointer-events-none">
         <div className={`absolute inset-0 bg-grid ${darkMode ? 'opacity-[0.05]' : 'opacity-[0.03]'}`} />
-        <div className={`absolute top-0 right-0 w-[500px] h-[500px] rounded-full blur-[120px] opacity-20 ${darkMode ? 'bg-blue-500/10' : 'bg-blue-500/5'}`} />
+        <div className={`absolute top-0 right-0 w-[600px] h-[600px] rounded-full blur-[120px] opacity-20 ${darkMode ? 'bg-blue-500/10' : 'bg-blue-500/5'}`} />
+        <div className={`absolute bottom-0 left-0 w-[400px] h-[400px] rounded-full blur-[100px] opacity-20 ${darkMode ? 'bg-purple-500/10' : 'bg-purple-500/5'}`} />
       </div>
 
       <Container className="relative z-10 pt-24 sm:pt-32">
         {/* Breadcrumbs */}
-        <nav className="flex items-center gap-2 text-sm mb-8 overflow-x-auto whitespace-nowrap pb-2">
+        <nav className="flex items-center gap-2 text-sm mb-8 overflow-x-auto whitespace-nowrap pb-2 scrollbar-hide">
           <Link to="/" className={`hover:text-blue-500 transition-colors ${darkMode ? 'text-slate-400' : 'text-slate-500'}`}>Home</Link>
           <ChevronRight size={14} className="text-slate-400" />
           <Link to="/products" className={`hover:text-blue-500 transition-colors ${darkMode ? 'text-slate-400' : 'text-slate-500'}`}>Products</Link>
@@ -126,314 +183,262 @@ export default function ProductDetail({ darkMode }) {
           <span className={`font-medium ${darkMode ? 'text-white' : 'text-slate-900'}`}>{product.name}</span>
         </nav>
 
-        <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 lg:gap-12">
-          {/* Left Column - Images */}
-          <div className="lg:col-span-7 space-y-6">
-            <div className={`relative aspect-[16/10] rounded-2xl overflow-hidden shadow-2xl ${darkMode ? 'bg-slate-800 ring-1 ring-white/10' : 'bg-white ring-1 ring-black/5'}`}>
-              <img
-                src={images[selectedImage] || '/api/placeholder/800/600'}
-                alt={product.name}
-                className="w-full h-full object-cover transition-transform duration-500 hover:scale-105"
-              />
-              {product.is_featured && (
-                <div className="absolute top-4 left-4 px-3 py-1 bg-yellow-500 text-white text-xs font-bold uppercase tracking-wider rounded-full shadow-lg">
-                  Featured
+        <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 lg:gap-16">
+          {/* Left Column - Images & Details */}
+          <div className="lg:col-span-7 space-y-10">
+            {/* Image Gallery */}
+            <div className="space-y-4">
+              <div className={`relative aspect-[16/10] rounded-3xl overflow-hidden shadow-2xl transition-all duration-500 ${darkMode ? 'bg-slate-900 ring-1 ring-white/10' : 'bg-white ring-1 ring-black/5'}`}>
+                <img
+                  src={images[selectedImage] || '/api/placeholder/800/600'}
+                  alt={product.name}
+                  className="w-full h-full object-cover transition-transform duration-700 hover:scale-105"
+                />
+                {product.is_featured && (
+                  <div className="absolute top-4 left-4 px-3 py-1 bg-amber-400 text-amber-950 text-xs font-bold uppercase tracking-wider rounded-full shadow-lg flex items-center gap-1">
+                    <Sparkles size={12} /> Featured
+                  </div>
+                )}
+              </div>
+
+              <div className="grid grid-cols-5 gap-3">
+                {images.map((img, idx) => (
+                  <button
+                    key={idx}
+                    onClick={() => setSelectedImage(idx)}
+                    className={`relative aspect-square rounded-xl overflow-hidden transition-all duration-300 ${selectedImage === idx
+                        ? 'ring-2 ring-blue-500 ring-offset-2 ring-offset-slate-50 dark:ring-offset-slate-950 scale-95 opacity-100'
+                        : 'opacity-60 hover:opacity-100 hover:scale-105'
+                      }`}
+                  >
+                    <img src={img || '/api/placeholder/100/100'} alt="" className="w-full h-full object-cover" />
+                  </button>
+                ))}
+              </div>
+            </div>
+
+            {/* Collapsible Sections (Accordion) */}
+            <div className="mt-8">
+              <AccordionItem
+                title="Description"
+                isOpen={openSection === 'description'}
+                onClick={() => toggleSection('description')}
+                darkMode={darkMode}
+                icon={FileText}
+              >
+                <div className={`prose max-w-none ${darkMode ? 'prose-invert text-slate-300' : 'prose-slate text-slate-600'}`}>
+                  <p>{product.description}</p>
                 </div>
-              )}
-            </div>
+              </AccordionItem>
 
-            <div className="grid grid-cols-4 sm:grid-cols-5 gap-3 sm:gap-4">
-              {images.map((img, idx) => (
-                <button
-                  key={idx}
-                  onClick={() => setSelectedImage(idx)}
-                  className={`relative aspect-square rounded-xl overflow-hidden transition-all duration-300 ${selectedImage === idx
-                      ? 'ring-2 ring-blue-500 ring-offset-2 ring-offset-slate-50 dark:ring-offset-slate-900 scale-95'
-                      : 'hover:opacity-80'
-                    }`}
-                >
-                  <img src={img || '/api/placeholder/100/100'} alt="" className="w-full h-full object-cover" />
-                </button>
-              ))}
-            </div>
-
-            {/* Tabs Section - Desktop */}
-            <div className="hidden lg:block mt-12">
-              <div className="border-b border-slate-200 dark:border-slate-700 mb-8">
-                <div className="flex gap-8">
-                  {['description', 'features', 'reviews'].map((tab) => (
-                    <button
-                      key={tab}
-                      onClick={() => setActiveTab(tab)}
-                      className={`pb-4 text-sm font-bold uppercase tracking-wider transition-all relative ${activeTab === tab
-                          ? 'text-blue-500'
-                          : darkMode ? 'text-slate-400 hover:text-white' : 'text-slate-500 hover:text-slate-900'
-                        }`}
-                    >
-                      {tab}
-                      {activeTab === tab && (
-                        <div className="absolute bottom-0 left-0 w-full h-0.5 bg-blue-500 rounded-t-full" />
-                      )}
-                    </button>
+              <AccordionItem
+                title="Features"
+                isOpen={openSection === 'features'}
+                onClick={() => toggleSection('features')}
+                darkMode={darkMode}
+                icon={Layers}
+              >
+                <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                  {product.features?.map((feature, idx) => (
+                    <div key={idx} className={`p-4 rounded-xl flex gap-3 ${darkMode ? 'bg-slate-800/50' : 'bg-slate-100/50'}`}>
+                      <div className="w-8 h-8 rounded-lg bg-blue-500/10 flex items-center justify-center shrink-0">
+                        <Check size={16} className="text-blue-500" />
+                      </div>
+                      <span className={`text-sm font-medium ${darkMode ? 'text-slate-300' : 'text-slate-700'}`}>{feature}</span>
+                    </div>
                   ))}
                 </div>
-              </div>
+              </AccordionItem>
 
-              <div className="animate-fadeIn">
-                {activeTab === 'description' && (
-                  <div className={`prose max-w-none ${darkMode ? 'prose-invert' : 'prose-slate'}`}>
-                    <p className="text-lg leading-relaxed">{product.description}</p>
-                  </div>
-                )}
-
-                {activeTab === 'features' && (
-                  <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                    {product.features?.map((feature, idx) => (
-                      <div key={idx} className={`p-4 rounded-xl flex gap-4 ${darkMode ? 'bg-slate-800/50' : 'bg-slate-50'}`}>
-                        <div className="w-10 h-10 rounded-lg bg-blue-500/10 flex items-center justify-center shrink-0">
-                          <Check size={20} className="text-blue-500" />
-                        </div>
-                        <div>
-                          <h4 className={`font-semibold mb-1 ${darkMode ? 'text-white' : 'text-slate-900'}`}>Feature {idx + 1}</h4>
-                          <p className={`text-sm ${darkMode ? 'text-slate-400' : 'text-slate-600'}`}>{feature}</p>
-                        </div>
+              <AccordionItem
+                title={`Reviews (${reviews.length})`}
+                isOpen={openSection === 'reviews'}
+                onClick={() => toggleSection('reviews')}
+                darkMode={darkMode}
+                icon={MessageSquare}
+              >
+                <div className="space-y-6">
+                  <div className="flex items-center justify-between">
+                    <div className="flex items-center gap-2">
+                      <span className={`text-2xl font-bold ${darkMode ? 'text-white' : 'text-slate-900'}`}>{product.rating || 4.8}</span>
+                      <div className="flex text-yellow-400">
+                        {[...Array(5)].map((_, i) => (
+                          <Star key={i} size={16} fill={i < Math.floor(product.rating || 4.8) ? "currentColor" : "none"} />
+                        ))}
                       </div>
-                    ))}
-                  </div>
-                )}
-
-                {activeTab === 'reviews' && (
-                  <div className="space-y-6">
-                    <div className="flex items-center justify-between">
-                      <h3 className={`text-xl font-bold ${darkMode ? 'text-white' : 'text-slate-900'}`}>
-                        {reviews.length} Reviews
-                      </h3>
-                      <Button onClick={() => setReviewModalOpen(true)} variant="outline" size="sm">
-                        Write a Review
-                      </Button>
                     </div>
-                    {reviews.length > 0 ? (
-                      reviews.map((review) => (
-                        <div key={review.id} className={`p-6 rounded-xl ${darkMode ? 'bg-slate-800' : 'bg-white border border-slate-100'} shadow-sm`}>
-                          <div className="flex items-center justify-between mb-4">
-                            <div className="flex items-center gap-3">
-                              <div className={`w-10 h-10 rounded-full flex items-center justify-center font-bold ${darkMode ? 'bg-slate-700 text-slate-300' : 'bg-slate-100 text-slate-600'}`}>
-                                {review.user_name?.[0] || 'A'}
-                              </div>
-                              <div>
-                                <div className={`font-semibold ${darkMode ? 'text-white' : 'text-slate-900'}`}>
-                                  {review.user_name || 'Anonymous'}
-                                </div>
-                                <div className="flex text-yellow-400 text-xs">
-                                  {[...Array(5)].map((_, i) => (
-                                    <Star key={i} size={12} fill={i < review.rating ? "currentColor" : "none"} className={i >= review.rating ? "text-slate-300 dark:text-slate-600" : ""} />
-                                  ))}
-                                </div>
-                              </div>
+                    <Button onClick={() => setReviewModalOpen(true)} variant="outline" size="sm">
+                      Write a Review
+                    </Button>
+                  </div>
+
+                  {reviews.length > 0 ? (
+                    reviews.map((review) => (
+                      <div key={review.id} className={`p-5 rounded-xl ${darkMode ? 'bg-slate-800/50' : 'bg-slate-50'} border ${darkMode ? 'border-slate-800' : 'border-slate-100'}`}>
+                        <div className="flex items-center justify-between mb-3">
+                          <div className="flex items-center gap-3">
+                            <div className={`w-8 h-8 rounded-full flex items-center justify-center font-bold text-sm ${darkMode ? 'bg-slate-700 text-slate-300' : 'bg-white text-slate-600 shadow-sm'}`}>
+                              {review.user_name?.[0] || 'A'}
                             </div>
-                            <span className={`text-xs ${darkMode ? 'text-slate-500' : 'text-slate-400'}`}>
-                              {new Date(review.created_at).toLocaleDateString()}
+                            <span className={`font-semibold text-sm ${darkMode ? 'text-white' : 'text-slate-900'}`}>
+                              {review.user_name || 'Anonymous'}
                             </span>
                           </div>
-                          <p className={darkMode ? 'text-slate-300' : 'text-slate-600'}>{review.content}</p>
+                          <span className={`text-xs ${darkMode ? 'text-slate-500' : 'text-slate-400'}`}>
+                            {new Date(review.created_at).toLocaleDateString()}
+                          </span>
                         </div>
-                      ))
-                    ) : (
-                      <div className={`text-center py-12 rounded-xl border-2 border-dashed ${darkMode ? 'border-slate-800 text-slate-500' : 'border-slate-200 text-slate-400'}`}>
-                        <MessageSquare size={32} className="mx-auto mb-3 opacity-50" />
-                        <p>No reviews yet. Be the first to share your thoughts!</p>
+                        <p className={`text-sm ${darkMode ? 'text-slate-300' : 'text-slate-600'}`}>{review.content}</p>
                       </div>
-                    )}
-                  </div>
-                )}
-              </div>
+                    ))
+                  ) : (
+                    <div className={`text-center py-8 rounded-xl border-2 border-dashed ${darkMode ? 'border-slate-800 text-slate-500' : 'border-slate-200 text-slate-400'}`}>
+                      <p className="text-sm">No reviews yet. Be the first to share your thoughts!</p>
+                    </div>
+                  )}
+                </div>
+              </AccordionItem>
             </div>
           </div>
 
-          {/* Right Column - Product Info & Actions */}
-          <div className="lg:col-span-5 space-y-8">
-            <div className={`sticky top-24 p-6 sm:p-8 rounded-3xl shadow-xl border backdrop-blur-xl ${darkMode
-                ? 'bg-slate-800/80 border-slate-700/50'
-                : 'bg-white/80 border-white/50'
+          {/* Right Column - Sticky Sidebar */}
+          <div className="lg:col-span-5 relative">
+            <div className={`sticky top-28 p-6 sm:p-8 rounded-3xl shadow-xl border backdrop-blur-xl transition-all ${darkMode
+              ? 'bg-slate-900/80 border-slate-800 shadow-black/20'
+              : 'bg-white/80 border-white/50 shadow-slate-200/50'
               }`}>
-              {product.category && (
-                <div className="flex items-center gap-2 mb-4">
-                  <span className={`px-3 py-1 rounded-full text-xs font-bold uppercase tracking-wider ${darkMode ? 'bg-blue-500/10 text-blue-400' : 'bg-blue-50 text-blue-600'
-                    }`}>
-                    {product.category}
+
+              {/* Header Info */}
+              <div className="mb-6">
+                <div className="flex items-center gap-2 mb-3">
+                  <span className={`px-3 py-1 rounded-full text-xs font-bold uppercase tracking-wider ${darkMode ? 'bg-blue-500/10 text-blue-400' : 'bg-blue-50 text-blue-600'}`}>
+                    {product.category || 'Software'}
                   </span>
                   {product.status === 'active' && (
-                    <span className="flex items-center gap-1 text-xs font-medium text-green-500">
-                      <span className="w-1.5 h-1.5 rounded-full bg-green-500 animate-pulse" />
+                    <span className="flex items-center gap-1.5 text-xs font-bold text-emerald-500 bg-emerald-500/10 px-2 py-1 rounded-full">
+                      <span className="w-1.5 h-1.5 rounded-full bg-emerald-500 animate-pulse" />
                       Active
                     </span>
                   )}
                 </div>
-              )}
-
-              <h1 className={`text-3xl sm:text-4xl font-black mb-4 leading-tight ${darkMode ? 'text-white' : 'text-slate-900'}`}>
-                {product.name}
-              </h1>
-
-              <div className="flex items-center gap-4 mb-6">
-                <div className="flex items-center gap-1">
-                  <Star size={18} className="text-yellow-400 fill-yellow-400" />
-                  <span className={`font-bold ${darkMode ? 'text-white' : 'text-slate-900'}`}>{product.rating || 4.8}</span>
-                  <span className={`text-sm ${darkMode ? 'text-slate-400' : 'text-slate-500'}`}>({product.rating_count || 12} reviews)</span>
-                </div>
-                <div className={`w-px h-4 ${darkMode ? 'bg-slate-700' : 'bg-slate-200'}`} />
-                <div className="flex items-center gap-1">
-                  <Download size={16} className={darkMode ? 'text-slate-400' : 'text-slate-500'} />
-                  <span className={`text-sm ${darkMode ? 'text-slate-400' : 'text-slate-500'}`}>{product.sales_count || 0} Sales</span>
-                </div>
+                <h1 className={`text-3xl sm:text-4xl font-black mb-2 leading-tight ${darkMode ? 'text-white' : 'text-slate-900'}`}>
+                  {product.name}
+                </h1>
+                <p className={`text-sm ${darkMode ? 'text-slate-400' : 'text-slate-500'}`}>
+                  Version {product.version || '1.0.0'} • Last updated {product.last_update || new Date().toLocaleDateString()}
+                </p>
               </div>
 
-              <div className="space-y-4 mb-8">
-                <div className="flex items-baseline gap-2">
+              {/* Price Display */}
+              <div className="mb-8 p-4 rounded-2xl bg-gradient-to-br from-blue-500/5 to-purple-500/5 border border-blue-500/10">
+                <div className="flex items-baseline gap-2 mb-1">
                   <span className={`text-5xl font-black tracking-tight ${darkMode ? 'text-white' : 'text-slate-900'}`}>
                     ${price}
                   </span>
-                  {licenseType === 'extended' && (
-                    <span className={`text-lg font-medium ${darkMode ? 'text-slate-400' : 'text-slate-500'}`}>USD</span>
-                  )}
+                  <span className={`text-lg font-medium ${darkMode ? 'text-slate-400' : 'text-slate-500'}`}>USD</span>
                 </div>
-                <p className={`text-sm ${darkMode ? 'text-slate-400' : 'text-slate-500'}`}>
+                <p className={`text-sm font-medium ${darkMode ? 'text-slate-400' : 'text-slate-500'}`}>
                   One-time payment. Lifetime access.
                 </p>
               </div>
 
               {/* License Selector */}
-              <div className="grid grid-cols-2 gap-3 mb-8">
-                <button
-                  onClick={() => setLicenseType('single')}
-                  className={`p-4 rounded-xl border-2 text-left transition-all ${licenseType === 'single'
-                      ? 'border-blue-500 bg-blue-500/5'
-                      : darkMode ? 'border-slate-700 hover:border-slate-600' : 'border-slate-200 hover:border-slate-300'
-                    }`}
-                >
-                  <div className={`font-bold mb-1 ${darkMode ? 'text-white' : 'text-slate-900'}`}>Regular</div>
-                  <div className={`text-xs ${darkMode ? 'text-slate-400' : 'text-slate-500'}`}>Personal projects</div>
-                </button>
-                <button
-                  onClick={() => setLicenseType('extended')}
-                  className={`p-4 rounded-xl border-2 text-left transition-all ${licenseType === 'extended'
-                      ? 'border-blue-500 bg-blue-500/5'
-                      : darkMode ? 'border-slate-700 hover:border-slate-600' : 'border-slate-200 hover:border-slate-300'
-                    }`}
-                >
-                  <div className={`font-bold mb-1 ${darkMode ? 'text-white' : 'text-slate-900'}`}>Extended</div>
-                  <div className={`text-xs ${darkMode ? 'text-slate-400' : 'text-slate-500'}`}>Commercial use</div>
-                </button>
+              <div className="space-y-3 mb-8">
+                <label className={`text-sm font-bold ${darkMode ? 'text-slate-300' : 'text-slate-700'}`}>Select License</label>
+                <div className="grid grid-cols-2 gap-3">
+                  <button
+                    onClick={() => setLicenseType('single')}
+                    className={`relative p-4 rounded-xl border-2 text-left transition-all duration-300 ${licenseType === 'single'
+                      ? 'border-blue-500 bg-blue-500/5 shadow-lg shadow-blue-500/10'
+                      : darkMode ? 'border-slate-800 bg-slate-800/50 hover:border-slate-600' : 'border-slate-100 bg-slate-50 hover:border-slate-300'
+                      }`}
+                  >
+                    <div className={`font-bold mb-1 ${darkMode ? 'text-white' : 'text-slate-900'}`}>Regular</div>
+                    <div className={`text-xs ${darkMode ? 'text-slate-400' : 'text-slate-500'}`}>Personal projects</div>
+                    {licenseType === 'single' && <div className="absolute top-3 right-3 w-2 h-2 rounded-full bg-blue-500" />}
+                  </button>
+                  <button
+                    onClick={() => setLicenseType('extended')}
+                    className={`relative p-4 rounded-xl border-2 text-left transition-all duration-300 ${licenseType === 'extended'
+                      ? 'border-blue-500 bg-blue-500/5 shadow-lg shadow-blue-500/10'
+                      : darkMode ? 'border-slate-800 bg-slate-800/50 hover:border-slate-600' : 'border-slate-100 bg-slate-50 hover:border-slate-300'
+                      }`}
+                  >
+                    <div className={`font-bold mb-1 ${darkMode ? 'text-white' : 'text-slate-900'}`}>Extended</div>
+                    <div className={`text-xs ${darkMode ? 'text-slate-400' : 'text-slate-500'}`}>Commercial use</div>
+                    {licenseType === 'extended' && <div className="absolute top-3 right-3 w-2 h-2 rounded-full bg-blue-500" />}
+                  </button>
+                </div>
               </div>
 
-              {/* Actions */}
-              <div className="flex gap-3 mb-8">
-                <Button
-                  onClick={handleAddToCart}
-                  size="lg"
-                  className="flex-1 shadow-xl shadow-blue-500/20 hover:shadow-blue-500/30"
-                >
-                  <ShoppingCart size={20} className="mr-2" />
-                  Add to Cart
-                </Button>
-                <button
-                  onClick={handleAddToWishlist}
-                  className={`p-4 rounded-xl border-2 transition-all ${isInWishlist(product.id)
+              {/* Action Buttons */}
+              <div className="space-y-3 mb-8">
+                {/* Buy Now Button with Shine Effect */}
+                <div className="relative group">
+                  <div className={`absolute -inset-0.5 rounded-xl blur opacity-30 group-hover:opacity-75 transition duration-1000 group-hover:duration-200 ${darkMode
+                      ? 'bg-gradient-to-r from-blue-600 to-cyan-600'
+                      : 'bg-gradient-to-r from-blue-600 to-cyan-600'
+                    }`}></div>
+                  <Button
+                    onClick={handleBuyNow}
+                    className={`relative w-full h-14 text-lg font-bold overflow-hidden transition-all duration-300 ${darkMode
+                        ? '!bg-slate-900 !text-white border border-slate-700 hover:!bg-slate-800'
+                        : '!bg-white !text-slate-900 border border-slate-200 hover:!bg-slate-50'
+                      }`}
+                  >
+                    <span className="relative z-10 flex items-center justify-center gap-2">
+                      Buy Now <ArrowRight size={20} />
+                    </span>
+                    <div className={`absolute inset-0 opacity-0 group-hover:opacity-10 transition-opacity duration-300 ${darkMode ? 'bg-blue-400' : 'bg-blue-600'
+                      }`} />
+                  </Button>
+                </div>
+
+                <div className="flex gap-3">
+                  <Button
+                    onClick={handleAddToCart}
+                    variant="outline"
+                    className={`flex-1 h-12 font-semibold ${darkMode ? 'border-slate-700 hover:bg-slate-800' : 'border-slate-200 hover:bg-slate-50'}`}
+                  >
+                    <ShoppingCart size={18} className="mr-2" />
+                    Add to Cart
+                  </Button>
+                  <button
+                    onClick={handleAddToWishlist}
+                    className={`px-4 rounded-xl border-2 transition-all flex items-center justify-center ${isInWishlist(product.id)
                       ? 'bg-red-500 border-red-500 text-white'
                       : darkMode
-                        ? 'border-slate-700 text-slate-400 hover:border-slate-600 hover:text-white'
-                        : 'border-slate-200 text-slate-600 hover:border-slate-300 hover:text-slate-900'
-                    }`}
-                >
-                  <Heart size={20} fill={isInWishlist(product.id) ? "currentColor" : "none"} />
-                </button>
+                        ? 'border-slate-700 text-slate-400 hover:border-slate-600 hover:text-white hover:bg-slate-800'
+                        : 'border-slate-200 text-slate-600 hover:border-slate-300 hover:text-slate-900 hover:bg-slate-50'
+                      }`}
+                  >
+                    <Heart size={20} fill={isInWishlist(product.id) ? "currentColor" : "none"} />
+                  </button>
+                </div>
               </div>
 
-              {/* Trust Badges */}
-              <div className="space-y-3 pt-6 border-t border-slate-200 dark:border-slate-700">
-                <div className="flex items-center gap-3 text-sm">
-                  <Shield size={16} className="text-green-500" />
+              {/* Trust Signals */}
+              <div className="space-y-4 pt-6 border-t border-slate-200 dark:border-slate-800">
+                <div className="flex items-center gap-3 text-sm font-medium">
+                  <div className="w-8 h-8 rounded-full bg-green-500/10 flex items-center justify-center">
+                    <Shield size={16} className="text-green-500" />
+                  </div>
                   <span className={darkMode ? 'text-slate-300' : 'text-slate-600'}>Secure checkout with Stripe</span>
                 </div>
-                <div className="flex items-center gap-3 text-sm">
-                  <Zap size={16} className="text-yellow-500" />
+                <div className="flex items-center gap-3 text-sm font-medium">
+                  <div className="w-8 h-8 rounded-full bg-yellow-500/10 flex items-center justify-center">
+                    <Zap size={16} className="text-yellow-500" />
+                  </div>
                   <span className={darkMode ? 'text-slate-300' : 'text-slate-600'}>Instant download after purchase</span>
                 </div>
-                <div className="flex items-center gap-3 text-sm">
-                  <Clock size={16} className="text-blue-500" />
-                  <span className={darkMode ? 'text-slate-300' : 'text-slate-600'}>Free lifetime updates</span>
+                <div className="flex items-center gap-3 text-sm font-medium">
+                  <div className="w-8 h-8 rounded-full bg-blue-500/10 flex items-center justify-center">
+                    <Clock size={16} className="text-blue-500" />
+                  </div>
+                  <span className={darkMode ? 'text-slate-300' : 'text-slate-600'}>Free lifetime updates & support</span>
                 </div>
               </div>
             </div>
-
-            {/* Product Meta Sidebar */}
-            <div className={`p-6 rounded-2xl border ${darkMode ? 'bg-slate-800/50 border-slate-700' : 'bg-white border-slate-200'}`}>
-              <h3 className={`font-bold mb-4 ${darkMode ? 'text-white' : 'text-slate-900'}`}>Product Information</h3>
-              <div className="space-y-4 text-sm">
-                <div className="flex justify-between py-2 border-b border-slate-200 dark:border-slate-700">
-                  <span className={darkMode ? 'text-slate-400' : 'text-slate-500'}>Version</span>
-                  <span className={`font-medium ${darkMode ? 'text-white' : 'text-slate-900'}`}>{product.version || '1.0.0'}</span>
-                </div>
-                <div className="flex justify-between py-2 border-b border-slate-200 dark:border-slate-700">
-                  <span className={darkMode ? 'text-slate-400' : 'text-slate-500'}>Last Updated</span>
-                  <span className={`font-medium ${darkMode ? 'text-white' : 'text-slate-900'}`}>
-                    {product.last_update || new Date(product.created_at).toLocaleDateString()}
-                  </span>
-                </div>
-                <div className="flex justify-between py-2 border-b border-slate-200 dark:border-slate-700">
-                  <span className={darkMode ? 'text-slate-400' : 'text-slate-500'}>License</span>
-                  <span className={`font-medium ${darkMode ? 'text-white' : 'text-slate-900'}`}>Standard / Extended</span>
-                </div>
-
-                {product.compatibility && product.compatibility.length > 0 && (
-                  <div className="pt-2">
-                    <span className={`block mb-2 ${darkMode ? 'text-slate-400' : 'text-slate-500'}`}>Compatible With</span>
-                    <div className="flex flex-wrap gap-2">
-                      {product.compatibility.map(item => (
-                        <span key={item} className={`px-2.5 py-1 rounded-md text-xs font-medium ${darkMode ? 'bg-slate-700 text-slate-300' : 'bg-slate-100 text-slate-700'
-                          }`}>
-                          {item}
-                        </span>
-                      ))}
-                    </div>
-                  </div>
-                )}
-
-                {product.tags && product.tags.length > 0 && (
-                  <div className="pt-2">
-                    <span className={`block mb-2 ${darkMode ? 'text-slate-400' : 'text-slate-500'}`}>Tags</span>
-                    <div className="flex flex-wrap gap-2">
-                      {product.tags.map(tag => (
-                        <span key={tag} className={`px-2.5 py-1 rounded-md text-xs font-medium ${darkMode ? 'bg-blue-500/10 text-blue-400' : 'bg-blue-50 text-blue-600'
-                          }`}>
-                          #{tag}
-                        </span>
-                      ))}
-                    </div>
-                  </div>
-                )}
-              </div>
-            </div>
-          </div>
-        </div>
-
-        {/* Mobile Tabs Content (Visible only on mobile) */}
-        <div className="lg:hidden mt-12 space-y-8">
-          <div className="space-y-4">
-            <h3 className={`text-xl font-bold ${darkMode ? 'text-white' : 'text-slate-900'}`}>Description</h3>
-            <p className={`leading-relaxed ${darkMode ? 'text-slate-300' : 'text-slate-600'}`}>{product.description}</p>
-          </div>
-
-          <div className="space-y-4">
-            <h3 className={`text-xl font-bold ${darkMode ? 'text-white' : 'text-slate-900'}`}>Features</h3>
-            <ul className="space-y-3">
-              {product.features?.map((feature, idx) => (
-                <li key={idx} className="flex gap-3">
-                  <Check size={20} className="text-blue-500 shrink-0" />
-                  <span className={darkMode ? 'text-slate-300' : 'text-slate-600'}>{feature}</span>
-                </li>
-              ))}
-            </ul>
           </div>
         </div>
       </Container>
