@@ -14,7 +14,13 @@ export default function Cart({ darkMode }) {
   const showToast = useUIStore((state) => state.showToast);
   const navigate = useNavigate();
 
-  const subtotal = getTotal();
+  // Calculate subtotal based on the actual displayed prices (handling sale prices and fallbacks)
+  const subtotal = items.reduce((total, item) => {
+    const price = item.licenseType === 'yearly' ? item.price_yearly : item.price_monthly || item.regular_price;
+    const displayPrice = item.sale_price || price || item.regular_price || 0;
+    return total + (Number(displayPrice) * item.quantity);
+  }, 0);
+
   const tax = subtotal * 0.18;
   const total = subtotal + tax;
 
@@ -115,8 +121,8 @@ export default function Cart({ darkMode }) {
                     exit={{ opacity: 0, x: -100 }}
                     transition={{ duration: 0.3, delay: index * 0.05 }}
                     className={`group relative overflow-hidden rounded-2xl border p-4 sm:p-6 transition-all ${darkMode
-                        ? 'bg-slate-900/50 border-slate-800 hover:border-slate-700'
-                        : 'bg-white border-slate-200 shadow-sm hover:shadow-md'
+                      ? 'bg-slate-900/50 border-slate-800 hover:border-slate-700'
+                      : 'bg-white border-slate-200 shadow-sm hover:shadow-md'
                       }`}
                   >
                     <div className="flex flex-col sm:flex-row gap-6">
@@ -149,8 +155,8 @@ export default function Cart({ darkMode }) {
                           <button
                             onClick={() => handleRemove(item)}
                             className={`p-2 rounded-lg transition-colors ${darkMode
-                                ? 'text-slate-500 hover:bg-red-500/10 hover:text-red-500'
-                                : 'text-slate-400 hover:bg-red-50 hover:text-red-500'
+                              ? 'text-slate-500 hover:bg-red-500/10 hover:text-red-500'
+                              : 'text-slate-400 hover:bg-red-50 hover:text-red-500'
                               }`}
                             title="Remove item"
                           >
@@ -165,8 +171,8 @@ export default function Cart({ darkMode }) {
                             <button
                               onClick={() => updateQuantity(item.id, item.licenseType, Math.max(1, item.quantity - 1))}
                               className={`w-8 h-8 flex items-center justify-center rounded-lg transition-colors ${darkMode
-                                  ? 'hover:bg-slate-700 text-slate-400 hover:text-white'
-                                  : 'hover:bg-white text-slate-500 hover:text-slate-900 hover:shadow-sm'
+                                ? 'hover:bg-slate-700 text-slate-400 hover:text-white'
+                                : 'hover:bg-white text-slate-500 hover:text-slate-900 hover:shadow-sm'
                                 }`}
                               disabled={item.quantity <= 1}
                             >
@@ -178,8 +184,8 @@ export default function Cart({ darkMode }) {
                             <button
                               onClick={() => updateQuantity(item.id, item.licenseType, item.quantity + 1)}
                               className={`w-8 h-8 flex items-center justify-center rounded-lg transition-colors ${darkMode
-                                  ? 'hover:bg-slate-700 text-slate-400 hover:text-white'
-                                  : 'hover:bg-white text-slate-500 hover:text-slate-900 hover:shadow-sm'
+                                ? 'hover:bg-slate-700 text-slate-400 hover:text-white'
+                                : 'hover:bg-white text-slate-500 hover:text-slate-900 hover:shadow-sm'
                                 }`}
                             >
                               <Plus size={14} />
@@ -200,8 +206,8 @@ export default function Cart({ darkMode }) {
                             <button
                               onClick={() => handleMoveToWishlist(item)}
                               className={`text-xs font-bold flex items-center gap-1.5 transition-colors ${darkMode
-                                  ? 'text-blue-400 hover:text-blue-300'
-                                  : 'text-blue-600 hover:text-blue-700'
+                                ? 'text-blue-400 hover:text-blue-300'
+                                : 'text-blue-600 hover:text-blue-700'
                                 }`}
                             >
                               <Heart size={14} className={isInWishlist(item.id) ? "fill-current" : ""} />
@@ -231,8 +237,8 @@ export default function Cart({ darkMode }) {
           {/* Order Summary Sidebar */}
           <div className="lg:w-96 shrink-0">
             <div className={`sticky top-28 rounded-2xl border p-6 ${darkMode
-                ? 'bg-slate-900/50 border-slate-800 backdrop-blur-xl'
-                : 'bg-white border-slate-200 shadow-lg shadow-slate-200/50'
+              ? 'bg-slate-900/50 border-slate-800 backdrop-blur-xl'
+              : 'bg-white border-slate-200 shadow-lg shadow-slate-200/50'
               }`}>
               <h2 className={`text-xl font-bold mb-6 ${darkMode ? 'text-white' : 'text-slate-900'}`}>
                 Order Summary
@@ -264,7 +270,10 @@ export default function Cart({ darkMode }) {
 
               <Button
                 onClick={() => navigate('/checkout')}
-                className="w-full h-12 text-base shadow-lg shadow-blue-500/25 mb-4 group"
+                className={`w-full h-12 text-base shadow-lg mb-4 group border-0 ${darkMode
+                    ? 'bg-gradient-to-r from-blue-600 to-indigo-600 text-white shadow-blue-500/25 hover:shadow-blue-500/40'
+                    : 'bg-gradient-to-r from-blue-600 to-indigo-600 text-white shadow-blue-500/30 hover:shadow-blue-500/50'
+                  }`}
               >
                 <span className="relative z-10 flex items-center justify-center gap-2">
                   Proceed to Checkout
