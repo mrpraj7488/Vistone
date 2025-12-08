@@ -418,41 +418,55 @@ export default function Products({ darkMode }) {
                                             </div>
 
                                             <div className="mt-auto pt-4 border-t border-dashed border-slate-200 dark:border-slate-800">
-                                                <div className="flex items-center justify-between gap-3">
-                                                    <div className="flex flex-col">
-                                                        {product.sale_price ? (
-                                                            <>
-                                                                <span className={`text-[10px] line-through ${darkMode ? 'text-slate-500' : 'text-slate-400'}`}>
-                                                                    ${product.regular_price}
-                                                                </span>
-                                                                <div className="flex items-center gap-1">
-                                                                    <span className="text-lg sm:text-xl font-black text-rose-500">
-                                                                        ${product.sale_price}
+                                                <div className="flex flex-col gap-4">
+                                                    <div className="flex items-end justify-between w-full">
+                                                        <div className="flex flex-col">
+                                                            {product.sale_price ? (
+                                                                <>
+                                                                    <span className={`text-[10px] line-through ${darkMode ? 'text-slate-500' : 'text-slate-400'}`}>
+                                                                        ${product.regular_price}
                                                                     </span>
+                                                                    <div className="flex items-center gap-2">
+                                                                        <span className="text-xl sm:text-2xl font-black text-rose-500">
+                                                                            ${product.sale_price}
+                                                                        </span>
+                                                                        <span className="flex items-center gap-1 px-2 py-0.5 rounded-full text-[10px] font-bold bg-rose-500/10 text-rose-500 animate-pulse border border-rose-500/20">
+                                                                            <Flame size={10} fill="currentColor" />
+                                                                            Hot Sale
+                                                                        </span>
+                                                                    </div>
+                                                                </>
+                                                            ) : (
+                                                                <div className="flex flex-col">
+                                                                    <span className={`text-[10px] sm:text-xs ${darkMode ? 'text-slate-500' : 'text-slate-400'}`}>Price</span>
+                                                                    <div className="flex items-center gap-2">
+                                                                        <span className={`text-xl sm:text-2xl font-black ${darkMode ? 'text-white' : 'text-slate-900'}`}>
+                                                                            ${product.regular_price}
+                                                                        </span>
+                                                                        {product.trending && (
+                                                                            <span className="flex items-center gap-1 px-2 py-0.5 rounded-full text-[10px] font-bold bg-amber-500/10 text-amber-500 animate-pulse border border-amber-500/20">
+                                                                                <Zap size={10} fill="currentColor" />
+                                                                                Selling Fast
+                                                                            </span>
+                                                                        )}
+                                                                    </div>
                                                                 </div>
-                                                            </>
-                                                        ) : (
-                                                            <>
-                                                                <span className={`text-[10px] sm:text-xs ${darkMode ? 'text-slate-500' : 'text-slate-400'}`}>Price</span>
-                                                                <span className={`text-lg sm:text-xl font-black ${darkMode ? 'text-white' : 'text-slate-900'}`}>
-                                                                    ${product.regular_price}
-                                                                </span>
-                                                            </>
-                                                        )}
+                                                            )}
+                                                        </div>
                                                     </div>
 
                                                     <motion.button
                                                         whileHover={{ scale: 1.02 }}
                                                         whileTap={{ scale: 0.98 }}
                                                         onClick={(e) => handleAddToCart(product, e)}
-                                                        className={`relative overflow-hidden flex-1 h-10 rounded-xl font-bold text-sm flex items-center justify-center gap-2 shadow-lg group/btn transition-all ${darkMode
+                                                        className={`w-full relative overflow-hidden h-11 rounded-xl font-bold text-sm flex items-center justify-center gap-2 shadow-lg group/btn transition-all ${darkMode
                                                             ? 'bg-gradient-to-r from-blue-600 to-indigo-600 text-white shadow-blue-500/20 hover:shadow-blue-500/40'
                                                             : 'bg-gradient-to-r from-blue-600 to-indigo-600 text-white shadow-blue-500/30 hover:shadow-blue-500/50'
                                                             }`}
                                                     >
                                                         <div className="absolute inset-0 -translate-x-full group-hover/btn:animate-[shine_1.5s_infinite] bg-gradient-to-r from-transparent via-white/30 to-transparent z-10" />
                                                         <span>Buy Now</span>
-                                                        <ShoppingCart size={16} className="group-hover/btn:translate-x-1 transition-transform" />
+                                                        <ShoppingCart size={18} className="group-hover/btn:translate-x-1 transition-transform" />
                                                     </motion.button>
                                                 </div>
                                             </div>
