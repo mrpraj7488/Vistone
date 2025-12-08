@@ -1,4 +1,5 @@
 import { useState, useEffect, useMemo, useRef, useCallback } from 'react';
+import { Link } from 'react-router-dom';
 import { ArrowRight, Play, Store, ShoppingBag, Zap, Star } from 'lucide-react';
 import { Button } from '../ui/Button';
 import { Container } from '../layout/Container';
@@ -256,144 +257,118 @@ const TrustBadge = ({ darkMode }) => (
   </motion.div>
 );
 
-// Main Floating Card Component with beautiful enhanced design
+// Main FloatingCard Component with beautiful enhanced design
 const MainFloatingCard = ({ darkMode, isVisible, isMobile }) => {
-  const y = useMotionValue(0);
-  const rotate = useMotionValue(0);
-
-  useEffect(() => {
-    if (!isVisible) return;
-
-    const floatStrength = isMobile ? 8 : 15;
-    const rotateStrength = isMobile ? 1.2 : 2;
-
-    const interval = setInterval(() => {
-      const time = Date.now() / 1000;
-      y.set(Math.sin(time * 0.5) * floatStrength);
-      rotate.set(Math.sin(time * 0.3) * rotateStrength);
-    }, 16); // ~60fps
-
-    return () => clearInterval(interval);
-  }, [isVisible, isMobile, y, rotate]);
-
-  const springY = useSpring(y, { stiffness: 50, damping: 20 });
-  const springRotate = useSpring(rotate, { stiffness: 50, damping: 20 });
-
   return (
-    <motion.div
-      initial={{ opacity: 0, scale: 0.8, rotate: -5 }}
-      animate={isVisible ? { opacity: 1, scale: 1, rotate: 0 } : { opacity: 0 }}
-      transition={{ delay: 0.4, duration: 0.6, ease: [0.4, 0, 0.2, 1] }}
-      style={{
-        y: isVisible ? springY : 0,
-        rotate: isVisible ? springRotate : 0,
-        transformStyle: 'preserve-3d',
-        willChange: 'transform',
-      }}
-      className={`absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[90%] sm:w-[85%] md:w-3/4 aspect-[4/3] rounded-2xl sm:rounded-3xl p-3 sm:p-6 md:p-8 z-30 ${darkMode
-        ? 'bg-gradient-to-br from-slate-800/80 via-slate-900/80 to-black/80 border border-slate-700/50 shadow-2xl shadow-indigo-500/20'
-        : 'bg-gradient-to-br from-white/80 via-white/60 to-white/40 border border-white/60 shadow-2xl shadow-blue-500/20'
-        } backdrop-blur-2xl`}
-    >
-      {/* Glowing border effect */}
-      <div className={`absolute inset-0 rounded-2xl sm:rounded-3xl ${darkMode
-        ? 'bg-gradient-to-r from-blue-500/20 via-purple-500/20 to-cyan-500/20 opacity-50 blur-xl'
-        : 'bg-gradient-to-r from-blue-400/30 via-purple-400/30 to-cyan-400/30 opacity-40 blur-xl'
-        }`} />
-
-      <div className="w-full h-full bg-gradient-to-br from-primary-500 via-purple-500 to-accent-500 rounded-xl flex items-center justify-center shadow-2xl relative overflow-hidden group">
-        {/* Animated gradient overlay */}
+    <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[90%] sm:w-[85%] md:w-3/4 aspect-[4/3] z-30">
+      <motion.div
+        initial={{ opacity: 0, scale: 0.8, rotate: -5 }}
+        animate={isVisible ? { opacity: 1, scale: 1, rotate: 0 } : { opacity: 0 }}
+        transition={{ delay: 0.4, duration: 0.6, ease: [0.4, 0, 0.2, 1] }}
+        className="w-full h-full"
+        style={{ transformStyle: 'preserve-3d' }}
+      >
         <motion.div
-          className="absolute inset-0 bg-gradient-to-br from-white/20 via-transparent to-transparent opacity-50"
           animate={{
-            backgroundPosition: ['0% 0%', '100% 100%'],
+            y: [0, isMobile ? -8 : -15, 0],
+            rotate: [0, isMobile ? 1.2 : 2, 0, isMobile ? -1.2 : -2, 0]
           }}
           transition={{
-            duration: 5,
+            duration: 6,
             repeat: Infinity,
-            repeatType: 'reverse',
-            ease: 'linear',
+            ease: "easeInOut"
           }}
-        />
-
-        {/* Radial gradient glow */}
-        <div
-          className="absolute inset-0 rounded-xl"
-          style={{
-            background: darkMode
-              ? 'radial-gradient(circle at center, rgba(96, 165, 250, 0.3), transparent 70%)'
-              : 'radial-gradient(circle at center, rgba(255, 255, 255, 0.4), transparent 70%)'
-          }}
-        />
-
-        <motion.div
-          className="text-white text-4xl sm:text-5xl md:text-6xl font-black drop-shadow-2xl relative z-10"
-          animate={{ scale: [1, 1.05, 1] }}
-          transition={{ duration: 2, repeat: Infinity, ease: "easeInOut" }}
-          style={{
-            textShadow: '0 0 30px rgba(255, 255, 255, 0.5), 0 0 60px rgba(59, 130, 246, 0.3)',
-          }}
+          className={`w-full h-full rounded-2xl sm:rounded-3xl p-3 sm:p-6 md:p-8 ${darkMode
+            ? 'bg-gradient-to-br from-slate-800/80 via-slate-900/80 to-black/80 border border-slate-700/50 shadow-2xl shadow-indigo-500/20'
+            : 'bg-gradient-to-br from-white/80 via-white/60 to-white/40 border border-white/60 shadow-2xl shadow-blue-500/20'
+            } backdrop-blur-2xl`}
         >
-          V
+          {/* Glowing border effect */}
+          <div className={`absolute inset-0 rounded-2xl sm:rounded-3xl ${darkMode
+            ? 'bg-gradient-to-r from-blue-500/20 via-purple-500/20 to-cyan-500/20 opacity-50 blur-xl'
+            : 'bg-gradient-to-r from-blue-400/30 via-purple-400/30 to-cyan-400/30 opacity-40 blur-xl'
+            }`} />
+
+          <div className="w-full h-full bg-gradient-to-br from-primary-500 via-purple-500 to-accent-500 rounded-xl flex items-center justify-center shadow-2xl relative overflow-hidden group">
+            {/* Animated gradient overlay */}
+            <motion.div
+              className="absolute inset-0 bg-gradient-to-br from-white/20 via-transparent to-transparent opacity-50"
+              animate={{
+                backgroundPosition: ['0% 0%', '100% 100%'],
+              }}
+              transition={{
+                duration: 5,
+                repeat: Infinity,
+                repeatType: 'reverse',
+                ease: 'linear',
+              }}
+            />
+
+            {/* Radial gradient glow */}
+            <div
+              className="absolute inset-0 rounded-xl"
+              style={{
+                background: darkMode
+                  ? 'radial-gradient(circle at center, rgba(96, 165, 250, 0.3), transparent 70%)'
+                  : 'radial-gradient(circle at center, rgba(255, 255, 255, 0.4), transparent 70%)'
+              }}
+            />
+
+            <motion.div
+              className="text-white text-4xl sm:text-5xl md:text-6xl font-black drop-shadow-2xl relative z-10"
+              animate={{ scale: [1, 1.05, 1] }}
+              transition={{ duration: 2, repeat: Infinity, ease: "easeInOut" }}
+              style={{
+                textShadow: '0 0 30px rgba(255, 255, 255, 0.5), 0 0 60px rgba(59, 130, 246, 0.3)',
+              }}
+            >
+              V
+            </motion.div>
+
+            {/* Subtle shine effect */}
+            <motion.div
+              className="absolute inset-0 bg-gradient-to-r from-transparent via-white/20 to-transparent"
+              animate={{
+                x: ['-100%', '200%'],
+              }}
+              transition={{
+                duration: 3,
+                repeat: Infinity,
+                repeatDelay: 2,
+                ease: 'easeInOut',
+              }}
+            />
+
+            {/* Corner accent lights */}
+            <div className="absolute top-2 left-2 w-2 h-2 bg-white/60 rounded-full blur-sm animate-pulse" />
+            <div className="absolute bottom-2 right-2 w-2 h-2 bg-cyan-300/60 rounded-full blur-sm animate-pulse" style={{ animationDelay: '1s' }} />
+          </div>
         </motion.div>
-
-        {/* Subtle shine effect */}
-        <motion.div
-          className="absolute inset-0 bg-gradient-to-r from-transparent via-white/20 to-transparent"
-          animate={{
-            x: ['-100%', '200%'],
-          }}
-          transition={{
-            duration: 3,
-            repeat: Infinity,
-            repeatDelay: 2,
-            ease: 'easeInOut',
-          }}
-        />
-
-        {/* Corner accent lights */}
-        <div className="absolute top-2 left-2 w-2 h-2 bg-white/60 rounded-full blur-sm animate-pulse" />
-        <div className="absolute bottom-2 right-2 w-2 h-2 bg-cyan-300/60 rounded-full blur-sm animate-pulse" style={{ animationDelay: '1s' }} />
-      </div>
-    </motion.div>
+      </motion.div>
+    </div>
   );
 };
 
 // Floating Product Card Component with beautiful enhanced design
 const FloatingProductCard = ({ item, index, darkMode, isVisible, isMobile, mousePosition }) => {
   const Icon = item.icon;
-  const y = useMotionValue(0);
-  const x = useMotionValue(0);
+  // Parallax motion values
+  const parallaxX = useMotionValue(0);
+  const parallaxY = useMotionValue(0);
 
-  useEffect(() => {
-    if (!isVisible) return;
-
-    const baseY = isMobile ? 7 : 12;
-    const baseX = isMobile ? 3 : 5;
-
-    const interval = setInterval(() => {
-      const time = Date.now() / 1000;
-      const offset = index * 0.3;
-      y.set(Math.sin(time * (0.4 + offset)) * baseY);
-      x.set(Math.cos(time * (0.3 + offset)) * baseX);
-    }, 16);
-
-    return () => clearInterval(interval);
-  }, [isVisible, index, y, x]);
-
-  // Parallax effect based on mouse position
+  // Parallax effect based on mouse position (Desktop only)
   useEffect(() => {
     if (!mousePosition || !isVisible || isMobile) return;
 
-    const parallaxX = (mousePosition.x - 0.5) * 10;
-    const parallaxY = (mousePosition.y - 0.5) * 10;
+    const px = (mousePosition.x - 0.5) * 10;
+    const py = (mousePosition.y - 0.5) * 10;
 
-    x.set(parallaxX * (0.3 + index * 0.1));
-    y.set(parallaxY * (0.3 + index * 0.1));
-  }, [mousePosition, index, isVisible, isMobile, x, y]);
+    parallaxX.set(px * (0.3 + index * 0.1));
+    parallaxY.set(py * (0.3 + index * 0.1));
+  }, [mousePosition, index, isVisible, isMobile, parallaxX, parallaxY]);
 
-  const springY = useSpring(y, { stiffness: 100, damping: 25 });
-  const springX = useSpring(x, { stiffness: 100, damping: 25 });
+  const springX = useSpring(parallaxX, { stiffness: 100, damping: 25 });
+  const springY = useSpring(parallaxY, { stiffness: 100, damping: 25 });
 
   return (
     <motion.div
@@ -415,52 +390,66 @@ const FloatingProductCard = ({ item, index, darkMode, isVisible, isMobile, mouse
         minWidth: isMobile ? '100px' : '110px',
         maxWidth: isMobile ? '130px' : '140px',
       }}
-      className={`absolute rounded-xl sm:rounded-2xl p-3 sm:p-4 transition-all duration-500 hover:scale-110 hover:z-50 group ${darkMode
-        ? 'bg-slate-800/60 border border-slate-700/50 shadow-lg shadow-black/20 hover:bg-slate-800/80 hover:border-indigo-500/50 hover:shadow-indigo-500/20'
-        : 'bg-white/60 border border-white/50 shadow-lg shadow-blue-900/5 hover:bg-white/80 hover:border-blue-400/50 hover:shadow-blue-500/20'
-        } backdrop-blur-xl`}
+      className="absolute"
     >
-      {/* Glowing border effect on hover */}
-      <div className={`absolute inset-0 rounded-xl sm:rounded-2xl opacity-0 group-hover:opacity-100 transition-opacity duration-300 ${darkMode
-        ? 'bg-gradient-to-r from-blue-500/30 via-purple-500/30 to-cyan-500/30 blur-lg'
-        : 'bg-gradient-to-r from-blue-400/40 via-purple-400/40 to-cyan-400/40 blur-lg'
-        }`} />
-
-      {/* Icon container with enhanced styling */}
-      <div className={`relative w-10 h-10 sm:w-12 sm:h-12 rounded-xl bg-gradient-to-br ${item.color} flex items-center justify-center mb-2 shadow-xl transition-all duration-300 group-hover:scale-110 group-hover:shadow-2xl ${darkMode ? 'shadow-blue-500/30' : 'shadow-blue-500/40'
-        }`}>
-        {/* Icon glow effect */}
-        <div className={`absolute inset-0 rounded-xl bg-gradient-to-br ${item.color} opacity-50 blur-md group-hover:opacity-75 transition-opacity`} />
-        <Icon size={20} className="sm:w-6 sm:h-6 text-white drop-shadow-lg relative z-10" />
-      </div>
-
-      {/* Title with better contrast */}
-      <div className={`text-xs sm:text-sm font-bold mb-1 relative z-10 ${darkMode ? 'text-white' : 'text-slate-900'
-        }`}>
-        {item.title}
-      </div>
-
-      {/* Price with enhanced gradient */}
-      <div className={`text-base sm:text-lg font-black relative z-10 ${darkMode
-        ? 'bg-gradient-to-r from-blue-400 via-cyan-400 to-blue-400 bg-clip-text text-transparent'
-        : 'bg-gradient-to-r from-primary-600 via-purple-600 to-primary-600 bg-clip-text text-transparent'
-        }`}>
-        {item.value}
-      </div>
-
-      {/* Subtle shine effect */}
       <motion.div
-        className="absolute inset-0 rounded-xl sm:rounded-2xl bg-gradient-to-r from-transparent via-white/10 to-transparent opacity-0 group-hover:opacity-100"
         animate={{
-          x: ['-100%', '200%'],
+          y: [0, isMobile ? 5 : 10, 0],
+          x: [0, isMobile ? 2 : 4, 0]
         }}
         transition={{
-          duration: 1.5,
+          duration: 4 + index, // Staggered duration
           repeat: Infinity,
-          repeatDelay: 3,
-          ease: 'easeInOut',
+          ease: "easeInOut",
+          delay: index * 0.5
         }}
-      />
+        className={`rounded-xl sm:rounded-2xl p-3 sm:p-4 transition-all duration-500 hover:scale-110 hover:z-50 group ${darkMode
+          ? 'bg-slate-800/60 border border-slate-700/50 shadow-lg shadow-black/20 hover:bg-slate-800/80 hover:border-indigo-500/50 hover:shadow-indigo-500/20'
+          : 'bg-white/60 border border-white/50 shadow-lg shadow-blue-900/5 hover:bg-white/80 hover:border-blue-400/50 hover:shadow-blue-500/20'
+          } backdrop-blur-xl`}
+      >
+        {/* Glowing border effect on hover */}
+        <div className={`absolute inset-0 rounded-xl sm:rounded-2xl opacity-0 group-hover:opacity-100 transition-opacity duration-300 ${darkMode
+          ? 'bg-gradient-to-r from-blue-500/30 via-purple-500/30 to-cyan-500/30 blur-lg'
+          : 'bg-gradient-to-r from-blue-400/40 via-purple-400/40 to-cyan-400/40 blur-lg'
+          }`} />
+
+        {/* Icon container with enhanced styling */}
+        <div className={`relative w-10 h-10 sm:w-12 sm:h-12 rounded-xl bg-gradient-to-br ${item.color} flex items-center justify-center mb-2 shadow-xl transition-all duration-300 group-hover:scale-110 group-hover:shadow-2xl ${darkMode ? 'shadow-blue-500/30' : 'shadow-blue-500/40'
+          }`}>
+          {/* Icon glow effect */}
+          <div className={`absolute inset-0 rounded-xl bg-gradient-to-br ${item.color} opacity-50 blur-md group-hover:opacity-75 transition-opacity`} />
+          <Icon size={20} className="sm:w-6 sm:h-6 text-white drop-shadow-lg relative z-10" />
+        </div>
+
+        {/* Title with better contrast */}
+        <div className={`text-xs sm:text-sm font-bold mb-1 relative z-10 ${darkMode ? 'text-white' : 'text-slate-900'
+          }`}>
+          {item.title}
+        </div>
+
+        {/* Price with enhanced gradient */}
+        <div className={`text-base sm:text-lg font-black relative z-10 ${darkMode
+          ? 'bg-gradient-to-r from-blue-400 via-cyan-400 to-blue-400 bg-clip-text text-transparent'
+          : 'bg-gradient-to-r from-primary-600 via-purple-600 to-primary-600 bg-clip-text text-transparent'
+          }`}>
+          {item.value}
+        </div>
+
+        {/* Subtle shine effect */}
+        <motion.div
+          className="absolute inset-0 rounded-xl sm:rounded-2xl bg-gradient-to-r from-transparent via-white/10 to-transparent opacity-0 group-hover:opacity-100"
+          animate={{
+            x: ['-100%', '200%'],
+          }}
+          transition={{
+            duration: 1.5,
+            repeat: Infinity,
+            repeatDelay: 3,
+            ease: 'easeInOut',
+          }}
+        />
+      </motion.div>
     </motion.div>
   );
 };
@@ -776,6 +765,7 @@ export default function Hero({ darkMode }) {
             {/* CTA Buttons */}
             <div className="flex flex-wrap gap-2.5 sm:gap-3.5 pt-3 sm:pt-4">
               <Button
+                asChild
                 variant="primary"
                 size="lg"
                 className={`relative overflow-hidden group shadow-xl transition-all duration-300 transform hover:-translate-y-1 hover:shadow-2xl px-6 sm:px-8 py-3.5 sm:py-4 rounded-full font-bold tracking-wide ${darkMode
@@ -784,13 +774,16 @@ export default function Hero({ darkMode }) {
                   }`}
                 aria-label="Browse our products"
               >
-                <span className="absolute inset-0 w-full h-full bg-gradient-to-r from-transparent via-white/20 to-transparent -translate-x-full group-hover:animate-[shine_1.5s_ease-in-out_infinite]" />
-                <span className="relative z-10 flex items-center gap-1.5 sm:gap-2 text-white text-sm sm:text-base">
-                  Browse Products
-                  <ArrowRight size={18} className="transition-transform group-hover:translate-x-1" />
-                </span>
+                <Link to="/products">
+                  <span className="absolute inset-0 w-full h-full bg-gradient-to-r from-transparent via-white/20 to-transparent -translate-x-full group-hover:animate-[shine_1.5s_ease-in-out_infinite]" />
+                  <span className="relative z-10 flex items-center gap-1.5 sm:gap-2 text-white text-sm sm:text-base">
+                    Browse Products
+                    <ArrowRight size={18} className="transition-transform group-hover:translate-x-1" />
+                  </span>
+                </Link>
               </Button>
               <Button
+                asChild
                 variant="outline"
                 size="lg"
                 className={`group backdrop-blur-md transition-all duration-300 px-6 sm:px-8 rounded-full font-bold tracking-wide ${darkMode
@@ -799,10 +792,12 @@ export default function Hero({ darkMode }) {
                   }`}
                 aria-label="Learn more about us"
               >
-                <span className="flex items-center gap-1.5 sm:gap-2 text-sm sm:text-base">
-                  <Play size={18} className="fill-current transition-transform group-hover:scale-110" />
-                  About Us
-                </span>
+                <Link to="/about">
+                  <span className="flex items-center gap-1.5 sm:gap-2 text-sm sm:text-base">
+                    <Play size={18} className="fill-current transition-transform group-hover:scale-110" />
+                    About Us
+                  </span>
+                </Link>
               </Button>
             </div>
 
