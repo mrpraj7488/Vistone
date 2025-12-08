@@ -1,5 +1,5 @@
-import { useState } from 'react';
-import { useNavigate } from 'react-router-dom';
+import { useState, useEffect } from 'react';
+import { useNavigate, useSearchParams } from 'react-router-dom';
 import DashboardHeader from '../components/dashboard/DashboardHeader';
 import DashboardSidebar from '../components/dashboard/DashboardSidebar';
 import PurchasesTab from '../components/dashboard/PurchasesTab';
@@ -9,7 +9,17 @@ import SupportTab from '../components/dashboard/SupportTab';
 import { useAuthStore } from '../store/useStore';
 
 export default function Dashboard({ darkMode, setDarkMode }) {
-  const [activeTab, setActiveTab] = useState('purchases');
+  const [searchParams] = useSearchParams();
+  const initialTab = searchParams.get('tab') || 'purchases';
+  const [activeTab, setActiveTab] = useState(initialTab);
+
+  // Update active tab when URL changes
+  useEffect(() => {
+    const tab = searchParams.get('tab');
+    if (tab) {
+      setActiveTab(tab);
+    }
+  }, [searchParams]);
   const [sidebarOpen, setSidebarOpen] = useState(false);
   const { user } = useAuthStore();
   const navigate = useNavigate();

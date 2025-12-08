@@ -2,6 +2,10 @@ import { useState, useEffect } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import { useCartStore, useAuthStore } from '../../store/useStore';
 import { supabase } from '../../lib/supabase';
+import {
+  LayoutDashboard, Package, Settings, LogOut, User, Menu, X,
+  Sun, Moon, Search, ShoppingCart, Heart, ChevronDown
+} from 'lucide-react';
 
 export default function HeaderNav({ darkMode, setDarkMode }) {
   const [isScrolled, setIsScrolled] = useState(false);
@@ -225,66 +229,70 @@ export default function HeaderNav({ darkMode, setDarkMode }) {
 
                     {userDropdownOpen && (
                       <div
-                        className={`absolute right-0 mt-2 w-56 rounded-xl shadow-2xl py-2 z-50 ${darkMode ? 'glass-dark' : 'glass-light'
+                        className={`absolute right-0 mt-2 w-64 rounded-xl shadow-2xl py-2 z-50 border ${darkMode ? 'glass-dark border-slate-700' : 'glass-light border-slate-200'
                           }`}
                       >
-                        <div className={`px-4 py-3 border-b ${darkMode ? 'border-gray-700' : 'border-gray-200'}`}>
-                          <p className={`text-sm font-bold ${darkMode ? 'text-white' : 'text-gray-900'}`}>
+                        <div className={`px-4 py-3 border-b ${darkMode ? 'border-slate-700' : 'border-slate-200'}`}>
+                          <p className={`text-sm font-bold truncate ${darkMode ? 'text-white' : 'text-slate-900'}`}>
                             {user.user_metadata?.full_name || 'User'}
                           </p>
-                          <p className={`text-xs ${darkMode ? 'text-gray-400' : 'text-gray-600'}`}>
+                          <p className={`text-xs truncate ${darkMode ? 'text-slate-400' : 'text-slate-500'}`}>
                             {user.email}
                           </p>
                         </div>
 
-                        <Link
-                          to="/dashboard"
-                          onClick={() => setUserDropdownOpen(false)}
-                          className={`flex items-center gap-3 px-4 py-2 text-sm transition-colors ${darkMode
-                            ? 'text-gray-300 hover:bg-gray-800 hover:text-white'
-                            : 'text-gray-700 hover:bg-gray-100 hover:text-gray-900'
-                            }`}
-                        >
-                          <span className="text-lg">📊</span>
-                          Dashboard
-                        </Link>
+                        <div className="p-2">
+                          <Link
+                            to="/dashboard"
+                            onClick={() => setUserDropdownOpen(false)}
+                            className={`flex items-center gap-3 px-3 py-2.5 rounded-lg text-sm font-medium transition-colors ${darkMode
+                              ? 'text-slate-300 hover:bg-slate-800 hover:text-white'
+                              : 'text-slate-700 hover:bg-slate-100 hover:text-slate-900'
+                              }`}
+                          >
+                            <LayoutDashboard size={18} />
+                            Dashboard
+                          </Link>
 
-                        <Link
-                          to="/orders"
-                          onClick={() => setUserDropdownOpen(false)}
-                          className={`flex items-center gap-3 px-4 py-2 text-sm transition-colors ${darkMode
-                            ? 'text-gray-300 hover:bg-gray-800 hover:text-white'
-                            : 'text-gray-700 hover:bg-gray-100 hover:text-gray-900'
-                            }`}
-                        >
-                          <span className="text-lg">📦</span>
-                          My Orders
-                        </Link>
+                          <Link
+                            to="/dashboard?tab=purchases"
+                            onClick={() => setUserDropdownOpen(false)}
+                            className={`flex items-center gap-3 px-3 py-2.5 rounded-lg text-sm font-medium transition-colors ${darkMode
+                              ? 'text-slate-300 hover:bg-slate-800 hover:text-white'
+                              : 'text-slate-700 hover:bg-slate-100 hover:text-slate-900'
+                              }`}
+                          >
+                            <Package size={18} />
+                            My Orders
+                          </Link>
 
-                        <Link
-                          to="/profile"
-                          onClick={() => setUserDropdownOpen(false)}
-                          className={`flex items-center gap-3 px-4 py-2 text-sm transition-colors ${darkMode
-                            ? 'text-gray-300 hover:bg-gray-800 hover:text-white'
-                            : 'text-gray-700 hover:bg-gray-100 hover:text-gray-900'
-                            }`}
-                        >
-                          <span className="text-lg">⚙️</span>
-                          Settings
-                        </Link>
+                          <Link
+                            to="/dashboard?tab=settings"
+                            onClick={() => setUserDropdownOpen(false)}
+                            className={`flex items-center gap-3 px-3 py-2.5 rounded-lg text-sm font-medium transition-colors ${darkMode
+                              ? 'text-slate-300 hover:bg-slate-800 hover:text-white'
+                              : 'text-slate-700 hover:bg-slate-100 hover:text-slate-900'
+                              }`}
+                          >
+                            <Settings size={18} />
+                            Settings
+                          </Link>
+                        </div>
 
-                        <div className={`my-2 border-t ${darkMode ? 'border-gray-700' : 'border-gray-200'}`}></div>
+                        <div className={`mx-2 my-1 border-t ${darkMode ? 'border-slate-700' : 'border-slate-200'}`}></div>
 
-                        <button
-                          onClick={handleLogout}
-                          className={`w-full flex items-center gap-3 px-4 py-2 text-sm transition-colors text-left ${darkMode
-                            ? 'text-red-400 hover:bg-gray-800'
-                            : 'text-red-600 hover:bg-gray-100'
-                            }`}
-                        >
-                          <span className="text-lg">🚪</span>
-                          Logout
-                        </button>
+                        <div className="p-2">
+                          <button
+                            onClick={handleLogout}
+                            className={`w-full flex items-center gap-3 px-3 py-2.5 rounded-lg text-sm font-medium transition-colors text-left ${darkMode
+                              ? 'text-red-400 hover:bg-red-500/10'
+                              : 'text-red-600 hover:bg-red-50'
+                              }`}
+                          >
+                            <LogOut size={18} />
+                            Logout
+                          </button>
+                        </div>
                       </div>
                     )}
                   </>
@@ -476,33 +484,33 @@ export default function HeaderNav({ darkMode, setDarkMode }) {
                     to="/dashboard"
                     onClick={() => setMobileMenuOpen(false)}
                     className={`flex items-center gap-3 px-3 py-2 rounded-lg transition-colors ${darkMode
-                      ? 'text-gray-200 hover:bg-gray-800'
-                      : 'text-gray-800 hover:bg-gray-100'
+                      ? 'text-slate-200 hover:bg-slate-800'
+                      : 'text-slate-800 hover:bg-slate-100'
                       }`}
                   >
-                    <span className="text-lg">📊</span>
+                    <LayoutDashboard size={20} />
                     <span className="text-sm font-medium">Dashboard</span>
                   </Link>
                   <Link
-                    to="/orders"
+                    to="/dashboard?tab=purchases"
                     onClick={() => setMobileMenuOpen(false)}
                     className={`flex items-center gap-3 px-3 py-2 rounded-lg transition-colors ${darkMode
-                      ? 'text-gray-200 hover:bg-gray-800'
-                      : 'text-gray-800 hover:bg-gray-100'
+                      ? 'text-slate-200 hover:bg-slate-800'
+                      : 'text-slate-800 hover:bg-slate-100'
                       }`}
                   >
-                    <span className="text-lg">📦</span>
+                    <Package size={20} />
                     <span className="text-sm font-medium">My Orders</span>
                   </Link>
                   <Link
-                    to="/profile"
+                    to="/dashboard?tab=settings"
                     onClick={() => setMobileMenuOpen(false)}
                     className={`flex items-center gap-3 px-3 py-2 rounded-lg transition-colors ${darkMode
-                      ? 'text-gray-200 hover:bg-gray-800'
-                      : 'text-gray-800 hover:bg-gray-100'
+                      ? 'text-slate-200 hover:bg-slate-800'
+                      : 'text-slate-800 hover:bg-slate-100'
                       }`}
                   >
-                    <span className="text-lg">⚙️</span>
+                    <Settings size={20} />
                     <span className="text-sm font-medium">Settings</span>
                   </Link>
                   <button
@@ -511,11 +519,11 @@ export default function HeaderNav({ darkMode, setDarkMode }) {
                       setMobileMenuOpen(false);
                     }}
                     className={`flex items-center gap-3 px-3 py-2 rounded-lg text-left transition-colors ${darkMode
-                      ? 'text-red-400 hover:bg-gray-800'
-                      : 'text-red-600 hover:bg-gray-100'
+                      ? 'text-red-400 hover:bg-red-500/10'
+                      : 'text-red-600 hover:bg-red-50'
                       }`}
                   >
-                    <span className="text-lg">🚪</span>
+                    <LogOut size={20} />
                     <span className="text-sm font-medium">Logout</span>
                   </button>
                 </>
