@@ -135,76 +135,124 @@ export default function Checkout({ darkMode }) {
       <div className={`min-h-screen pt-32 pb-20 ${darkMode ? 'bg-[#0B0F19]' : 'bg-slate-50'}`}>
         <Container>
           <div className="max-w-3xl mx-auto">
+            {/* Success Header */}
             <motion.div
               initial={{ scale: 0.9, opacity: 0 }}
               animate={{ scale: 1, opacity: 1 }}
-              className={`text-center mb-8 p-8 rounded-3xl border ${darkMode ? 'bg-slate-900/50 border-slate-800' : 'bg-white border-slate-200 shadow-xl shadow-slate-200/50'}`}
+              transition={{ type: "spring", duration: 0.8 }}
+              className={`relative text-center mb-8 p-10 rounded-3xl border overflow-hidden ${darkMode ? 'bg-slate-900/50 border-slate-800' : 'bg-white border-slate-200 shadow-xl shadow-slate-200/50'}`}
             >
-              <div className="w-20 h-20 bg-green-500/10 rounded-full flex items-center justify-center mx-auto mb-6">
-                <CheckCircle className="w-10 h-10 text-green-500" />
-              </div>
-              <h1 className={`text-3xl md:text-4xl font-black mb-4 ${darkMode ? 'text-white' : 'text-slate-900'}`}>Order Complete!</h1>
-              <p className={`text-lg mb-2 ${darkMode ? 'text-slate-400' : 'text-slate-600'}`}>
-                Thank you for your purchase. A confirmation email has been sent to {formData.email}.
+              {/* Background Glow */}
+              <div className={`absolute top-0 left-1/2 -translate-x-1/2 w-64 h-64 rounded-full blur-3xl -z-10 ${darkMode ? 'bg-green-500/20' : 'bg-green-500/10'}`} />
+
+              <motion.div
+                initial={{ scale: 0 }}
+                animate={{ scale: 1 }}
+                transition={{ delay: 0.2, type: "spring", stiffness: 200 }}
+                className="w-24 h-24 bg-gradient-to-tr from-green-500 to-emerald-400 rounded-full flex items-center justify-center mx-auto mb-6 shadow-lg shadow-green-500/30"
+              >
+                <CheckCircle className="w-12 h-12 text-white" />
+              </motion.div>
+
+              <h1 className={`text-4xl md:text-5xl font-black mb-4 tracking-tight ${darkMode ? 'text-white' : 'text-slate-900'}`}>
+                Order Confirmed!
+              </h1>
+              <p className={`text-lg mb-6 max-w-lg mx-auto ${darkMode ? 'text-slate-400' : 'text-slate-600'}`}>
+                Thank you for your purchase. We've sent a confirmation email to <span className={`font-bold ${darkMode ? 'text-white' : 'text-slate-900'}`}>{formData.email}</span>.
               </p>
-              <div className={`inline-block px-4 py-2 rounded-full text-sm font-bold mt-4 ${darkMode ? 'bg-slate-800 text-slate-300' : 'bg-slate-100 text-slate-700'}`}>
-                Order #{orderDetails.orderNumber}
+
+              <div className="flex flex-wrap justify-center gap-3">
+                <div className={`px-4 py-2 rounded-full text-sm font-bold border ${darkMode ? 'bg-slate-800 border-slate-700 text-slate-300' : 'bg-slate-100 border-slate-200 text-slate-700'}`}>
+                  Order #{orderDetails.orderNumber}
+                </div>
+                <div className={`px-4 py-2 rounded-full text-sm font-bold border ${darkMode ? 'bg-slate-800 border-slate-700 text-slate-300' : 'bg-slate-100 border-slate-200 text-slate-700'}`}>
+                  {new Date().toLocaleDateString()}
+                </div>
               </div>
             </motion.div>
 
-            <div className={`rounded-3xl p-8 mb-8 border ${darkMode ? 'bg-slate-900/50 border-slate-800' : 'bg-white border-slate-200 shadow-lg'}`}>
-              <h2 className={`text-2xl font-bold mb-6 ${darkMode ? 'text-white' : 'text-slate-900'}`}>
-                Your License Keys
-              </h2>
+            {/* License Keys Section */}
+            <div className={`rounded-3xl p-8 mb-8 border relative overflow-hidden ${darkMode ? 'bg-slate-900/50 border-slate-800' : 'bg-white border-slate-200 shadow-lg'}`}>
+              <div className="flex items-center justify-between mb-8">
+                <h2 className={`text-2xl font-bold ${darkMode ? 'text-white' : 'text-slate-900'}`}>
+                  Your License Keys
+                </h2>
+                <Button variant="outline" size="sm" className="hidden sm:flex">
+                  <Package className="w-4 h-4 mr-2" /> Download Invoice
+                </Button>
+              </div>
+
               <div className="space-y-4">
                 {orderDetails.items.map((item, index) => (
                   <motion.div
                     key={item.id}
-                    initial={{ opacity: 0, y: 20 }}
-                    animate={{ opacity: 1, y: 0 }}
-                    transition={{ delay: index * 0.1 }}
-                    className={`p-5 rounded-2xl border ${darkMode ? 'bg-slate-800/50 border-slate-700' : 'bg-slate-50 border-slate-200'}`}
+                    initial={{ opacity: 0, x: -20 }}
+                    animate={{ opacity: 1, x: 0 }}
+                    transition={{ delay: 0.4 + (index * 0.1) }}
+                    className={`group p-5 rounded-2xl border transition-all hover:border-blue-500/50 ${darkMode ? 'bg-slate-800/30 border-slate-700' : 'bg-slate-50 border-slate-200'}`}
                   >
                     <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4 mb-4">
-                      <div>
-                        <h3 className={`font-bold text-lg ${darkMode ? 'text-white' : 'text-slate-900'}`}>
-                          {item.name}
-                        </h3>
-                        <p className={`text-sm ${darkMode ? 'text-slate-400' : 'text-slate-500'}`}>
-                          {item.licenseType === 'yearly' ? 'Extended' : 'Standard'} License
-                        </p>
+                      <div className="flex items-center gap-4">
+                        <div className={`w-12 h-12 rounded-xl flex items-center justify-center ${darkMode ? 'bg-slate-800' : 'bg-white border border-slate-200'}`}>
+                          <img src={item.featured_image} alt={item.name} className="w-8 h-8 object-cover rounded" />
+                        </div>
+                        <div>
+                          <h3 className={`font-bold text-lg ${darkMode ? 'text-white' : 'text-slate-900'}`}>
+                            {item.name}
+                          </h3>
+                          <p className={`text-sm ${darkMode ? 'text-slate-400' : 'text-slate-500'}`}>
+                            {item.licenseType === 'yearly' ? 'Extended' : 'Standard'} License
+                          </p>
+                        </div>
                       </div>
                     </div>
-                    <div className={`flex items-center gap-3 p-3 rounded-xl border ${darkMode ? 'bg-black/30 border-slate-700' : 'bg-white border-slate-200'}`}>
-                      <Key className="w-5 h-5 text-blue-500 shrink-0" />
-                      <code className={`text-sm font-mono flex-1 break-all ${darkMode ? 'text-slate-300' : 'text-slate-700'}`}>{item.licenseKey}</code>
-                      <button
-                        onClick={() => {
-                          navigator.clipboard.writeText(item.licenseKey);
-                          showToast('License key copied!', 'success');
-                        }}
-                        className="p-2 hover:bg-blue-500/10 rounded-lg text-blue-500 transition-colors shrink-0"
-                        title="Copy Key"
-                      >
-                        <Check className="w-4 h-4" />
-                      </button>
+
+                    <div className="relative">
+                      <div className={`flex items-center gap-3 p-4 rounded-xl border font-mono text-sm ${darkMode ? 'bg-black/30 border-slate-700 text-slate-300' : 'bg-white border-slate-200 text-slate-700'}`}>
+                        <Key className="w-5 h-5 text-blue-500 shrink-0" />
+                        <span className="flex-1 break-all tracking-wider">{item.licenseKey}</span>
+                      </div>
+                      <div className="absolute right-2 top-1/2 -translate-y-1/2">
+                        <button
+                          onClick={() => {
+                            navigator.clipboard.writeText(item.licenseKey);
+                            showToast('License key copied!', 'success');
+                          }}
+                          className={`p-2 rounded-lg transition-colors ${darkMode ? 'hover:bg-slate-700 text-slate-400 hover:text-white' : 'hover:bg-slate-100 text-slate-500 hover:text-slate-900'}`}
+                          title="Copy Key"
+                        >
+                          <Check className="w-4 h-4" />
+                        </button>
+                      </div>
                     </div>
                   </motion.div>
                 ))}
               </div>
+
+              <div className="mt-8 pt-6 border-t border-dashed border-slate-200 dark:border-slate-800 flex justify-between items-center">
+                <span className={`text-sm ${darkMode ? 'text-slate-400' : 'text-slate-500'}`}>Need help with installation?</span>
+                <Link to="/docs" className="text-sm font-bold text-blue-500 hover:underline">View Documentation</Link>
+              </div>
             </div>
 
+            {/* Action Buttons */}
             <div className="flex flex-col sm:flex-row gap-4">
               <Button
                 onClick={() => navigate('/dashboard')}
-                className="flex-1 h-12 text-base"
+                className={`flex-1 h-14 text-base font-bold shadow-lg shadow-blue-500/25 border-0 ${darkMode
+                    ? 'bg-gradient-to-r from-blue-600 to-indigo-600 text-white hover:shadow-blue-500/40'
+                    : 'bg-gradient-to-r from-blue-600 to-indigo-600 text-white hover:shadow-blue-500/50'
+                  }`}
               >
                 Go to Dashboard
               </Button>
               <Button
                 variant="outline"
                 onClick={() => navigate('/products')}
-                className="flex-1 h-12 text-base"
+                className={`flex-1 h-14 text-base font-bold border ${darkMode
+                    ? 'border-slate-700 text-slate-300 hover:bg-slate-800 hover:text-white'
+                    : 'border-slate-200 text-slate-700 hover:bg-slate-50 hover:text-slate-900'
+                  }`}
               >
                 Continue Shopping
               </Button>
