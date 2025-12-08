@@ -4,6 +4,11 @@ import { supabase } from '../lib/supabase';
 import { useCartStore, useWishlistStore, useUIStore } from '../store/useStore';
 import Button from '../components/ui/Button';
 import { Container } from '../components/layout/Container';
+import {
+  Filter, X, ChevronDown, Search, Grid, List, Heart,
+  ShoppingCart, Star, SlidersHorizontal, Check
+} from 'lucide-react';
+import { motion, AnimatePresence } from 'motion/react';
 
 export default function Products({ darkMode }) {
   const [products, setProducts] = useState([]);
@@ -14,6 +19,8 @@ export default function Products({ darkMode }) {
   const [selectedCategory, setSelectedCategory] = useState(null);
   const [priceRange, setPriceRange] = useState([0, 200]);
   const [selectedRating, setSelectedRating] = useState(null);
+  const [showMobileFilters, setShowMobileFilters] = useState(false);
+  const [searchQuery, setSearchQuery] = useState('');
 
   const addToCart = useCartStore((state) => state.addItem);
   const { addItem: addToWishlist, isInWishlist } = useWishlistStore();
@@ -31,20 +38,12 @@ export default function Products({ darkMode }) {
 
   const fetchProducts = async () => {
     setLoading(true);
-    // Select all fields. We don't use relations because category is a string column
-    // and technologies are stored in tech_stack array
-    let query = supabase
-      .from('products')
-      .select('*');
+    let query = supabase.from('products').select('*');
 
     if (selectedCategory) {
-      // If selectedCategory is a string (from our hardcoded list), match it
-      // If it was an ID, we'd need to check how categories are handled.
-      // For now, assuming category is a string column based on ProductForm
       query = query.eq('category', selectedCategory);
     }
 
-    // Only show active products
     query = query.eq('status', 'active');
 
     if (sortBy === 'price-low') {
@@ -54,7 +53,7 @@ export default function Products({ darkMode }) {
     } else if (sortBy === 'rating') {
       query = query.order('rating', { ascending: false });
     } else if (sortBy === 'popular') {
-      query = query.order('sales_count', { ascending: false }); // Assuming sales_count exists
+      query = query.order('sales_count', { ascending: false });
     } else {
       query = query.order('created_at', { ascending: false });
     }
@@ -83,198 +82,216 @@ export default function Products({ darkMode }) {
 
   const filteredProducts = products.filter((product) => {
     if (selectedRating && (product.rating || 0) < selectedRating) return false;
-    // Use regular_price instead of price_monthly
     const price = product.regular_price || 0;
-    if (price < priceRange[0] || price > priceRange[1])
-      return false;
+    if (price < priceRange[0] || price > priceRange[1]) return false;
+    if (searchQuery && !product.name.toLowerCase().includes(searchQuery.toLowerCase())) return false;
     return true;
   });
 
-  return (
-    <div
-      className={`min-h-screen pt-24 sm:pt-28 lg:pt-32 pb-16 sm:pb-20 ${darkMode ? 'bg-slate-950' : 'bg-slate-50'
-        }`}
-    >
-      <Container>
-        <div className="mb-10 sm:mb-12">
-          <nav
-            className={`mb-3 sm:mb-4 text-xs sm:text-sm ${darkMode ? 'text-gray-400' : 'text-gray-600'
+  const FilterContent = () => (
+    <div className="space-y-8">
+      <div>
+        <h4 className={`font-bold mb-4 flex items-center gap-2 ${darkMode ? 'text-white' : 'text-slate-900'}`}>
+          Categories
+        </h4>
+        <div className="space-y-2">
+          <button
+            onClick={() => setSelectedCategory(null)}
+            className={`w-full text-left px-3 py-2 rounded-lg text-sm font-medium transition-all ${!selectedCategory
+                ? 'bg-blue-600 text-white shadow-lg shadow-blue-500/30'
+                : darkMode
+                  ? 'text-slate-400 hover:bg-slate-800 hover:text-white'
+                  : 'text-slate-600 hover:bg-slate-100 hover:text-slate-900'
               }`}
           >
-            <Link to="/" className="hover:text-cyan-500">
-              Home
-            </Link>{' '}
-            / <span className={darkMode ? 'text-white' : 'text-gray-900'}>Products</span>
-          </nav>
-          <h1
-            className="font-black mb-2 text-gradient"
-            style={{
-              fontSize: 'clamp(2rem, 4vw + 0.5rem, 3rem)', // 32px - 48px
-              lineHeight: '1.15',
-              letterSpacing: '-0.02em',
-            }}
-          >
-            Our Software Solutions
-          </h1>
-          <p
-            className={`${darkMode ? 'text-gray-300' : 'text-gray-600'}`}
-            style={{
-              fontSize: 'clamp(0.95rem, 1.7vw, 1.15rem)', // 15px - 18px
-              lineHeight: 1.6,
-            }}
-          >
-            Discover powerful tools to transform your business.
-          </p>
+            All Categories
+          </button>
+          {categories.map((cat) => (
+            <button
+              key={cat.id || cat.name}
+              onClick={() => setSelectedCategory(cat.name || cat.id)}
+              className={`w-full text-left px-3 py-2 rounded-lg text-sm font-medium transition-all flex items-center justify-between ${selectedCategory === (cat.name || cat.id)
+                  ? 'bg-blue-600 text-white shadow-lg shadow-blue-500/30'
+                  : darkMode
+                    ? 'text-slate-400 hover:bg-slate-800 hover:text-white'
+                    : 'text-slate-600 hover:bg-slate-100 hover:text-slate-900'
+                }`}
+            >
+              <span>{cat.name}</span>
+              {selectedCategory === (cat.name || cat.id) && <Check size={14} />}
+            </button>
+          ))}
+        </div>
+      </div>
+
+      <div>
+        <h4 className={`font-bold mb-4 ${darkMode ? 'text-white' : 'text-slate-900'}`}>
+          Price Range
+        </h4>
+        <div className="space-y-4 px-1">
+          <input
+            type="range"
+            min="0"
+            max="200"
+            value={priceRange[1]}
+            onChange={(e) => setPriceRange([0, parseInt(e.target.value)])}
+            className="w-full h-2 bg-slate-200 rounded-lg appearance-none cursor-pointer dark:bg-slate-700 accent-blue-600"
+          />
+          <div className={`flex justify-between text-sm font-medium ${darkMode ? 'text-slate-400' : 'text-slate-600'}`}>
+            <span>$0</span>
+            <span className={darkMode ? 'text-white' : 'text-slate-900'}>${priceRange[1]}</span>
+          </div>
+        </div>
+      </div>
+
+      <div>
+        <h4 className={`font-bold mb-4 ${darkMode ? 'text-white' : 'text-slate-900'}`}>
+          Rating
+        </h4>
+        <div className="space-y-2">
+          {[5, 4, 3].map((rating) => (
+            <button
+              key={rating}
+              onClick={() => setSelectedRating(selectedRating === rating ? null : rating)}
+              className={`w-full flex items-center gap-2 px-3 py-2 rounded-lg text-sm font-medium transition-all ${selectedRating === rating
+                  ? 'bg-blue-600 text-white shadow-lg shadow-blue-500/30'
+                  : darkMode
+                    ? 'text-slate-400 hover:bg-slate-800 hover:text-white'
+                    : 'text-slate-600 hover:bg-slate-100 hover:text-slate-900'
+                }`}
+            >
+              <div className="flex text-yellow-400">
+                {[...Array(5)].map((_, i) => (
+                  <Star key={i} size={14} fill={i < rating ? "currentColor" : "none"} className={i < rating ? "" : "text-slate-400"} />
+                ))}
+              </div>
+              <span>& Up</span>
+            </button>
+          ))}
+        </div>
+      </div>
+
+      <Button
+        variant="outline"
+        className="w-full"
+        onClick={() => {
+          setSelectedCategory(null);
+          setPriceRange([0, 200]);
+          setSelectedRating(null);
+          setSearchQuery('');
+        }}
+      >
+        Reset Filters
+      </Button>
+    </div>
+  );
+
+  return (
+    <div className={`min-h-screen pt-24 pb-20 ${darkMode ? 'bg-[#0B0F19]' : 'bg-slate-50'}`}>
+      <Container>
+        {/* Header Section */}
+        <div className="mb-8 md:mb-12">
+          <div className="flex flex-col md:flex-row md:items-end justify-between gap-6">
+            <div>
+              <nav className={`text-sm mb-4 ${darkMode ? 'text-slate-400' : 'text-slate-500'}`}>
+                <Link to="/" className="hover:text-blue-500 transition-colors">Home</Link> / <span className={darkMode ? 'text-white' : 'text-slate-900'}>Products</span>
+              </nav>
+              <h1 className={`text-3xl md:text-4xl lg:text-5xl font-black tracking-tight mb-4 ${darkMode ? 'text-white' : 'text-slate-900'}`}>
+                Explore Solutions
+              </h1>
+              <p className={`text-lg max-w-2xl ${darkMode ? 'text-slate-400' : 'text-slate-600'}`}>
+                Premium digital products designed to accelerate your workflow.
+              </p>
+            </div>
+
+            {/* Mobile Filter Toggle */}
+            <button
+              onClick={() => setShowMobileFilters(true)}
+              className={`md:hidden flex items-center gap-2 px-4 py-2.5 rounded-xl font-bold text-sm transition-all ${darkMode
+                  ? 'bg-slate-800 text-white border border-slate-700'
+                  : 'bg-white text-slate-900 border border-slate-200 shadow-sm'
+                }`}
+            >
+              <SlidersHorizontal size={18} />
+              Filters
+            </button>
+          </div>
         </div>
 
-        <div className="flex flex-col lg:flex-row gap-6 sm:gap-8">
-          <aside className="w-full lg:w-1/4">
-            <div
-              className={`rounded-2xl p-4 sm:p-5 lg:p-6 ${darkMode ? 'glass-dark' : 'glass-light'
-                } lg:sticky lg:top-24`}
-            >
-              <h3
-                className={`font-bold mb-4 sm:mb-5 ${darkMode ? 'text-white' : 'text-gray-900'
-                  }`}
-                style={{
-                  fontSize: 'clamp(1.05rem, 1.9vw, 1.25rem)', // 17px - 20px
-                }}
-              >
-                Filters
-              </h3>
-
-              <div className="mb-8">
-                <h4
-                  className={`font-semibold mb-3 ${darkMode ? 'text-white' : 'text-gray-900'
-                    }`}
-                  style={{
-                    fontSize: 'clamp(0.9rem, 1.6vw, 1.05rem)', // 14px - 16px
-                  }}
-                >
-                  Categories
-                </h4>
-                <div className="space-y-2">
-                  <button
-                    onClick={() => setSelectedCategory(null)}
-                    className={`w-full text-left px-4 py-2 rounded-lg transition-colors ${!selectedCategory
-                        ? 'bg-cyan-500 text-white'
-                        : darkMode
-                          ? 'hover:bg-gray-700 text-gray-300'
-                          : 'hover:bg-gray-100 text-gray-700'
-                      }`}
-                  >
-                    All Categories
-                  </button>
-                  {categories.map((cat) => (
-                    <button
-                      key={cat.id || cat.name} // Handle if cat is just object with name
-                      onClick={() => setSelectedCategory(cat.name || cat.id)} // Use name if that's what we filter by
-                      className={`w-full text-left px-4 py-2 rounded-lg transition-colors flex items-center justify-between ${selectedCategory === (cat.name || cat.id)
-                          ? 'bg-cyan-500 text-white'
-                          : darkMode
-                            ? 'hover:bg-gray-700 text-gray-300'
-                            : 'hover:bg-gray-100 text-gray-700'
-                        }`}
-                    >
-                      <span>
-                        {cat.icon} {cat.name}
-                      </span>
-                    </button>
-                  ))}
-                </div>
-              </div>
-
-              <div className="mb-8">
-                <h4
-                  className={`font-semibold mb-3 ${darkMode ? 'text-white' : 'text-gray-900'
-                    }`}
-                  style={{
-                    fontSize: 'clamp(0.9rem, 1.6vw, 1.05rem)',
-                  }}
-                >
-                  Price Range
-                </h4>
-                <div className="space-y-4">
-                  <input
-                    type="range"
-                    min="0"
-                    max="200"
-                    value={priceRange[1]}
-                    onChange={(e) => setPriceRange([0, parseInt(e.target.value)])}
-                    className="w-full"
-                  />
-                  <div className={`text-sm ${darkMode ? 'text-gray-300' : 'text-gray-600'}`}>
-                    $0 - ${priceRange[1]}
-                  </div>
-                </div>
-              </div>
-
-              <div className="mb-8">
-                <h4
-                  className={`font-semibold mb-3 ${darkMode ? 'text-white' : 'text-gray-900'
-                    }`}
-                  style={{
-                    fontSize: 'clamp(0.9rem, 1.6vw, 1.05rem)',
-                  }}
-                >
-                  Minimum Rating
-                </h4>
-                <div className="space-y-2">
-                  {[5, 4, 3].map((rating) => (
-                    <button
-                      key={rating}
-                      onClick={() =>
-                        setSelectedRating(selectedRating === rating ? null : rating)
-                      }
-                      className={`w-full text-left px-4 py-2 rounded-lg transition-colors ${selectedRating === rating
-                          ? 'bg-cyan-500 text-white'
-                          : darkMode
-                            ? 'hover:bg-gray-700 text-gray-300'
-                            : 'hover:bg-gray-100 text-gray-700'
-                        }`}
-                    >
-                      {'⭐'.repeat(rating)}+ & Up
-                    </button>
-                  ))}
-                </div>
-              </div>
-
-              <Button
-                variant="outline"
-                className="w-full mt-2"
-                onClick={() => {
-                  setSelectedCategory(null);
-                  setPriceRange([0, 200]);
-                  setSelectedRating(null);
-                }}
-              >
-                Clear Filters
-              </Button>
+        <div className="flex flex-col lg:flex-row gap-8">
+          {/* Desktop Sidebar */}
+          <aside className="hidden lg:block w-64 shrink-0">
+            <div className={`sticky top-28 rounded-2xl p-6 border ${darkMode
+                ? 'bg-slate-900/50 border-slate-800 backdrop-blur-xl'
+                : 'bg-white/50 border-slate-200 backdrop-blur-xl'
+              }`}>
+              <FilterContent />
             </div>
           </aside>
 
-          <main className="lg:w-3/4">
-            <div className="mb-6 sm:mb-8 flex flex-col sm:flex-row justify-between items-start sm:items-center gap-3 sm:gap-4">
-              <p
-                className={darkMode ? 'text-gray-300' : 'text-gray-600'}
-                style={{
-                  fontSize: 'clamp(0.85rem, 1.5vw, 0.95rem)',
-                }}
-              >
-                Showing {filteredProducts.length} products
-              </p>
+          {/* Mobile Filter Drawer */}
+          <AnimatePresence>
+            {showMobileFilters && (
+              <>
+                <motion.div
+                  initial={{ opacity: 0 }}
+                  animate={{ opacity: 1 }}
+                  exit={{ opacity: 0 }}
+                  onClick={() => setShowMobileFilters(false)}
+                  className="fixed inset-0 bg-black/60 backdrop-blur-sm z-50 lg:hidden"
+                />
+                <motion.div
+                  initial={{ x: '100%' }}
+                  animate={{ x: 0 }}
+                  exit={{ x: '100%' }}
+                  transition={{ type: 'spring', damping: 25, stiffness: 200 }}
+                  className={`fixed right-0 top-0 h-full w-[300px] z-50 p-6 overflow-y-auto ${darkMode ? 'bg-slate-900 border-l border-slate-800' : 'bg-white border-l border-slate-200'
+                    }`}
+                >
+                  <div className="flex items-center justify-between mb-8">
+                    <h3 className={`text-xl font-bold ${darkMode ? 'text-white' : 'text-slate-900'}`}>Filters</h3>
+                    <button
+                      onClick={() => setShowMobileFilters(false)}
+                      className={`p-2 rounded-full ${darkMode ? 'hover:bg-slate-800 text-slate-400' : 'hover:bg-slate-100 text-slate-600'}`}
+                    >
+                      <X size={20} />
+                    </button>
+                  </div>
+                  <FilterContent />
+                </motion.div>
+              </>
+            )}
+          </AnimatePresence>
 
-              <div className="flex items-center gap-3 sm:gap-4">
+          {/* Main Content */}
+          <main className="flex-1">
+            {/* Toolbar */}
+            <div className={`mb-6 p-4 rounded-2xl border flex flex-col sm:flex-row gap-4 items-center justify-between ${darkMode
+                ? 'bg-slate-900/50 border-slate-800'
+                : 'bg-white border-slate-200 shadow-sm'
+              }`}>
+              <div className="relative w-full sm:w-auto sm:min-w-[240px]">
+                <Search size={18} className={`absolute left-3 top-1/2 -translate-y-1/2 ${darkMode ? 'text-slate-500' : 'text-slate-400'}`} />
+                <input
+                  type="text"
+                  placeholder="Search products..."
+                  value={searchQuery}
+                  onChange={(e) => setSearchQuery(e.target.value)}
+                  className={`w-full pl-10 pr-4 py-2 rounded-xl text-sm outline-none transition-all ${darkMode
+                      ? 'bg-slate-800 text-white placeholder:text-slate-500 focus:ring-2 focus:ring-blue-500/50'
+                      : 'bg-slate-100 text-slate-900 placeholder:text-slate-500 focus:ring-2 focus:ring-blue-500/50'
+                    }`}
+                />
+              </div>
+
+              <div className="flex items-center gap-3 w-full sm:w-auto">
                 <select
                   value={sortBy}
                   onChange={(e) => setSortBy(e.target.value)}
-                  className={`px-4 py-2 rounded-lg border-2 outline-none ${darkMode
-                      ? 'glass-dark border-cyan-500/30 text-white'
-                      : 'glass-light border-gray-200 text-gray-900'
+                  className={`flex-1 sm:flex-none px-4 py-2 rounded-xl text-sm outline-none border cursor-pointer ${darkMode
+                      ? 'bg-slate-800 border-slate-700 text-white focus:border-blue-500'
+                      : 'bg-white border-slate-200 text-slate-900 focus:border-blue-500'
                     }`}
-                  style={{
-                    fontSize: 'clamp(0.8rem, 1.4vw, 0.95rem)',
-                  }}
                 >
                   <option value="newest">Newest First</option>
                   <option value="price-low">Price: Low to High</option>
@@ -283,170 +300,153 @@ export default function Products({ darkMode }) {
                   <option value="rating">Highest Rated</option>
                 </select>
 
-                <div className="flex gap-1.5">
+                <div className={`hidden sm:flex p-1 rounded-xl border ${darkMode ? 'bg-slate-800 border-slate-700' : 'bg-slate-100 border-slate-200'}`}>
                   <button
                     onClick={() => setViewMode('grid')}
-                    className={`p-1.5 sm:p-2 rounded-lg ${viewMode === 'grid'
-                        ? 'bg-cyan-500 text-white'
-                        : darkMode
-                          ? 'bg-gray-700 text-gray-300'
-                          : 'bg-gray-200 text-gray-700'
+                    className={`p-1.5 rounded-lg transition-all ${viewMode === 'grid'
+                      ? 'bg-white text-blue-600 shadow-sm dark:bg-slate-700 dark:text-blue-400'
+                      : 'text-slate-400 hover:text-slate-600 dark:text-slate-500 dark:hover:text-slate-300'
                       }`}
                   >
-                    ▦
+                    <Grid size={18} />
                   </button>
                   <button
                     onClick={() => setViewMode('list')}
-                    className={`p-1.5 sm:p-2 rounded-lg ${viewMode === 'list'
-                        ? 'bg-cyan-500 text-white'
-                        : darkMode
-                          ? 'bg-gray-700 text-gray-300'
-                          : 'bg-gray-200 text-gray-700'
+                    className={`p-1.5 rounded-lg transition-all ${viewMode === 'list'
+                      ? 'bg-white text-blue-600 shadow-sm dark:bg-slate-700 dark:text-blue-400'
+                      : 'text-slate-400 hover:text-slate-600 dark:text-slate-500 dark:hover:text-slate-300'
                       }`}
                   >
-                    ☰
+                    <List size={18} />
                   </button>
                 </div>
               </div>
             </div>
 
+            {/* Products Grid */}
             {loading ? (
-              <div className="flex items-center justify-center h-64">
-                <div className="animate-spin text-6xl">⚙️</div>
+              <div className="grid grid-cols-2 md:grid-cols-2 lg:grid-cols-3 gap-4">
+                {[...Array(6)].map((_, i) => (
+                  <div key={i} className={`aspect-[4/5] rounded-2xl animate-pulse ${darkMode ? 'bg-slate-800' : 'bg-slate-200'}`} />
+                ))}
               </div>
-            ) : (
-              <div
-                className={`grid gap-5 sm:gap-6 lg:gap-8 ${viewMode === 'grid'
-                    ? 'grid-cols-1 md:grid-cols-2 lg:grid-cols-3'
-                    : 'grid-cols-1'
-                  }`}
-              >
+            ) : filteredProducts.length > 0 ? (
+              <div className={`grid gap-3 sm:gap-6 ${viewMode === 'grid'
+                  ? 'grid-cols-2 md:grid-cols-2 lg:grid-cols-3'
+                  : 'grid-cols-1'
+                }`}>
                 {filteredProducts.map((product) => (
                   <Link
                     key={product.id}
                     to={`/products/${product.slug}`}
-                    className={`rounded-2xl overflow-hidden shadow-xl transition-all duration-300 hover:-translate-y-2 hover:shadow-2xl group ${darkMode ? 'glass-dark' : 'glass-light'
+                    className={`group relative flex flex-col rounded-2xl overflow-hidden border transition-all duration-300 hover:-translate-y-1 hover:shadow-xl ${darkMode
+                        ? 'bg-slate-900/50 border-slate-800 hover:border-blue-500/30'
+                        : 'bg-white border-slate-200 hover:border-blue-500/30 hover:shadow-blue-500/10'
                       }`}
                   >
-                    <div className="relative h-44 sm:h-48 overflow-hidden bg-gradient-to-br from-cyan-500 to-blue-600">
+                    {/* Image Container - 4:3 Aspect Ratio */}
+                    <div className="relative aspect-[4/3] overflow-hidden bg-slate-100 dark:bg-slate-800">
                       <img
                         src={product.featured_image || '/api/placeholder/400/300'}
                         alt={product.name}
-                        className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-300"
+                        className="w-full h-full object-cover transition-transform duration-500 group-hover:scale-110"
                       />
-                      {product.is_featured && (
-                        <span className="absolute top-4 right-4 bg-green-500 text-white px-3 py-1 rounded-full text-sm font-bold">
-                          Featured
-                        </span>
-                      )}
-                      {product.trending && (
-                        <span className="absolute top-4 left-4 bg-orange-500 text-white px-3 py-1 rounded-full text-sm font-bold">
-                          Trending
-                        </span>
-                      )}
-                    </div>
+                      <div className="absolute inset-0 bg-gradient-to-t from-black/60 via-transparent to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300" />
 
-                    <div className="p-4 sm:p-5 lg:p-6">
-                      {product.category && (
-                        <span
-                          className={`text-sm font-bold ${darkMode ? 'text-cyan-400' : 'text-cyan-600'
+                      {/* Floating Actions */}
+                      <div className="absolute top-3 right-3 flex flex-col gap-2 opacity-0 group-hover:opacity-100 transition-all duration-300 translate-x-4 group-hover:translate-x-0">
+                        <button
+                          onClick={(e) => handleAddToWishlist(product, e)}
+                          className={`p-2 rounded-full backdrop-blur-md transition-colors ${isInWishlist(product.id)
+                              ? 'bg-red-500 text-white'
+                              : 'bg-white/90 text-slate-700 hover:bg-white hover:text-red-500'
                             }`}
                         >
-                          {product.category}
-                        </span>
-                      )}
-
-                      <h3
-                        className={`font-bold mt-2 mb-2 ${darkMode ? 'text-white' : 'text-gray-900'
-                          }`}
-                        style={{
-                          fontSize: 'clamp(1rem, 1.9vw, 1.25rem)', // 16px - 20px
-                        }}
-                      >
-                        {product.name}
-                      </h3>
-
-                      <div className="flex items-center gap-2 mb-3">
-                        <span className="text-yellow-400">{'⭐'.repeat(Math.floor(product.rating || 0))}</span>
-                        <span
-                          className={`${darkMode ? 'text-gray-400' : 'text-gray-600'}`}
-                          style={{
-                            fontSize: 'clamp(0.8rem, 1.4vw, 0.95rem)',
-                          }}
+                          <Heart size={16} fill={isInWishlist(product.id) ? "currentColor" : "none"} />
+                        </button>
+                        <button
+                          onClick={(e) => handleAddToCart(product, e)}
+                          className="p-2 rounded-full bg-white/90 text-slate-700 hover:bg-blue-600 hover:text-white backdrop-blur-md transition-colors"
                         >
-                          {product.rating || 0} ({product.rating_count || 0})
+                          <ShoppingCart size={16} />
+                        </button>
+                      </div>
+
+                      {/* Badges */}
+                      <div className="absolute top-3 left-3 flex flex-col gap-1.5">
+                        {product.is_featured && (
+                          <span className="px-2 py-1 rounded-md text-[10px] font-bold uppercase tracking-wider bg-amber-400 text-amber-950 shadow-sm">
+                            Featured
+                          </span>
+                        )}
+                        {product.trending && (
+                          <span className="px-2 py-1 rounded-md text-[10px] font-bold uppercase tracking-wider bg-rose-500 text-white shadow-sm">
+                            Hot
+                          </span>
+                        )}
+                      </div>
+                    </div>
+
+                    {/* Content */}
+                    <div className="flex-1 p-3 sm:p-5 flex flex-col">
+                      <div className="mb-1">
+                        <span className={`text-[10px] sm:text-xs font-bold uppercase tracking-wider ${darkMode ? 'text-blue-400' : 'text-blue-600'}`}>
+                          {product.category}
                         </span>
                       </div>
 
-                      <p
-                        className={`mb-3 sm:mb-4 line-clamp-2 ${darkMode ? 'text-gray-300' : 'text-gray-600'
-                          }`}
-                        style={{
-                          fontSize: 'clamp(0.85rem, 1.5vw, 0.98rem)',
-                        }}
-                      >
-                        {product.short_description}
-                      </p>
+                      <h3 className={`font-bold text-sm sm:text-lg mb-1 sm:mb-2 line-clamp-1 group-hover:text-blue-500 transition-colors ${darkMode ? 'text-white' : 'text-slate-900'}`}>
+                        {product.name}
+                      </h3>
 
-                      <div className="flex items-center justify-between">
-                        <div>
-                          <span
-                            className={`font-black ${darkMode ? 'text-cyan-400' : 'text-cyan-600'
-                              }`}
-                            style={{
-                              fontSize: 'clamp(1.2rem, 2.1vw, 1.6rem)', // 19px - 25px
-                            }}
-                          >
+                      <div className="flex items-center gap-1.5 mb-2 sm:mb-3">
+                        <Star size={12} className="text-amber-400 fill-current" />
+                        <span className={`text-xs font-medium ${darkMode ? 'text-slate-400' : 'text-slate-600'}`}>
+                          {product.rating || 0}
+                        </span>
+                        <span className={`text-xs ${darkMode ? 'text-slate-600' : 'text-slate-400'}`}>
+                          ({product.rating_count || 0})
+                        </span>
+                      </div>
+
+                      <div className="mt-auto flex items-center justify-between pt-3 border-t border-dashed border-slate-200 dark:border-slate-800">
+                        <div className="flex flex-col">
+                          <span className={`text-[10px] sm:text-xs ${darkMode ? 'text-slate-500' : 'text-slate-400'}`}>Price</span>
+                          <span className={`text-sm sm:text-lg font-black ${darkMode ? 'text-white' : 'text-slate-900'}`}>
                             ${product.regular_price}
                           </span>
                         </div>
-
-                        <div className="flex gap-1.5 sm:gap-2">
-                          <button
-                            onClick={(e) => handleAddToWishlist(product, e)}
-                            className={`p-1.5 sm:p-2 rounded-lg transition-all ${isInWishlist(product.id)
-                                ? 'bg-red-500 text-white'
-                                : darkMode
-                                  ? 'bg-gray-700 hover:bg-gray-600 text-white'
-                                  : 'bg-gray-200 hover:bg-gray-300'
-                              }`}
-                          >
-                            ❤️
-                          </button>
-                          <button
-                            onClick={(e) => handleAddToCart(product, e)}
-                            className="p-1.5 sm:p-2 rounded-lg bg-cyan-500 text-white hover:bg-cyan-600 transition-colors"
-                          >
-                            🛒
-                          </button>
-                        </div>
+                        <button className={`text-xs font-bold px-3 py-1.5 rounded-lg transition-colors ${darkMode
+                            ? 'bg-slate-800 text-white hover:bg-blue-600'
+                            : 'bg-slate-100 text-slate-900 hover:bg-blue-600 hover:text-white'
+                          }`}>
+                          View Details
+                        </button>
                       </div>
                     </div>
                   </Link>
                 ))}
               </div>
-            )}
-
-            {!loading && filteredProducts.length === 0 && (
-              <div className="text-center py-16 sm:py-20">
-                <div className="text-7xl sm:text-8xl mb-4 sm:mb-6">📦</div>
-                <h3
-                  className={`text-2xl sm:text-3xl font-bold mb-3 sm:mb-4 ${darkMode ? 'text-white' : 'text-gray-900'
-                    }`}
-                >
+            ) : (
+              <div className="flex flex-col items-center justify-center py-20 text-center">
+                <div className={`w-24 h-24 rounded-full flex items-center justify-center mb-6 ${darkMode ? 'bg-slate-800' : 'bg-slate-100'}`}>
+                  <Search size={40} className={darkMode ? 'text-slate-600' : 'text-slate-400'} />
+                </div>
+                <h3 className={`text-xl font-bold mb-2 ${darkMode ? 'text-white' : 'text-slate-900'}`}>
                   No products found
                 </h3>
-                <p className={`mb-6 sm:mb-8 ${darkMode ? 'text-gray-300' : 'text-gray-600'}`}>
-                  Try adjusting your filters or browse all products
+                <p className={`max-w-md mb-8 ${darkMode ? 'text-slate-400' : 'text-slate-600'}`}>
+                  We couldn't find any products matching your filters. Try adjusting your search or filter criteria.
                 </p>
                 <Button
                   onClick={() => {
                     setSelectedCategory(null);
                     setPriceRange([0, 200]);
                     setSelectedRating(null);
+                    setSearchQuery('');
                   }}
                 >
-                  Clear Filters
+                  Clear All Filters
                 </Button>
               </div>
             )}
