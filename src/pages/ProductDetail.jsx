@@ -165,7 +165,7 @@ export default function ProductDetail({ darkMode }) {
   }
 
   return (
-    <div className={`min-h-screen pb-20 ${darkMode ? 'bg-slate-950' : 'bg-slate-50'}`}>
+    <div className={`min-h-screen pb-32 lg:pb-20 ${darkMode ? 'bg-slate-950' : 'bg-slate-50'}`}>
       {/* Background Elements */}
       <div className="absolute inset-0 overflow-hidden pointer-events-none">
         <div className={`absolute inset-0 bg-grid ${darkMode ? 'opacity-[0.05]' : 'opacity-[0.03]'}`} />
@@ -453,6 +453,29 @@ export default function ProductDetail({ darkMode }) {
           <Button onClick={() => setReviewModalOpen(false)} fullWidth>Close</Button>
         </div>
       </Modal>
+
+      {/* Mobile Sticky Action Bar */}
+      <div className={`fixed bottom-0 left-0 right-0 p-4 z-50 lg:hidden border-t backdrop-blur-xl transition-all duration-300 ${darkMode
+        ? 'bg-slate-900/90 border-slate-800'
+        : 'bg-white/90 border-slate-200'
+        }`}>
+        <div className="flex items-center gap-4 max-w-md mx-auto">
+          <div className="flex flex-col">
+            <span className={`text-xs font-medium ${darkMode ? 'text-slate-400' : 'text-slate-500'}`}>Total Price</span>
+            <div className="flex items-baseline gap-1">
+              <span className={`text-2xl font-black ${darkMode ? 'text-white' : 'text-slate-900'}`}>${price}</span>
+              <span className={`text-xs ${darkMode ? 'text-slate-500' : 'text-slate-400'}`}>USD</span>
+            </div>
+          </div>
+          <Button
+            onClick={handleBuyNow}
+            className={`flex-1 h-12 text-base font-bold shadow-lg shadow-blue-500/20 ${darkMode ? 'bg-blue-600 hover:bg-blue-500' : 'bg-blue-600 hover:bg-blue-700'
+              }`}
+          >
+            Buy Now <ArrowRight size={18} className="ml-2" />
+          </Button>
+        </div>
+      </div>
     </div>
   );
 }
